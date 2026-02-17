@@ -70,6 +70,7 @@ Dependabot met automatiquement à jour vos dépendances. C'est déjà configuré
 ### Configuration Personnalisée
 
 Notre configuration`.github/dependabot.yml` :
+
 - Crée des PR **tous les lundi à 3h UTC**
 - Limite à **5 PR ouvertes** simultanées
 - Labels automatiques : `dependencies`
@@ -79,12 +80,12 @@ Pour modifier, éditez [.github/dependabot.yml](.github/dependabot.yml) :
 
 ```yaml
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"        # Changez le jour (monday, tuesday, etc.)
-      time: "03:00"        # Changez l'heure (UTC)
+      interval: 'weekly'
+      day: 'monday' # Changez le jour (monday, tuesday, etc.)
+      time: '03:00' # Changez l'heure (UTC)
     # ... autres options
 ```
 
@@ -110,6 +111,7 @@ C'est activé automatiquement par `.github/workflows/codeql.yml` tous les dimanc
 ### Customiser CodeQL
 
 Notre workflow `.github/workflows/codeql.yml` :
+
 - Analyse en **JavaScript/TypeScript**
 - Scan **hebdomadaire** (dimanche)
 - Scan sur **chaque push** vers main/develop
@@ -122,7 +124,7 @@ Pour modifier les requêtes, éditez [.github/workflows/codeql.yml](.github/work
   uses: github/codeql-action/init@v2
   with:
     languages: ${{ matrix.language }}
-    queries: security-and-quality  # Changez ici (security-only, etc.)
+    queries: security-and-quality # Changez ici (security-only, etc.)
 ```
 
 ---
