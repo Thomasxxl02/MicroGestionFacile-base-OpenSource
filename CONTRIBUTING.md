@@ -33,7 +33,7 @@ npm run dev
 ### 4. Format et Linting
 
 ```bash
-npm run format:fix
+npm run format
 npm run lint:fix
 npm run type-check
 ```
