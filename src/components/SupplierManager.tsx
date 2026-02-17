@@ -101,7 +101,7 @@ const SupplierManager: React.FC = () => {
     let result = suppliers.filter(
       (s) =>
         s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (s.category && s.category.toLowerCase().includes(searchTerm.toLowerCase()))
+        s.category?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (selectedCategory) {

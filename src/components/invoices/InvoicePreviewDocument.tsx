@@ -131,7 +131,7 @@ const InvoicePreviewDocument = ({
       {linkedDoc && (
         <div
           className="bg-slate-50 border border-slate-100 rounded-[2rem] p-6 mb-12 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-all no-print group"
-          onClick={() => !isPreview && onOpenLinkedDocument && onOpenLinkedDocument(linkedDoc.id)}
+          onClick={() => !isPreview && onOpenLinkedDocument?.(linkedDoc.id)}
         >
           <div className="flex items-center gap-5">
             <div

@@ -79,7 +79,7 @@ const InvoiceManager: React.FC = () => {
         await db.invoices.add(docToSave);
       } else if (data.id) {
         const existing = await db.invoices.get(data.id);
-        if (existing && existing.type === 'invoice' && existing.status !== 'draft') {
+        if (existing?.type === 'invoice' && existing.status !== 'draft') {
           toast.error('Cette facture est émise et ne peut plus être modifiée.');
           return;
         }
@@ -118,7 +118,7 @@ const InvoiceManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     const doc = await db.invoices.get(id);
-    if (doc && doc.type === 'invoice' && doc.status !== 'draft') {
+    if (doc?.type === 'invoice' && doc.status !== 'draft') {
       toast.error('Cette facture est émise et ne peut plus être supprimée.');
       return;
     }

@@ -62,6 +62,7 @@ security: correction de sécurité
 ```
 
 Exemple :
+
 ```
 feat(invoices): ajouter la génération Factur-X
 
@@ -83,14 +84,17 @@ feat(invoices): ajouter la génération Factur-X
 
 ```markdown
 ## Description
+
 Ajoute une validation des plafonds TVA pour 2026
 
 Fermé par : #45
 
 ## Type
+
 - [x] New feature
 
 ## Checklist
+
 - [x] npm run validate ✓
 - [x] npm run test:run ✓
 - [x] Tests ajoutés
@@ -119,6 +123,7 @@ Utilisez le template [feature_request.md](.github/ISSUE_TEMPLATE/feature_request
 ## 🔒 Sécurité
 
 ⚠️ **N'exposez jamais** :
+
 - Clés API (même en exemple)
 - Tokens d'authentification
 - Identifiants de base de données
@@ -129,6 +134,7 @@ Pour les failles de sécurité, consultez [SECURITY.md](SECURITY.md).
 ## 🏗️ Architecture
 
 Avant de contribuer, lisez :
+
 - [ARCHITECTURE.md](ARCHITECTURE.md) - Structure technique
 - [SECURITY.md](SECURITY.md) - Politiques de sécurité
 - [IMPROVEMENTS.md](IMPROVEMENTS.md) - Roadmap

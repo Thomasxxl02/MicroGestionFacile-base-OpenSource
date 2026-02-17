@@ -1,17 +1,17 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "03:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '03:00'
     open-pull-requests-limit: 5
     reviewers:
-      - "Thomasxxl02"
+      - 'Thomasxxl02'
     labels:
-      - "dependencies"
-    versioning-strategy: "increase"
+      - 'dependencies'
+    versioning-strategy: 'increase'
     commit-message:
-      prefix: "deps:"
-      include: "scope"
+      prefix: 'deps:'
+      include: 'scope'

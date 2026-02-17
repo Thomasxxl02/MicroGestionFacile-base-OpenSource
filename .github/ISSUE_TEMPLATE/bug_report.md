@@ -4,7 +4,6 @@ about: Signalez un bug rencontré
 title: '[BUG] '
 labels: 'bug'
 assignees: ''
-
 ---
 
 ## 🐛 Description du bug

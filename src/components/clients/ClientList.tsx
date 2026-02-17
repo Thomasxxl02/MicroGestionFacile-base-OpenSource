@@ -171,7 +171,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
 
   const processedClients = useMemo(() => {
     // 1. Filter by Archive Status
-    let result = clients.filter((c) => !!c.archived === showArchived);
+    let result = clients.filter((c) => Boolean(c.archived) === showArchived);
 
     // 2. Filter by Search (Name, Email, SIRET, Notes)
     const term = searchTerm.toLowerCase();
@@ -179,8 +179,8 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
       (c) =>
         c.name.toLowerCase().includes(term) ||
         c.email.toLowerCase().includes(term) ||
-        (c.siret && c.siret.includes(term)) ||
-        (c.notes && c.notes.toLowerCase().includes(term))
+        c.siret?.includes(term) ||
+        c.notes?.toLowerCase().includes(term)
     );
 
     // 3. Sort

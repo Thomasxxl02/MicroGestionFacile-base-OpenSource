@@ -4,7 +4,6 @@ about: Proposez une nouvelle fonctionnalité
 title: '[FEATURE] '
 labels: 'enhancement'
 assignees: ''
-
 ---
 
 ## 🚀 Description de la fonctionnalité

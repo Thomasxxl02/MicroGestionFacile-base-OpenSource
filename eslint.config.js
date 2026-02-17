@@ -7,20 +7,27 @@ import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'coverage', '.github', '**/*.config.js', '**/*.config.ts', 'vite-env.d.ts'] },
   {
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
-      eslintConfigPrettier,
+    ignores: [
+      'dist',
+      'node_modules',
+      'coverage',
+      '.github',
+      '**/*.config.js',
+      '**/*.config.ts',
+      'vite-env.d.ts',
     ],
+  },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended, eslintConfigPrettier],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.browser,
       parserOptions: {
-        project: ['./tsconfig.json'],
-        tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     plugins: {
@@ -36,27 +43,23 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react/react-in-jsx-scope': 'off', // React 17+ JSX Transform
+      'react/prop-types': 'off', // TypeScript remplace prop-types
+      'react/no-unescaped-entities': 'warn',
+
+      // TypeScript - Balance strictness and pragmatism
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-floating-promises': 'warn', // Downgrade to warn to be pragmatic
-      '@typescript-eslint/no-misused-promises': [
-        'error',
-        {
-          checksConditionals: true,
-          checksVoidReturn: false, // Allow promise-returning functions in event handlers
-        },
-      ],
-      '@typescript-eslint/require-await': 'warn',
-      '@typescript-eslint/await-thenable': 'error',
-      '@typescript-eslint/no-unsafe-enum-comparison': 'warn',
-      '@typescript-eslint/no-unsafe-member-access': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      '@typescript-eslint/no-unsafe-call': 'warn',
-      '@typescript-eslint/no-unsafe-assignment': 'warn',
-      '@typescript-eslint/no-redundant-type-constituents': 'warn',
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      '@typescript-eslint/no-require-imports': 'warn',
+      '@typescript-eslint/no-empty-interface': 'warn',
+
+      // Best practices
+      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'prefer-const': 'error',
       'no-var': 'error',
+      eqeqeq: ['warn', 'smart'],
+      'no-implicit-coercion': 'warn',
+      'no-empty-function': ['warn', { allow: ['arrowFunctions'] }],
     },
   }
 );

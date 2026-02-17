@@ -87,7 +87,7 @@ const AISettings: React.FC = () => {
           ? 'claudeKey'
           : 'mistralKey'
   );
-  const isConfigured = !!getApiKeyValue;
+  const isConfigured = Boolean(getApiKeyValue);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
