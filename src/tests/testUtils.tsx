@@ -36,9 +36,7 @@ export const RoutesWrapper = ({ children }: { children: React.ReactNode }) => (
  * Ajoute des dimensions CSS appropriées au conteneur
  */
 export const ChartsWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ width: '800px', height: '600px', display: 'flex' }}>
-    {children}
-  </div>
+  <div style={{ width: '800px', height: '600px', display: 'flex' }}>{children}</div>
 );
 
 /**
@@ -50,11 +48,7 @@ export const RoutesChartsWrapper = ({ children }: { children: React.ReactNode })
     <Routes>
       <Route
         path="/*"
-        element={
-          <div style={{ width: '800px', height: '600px', display: 'flex' }}>
-            {children}
-          </div>
-        }
+        element={<div style={{ width: '800px', height: '600px', display: 'flex' }}>{children}</div>}
       />
     </Routes>
   </BrowserRouter>

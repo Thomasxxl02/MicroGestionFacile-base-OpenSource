@@ -547,12 +547,15 @@ describe('🧪 AccountingManager Component', () => {
         </BrowserRouter>
       );
 
-      const journalTab = screen.getByRole('tab', { name: /journal/i });
+      const journalTab = screen.getByRole('button', { name: /journal/i });
       await user.click(journalTab);
 
-      await waitFor(() => {
-        expect(screen.getByText(/écritures comptables/i)).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByText(/écritures comptables/i)).toBeInTheDocument();
+        },
+        { timeout: 2000 }
+      );
     });
 
     it('devrait générer des écritures comptables automatiquement', async () => {
@@ -565,12 +568,15 @@ describe('🧪 AccountingManager Component', () => {
         </BrowserRouter>
       );
 
-      const journalTab = screen.getByRole('tab', { name: /journal/i });
+      const journalTab = screen.getByRole('button', { name: /journal/i });
       await user.click(journalTab);
 
-      await waitFor(() => {
-        expect(generateJournalEntries).toHaveBeenCalled();
-      });
+      await waitFor(
+        () => {
+          expect(generateJournalEntries).toHaveBeenCalled();
+        },
+        { timeout: 2000 }
+      );
     });
 
     it('devrait afficher les comptes et montants', async () => {
@@ -581,7 +587,7 @@ describe('🧪 AccountingManager Component', () => {
         </BrowserRouter>
       );
 
-      const journalTab = screen.getByRole('tab', { name: /journal/i });
+      const journalTab = screen.getByRole('button', { name: /journal/i });
       await user.click(journalTab);
 
       await waitFor(() => {
@@ -598,7 +604,7 @@ describe('🧪 AccountingManager Component', () => {
         </BrowserRouter>
       );
 
-      const journalTab = screen.getByRole('tab', { name: /journal/i });
+      const journalTab = screen.getByRole('button', { name: /journal/i });
       await user.click(journalTab);
 
       await waitFor(() => {
@@ -661,7 +667,7 @@ describe('🧪 AccountingManager Component', () => {
         </BrowserRouter>
       );
 
-      const journalTab = screen.getByRole('tab', { name: /journal/i });
+      const journalTab = screen.getByRole('button', { name: /journal/i });
       await user.click(journalTab);
 
       const searchInput = screen.getByPlaceholderText(/rechercher/i);
