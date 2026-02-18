@@ -1,6 +1,7 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Sidebar from './components/Sidebar';
 import { UserProfile } from './types';
 import { Menu, Loader2 } from 'lucide-react';
@@ -205,6 +206,7 @@ const App: React.FC = () => {
           theme={isDarkMode ? 'dark' : 'light'}
         />
         <Analytics />
+        <SpeedInsights />
       </div>
     </ErrorBoundary>
   );
