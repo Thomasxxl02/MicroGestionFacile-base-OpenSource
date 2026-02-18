@@ -358,7 +358,10 @@ const AccountingManager: React.FC = () => {
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
 
   return (
-    <div data-testid="accounting-container" className="space-y-10 animate-in fade-in duration-700 max-w-7xl mx-auto pb-20 px-4 md:px-0">
+    <div
+      data-testid="accounting-container"
+      className="space-y-10 animate-in fade-in duration-700 max-w-7xl mx-auto pb-20 px-4 md:px-0"
+    >
       <Header
         title="Comptabilité"
         description="Pilotez votre trésorerie et vos obligations fiscales en temps réel."

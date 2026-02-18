@@ -239,7 +239,10 @@ const ProductManager: React.FC = () => {
   }, [products, searchTerm, sortBy]);
 
   return (
-    <div data-testid="products-container" className="space-y-12 animate-fade-in max-w-7xl mx-auto pb-20">
+    <div
+      data-testid="products-container"
+      className="space-y-12 animate-fade-in max-w-7xl mx-auto pb-20"
+    >
       <Header
         title="Catalogue"
         description="Gérez vos prestations et produits avec suivi automatique du stock."
@@ -261,7 +264,10 @@ const ProductManager: React.FC = () => {
       />
 
       {/* Statistiques du Catalogue */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6" data-testid="product-stats">
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6"
+        data-testid="product-stats"
+      >
         <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
           <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500">
             <LayoutGrid size={24} />

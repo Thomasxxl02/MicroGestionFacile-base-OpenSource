@@ -151,10 +151,10 @@ describe('🧪 ProductManager Component', () => {
       await waitFor(() => {
         // 4 produits au total
         expect(screen.getByText('4')).toBeInTheDocument();
-        
+
         // 2 prestations
         expect(screen.getByText('2')).toBeInTheDocument();
-        
+
         // 2 marchandises
         expect(screen.getByText('2')).toBeInTheDocument();
       });
@@ -251,10 +251,8 @@ describe('🧪 ProductManager Component', () => {
       );
 
       await waitFor(() => {
-        const productNames = screen
-          .getAllByRole('heading', { level: 4 })
-          .map((h) => h.textContent);
-        
+        const productNames = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
+
         // Ordre alphabétique: Clavier, Consultation, Formation, MacBook
         expect(productNames[0]).toContain('Clavier');
       });
@@ -332,7 +330,7 @@ describe('🧪 ProductManager Component', () => {
       await waitFor(() => {
         // MacBook a un stock de 5
         expect(screen.getByText(/stock.*5/i)).toBeInTheDocument();
-        
+
         // Les services n'ont pas de stock
         const serviceCard = screen.getByText('Consultation SEO').closest('div');
         expect(serviceCard).not.toHaveTextContent(/stock/i);
@@ -341,7 +339,7 @@ describe('🧪 ProductManager Component', () => {
   });
 
   describe('Informations légales et commerciales', () => {
-    it('devrait afficher l\'éco-participation si présente', async () => {
+    it("devrait afficher l'éco-participation si présente", async () => {
       render(
         <BrowserRouter>
           <ProductManager />
@@ -354,7 +352,7 @@ describe('🧪 ProductManager Component', () => {
       });
     });
 
-    it('devrait afficher l\'indice de réparabilité', async () => {
+    it("devrait afficher l'indice de réparabilité", async () => {
       render(
         <BrowserRouter>
           <ProductManager />
@@ -379,7 +377,7 @@ describe('🧪 ProductManager Component', () => {
       });
     });
 
-    it('devrait afficher l\'origine du produit', async () => {
+    it("devrait afficher l'origine du produit", async () => {
       render(
         <BrowserRouter>
           <ProductManager />
@@ -491,7 +489,7 @@ describe('🧪 ProductManager Component', () => {
   });
 
   describe('État vide', () => {
-    it('devrait afficher un message quand aucun produit n\'existe', async () => {
+    it("devrait afficher un message quand aucun produit n'existe", async () => {
       vi.mocked(useProducts).mockReturnValue([]);
 
       render(
@@ -525,7 +523,7 @@ describe('🧪 ProductManager Component', () => {
   describe('Validation des données', () => {
     it('devrait valider les produits chargés', async () => {
       const { validateProduct } = await import('../services/validationService');
-      
+
       render(
         <BrowserRouter>
           <ProductManager />
@@ -585,7 +583,7 @@ describe('🧪 ProductManager Component', () => {
   });
 
   describe('Vue détaillée', () => {
-    it('devrait pouvoir ouvrir les détails d\'un produit', async () => {
+    it("devrait pouvoir ouvrir les détails d'un produit", async () => {
       const user = userEvent.setup();
       render(
         <BrowserRouter>

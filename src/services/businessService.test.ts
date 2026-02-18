@@ -694,7 +694,7 @@ describe('businessService', () => {
       expect(result.date instanceof Date).toBe(true);
     });
 
-    it('devrait retourner l\'échéance trimestrielle Q1 pour janvier-mars', () => {
+    it("devrait retourner l'échéance trimestrielle Q1 pour janvier-mars", () => {
       // Va dépendre du mois courant, donc on teste juste la structure
       const profileQuarterly = { ...mockUserProfile, contributionQuarter: 'quarterly' as const };
       const result = getNextUrssafDeadline(profileQuarterly);
@@ -743,9 +743,9 @@ describe('businessService', () => {
     });
 
     it('devrait respecter le numéro de départ configuré', () => {
-      const profileWithStart = { 
-        ...mockUserProfile, 
-        invoiceStartNumber: 100 
+      const profileWithStart = {
+        ...mockUserProfile,
+        invoiceStartNumber: 100,
       };
 
       const result = getNextDocumentNumber([], 'invoice', profileWithStart);
@@ -850,7 +850,7 @@ describe('businessService', () => {
 
     it('devrait calculer un ajustement négatif si le CA réel < CA déclaré', () => {
       const result = calculateUrssafAdjustment(
-        8000,  // actualTurnover (réel)
+        8000, // actualTurnover (réel)
         10000, // declaredTurnover (déclaré)
         mockUserProfile
       );
@@ -861,7 +861,7 @@ describe('businessService', () => {
 
     it('devrait inclure les valeurs original et final dans le résultat', () => {
       const result = calculateUrssafAdjustment(
-        12000,  // actualTurnover
+        12000, // actualTurnover
         10000, // declaredTurnover
         mockUserProfile
       );
@@ -873,5 +873,4 @@ describe('businessService', () => {
       expect(typeof result.final).toBe('number');
     });
   });
-
 });

@@ -256,14 +256,12 @@ describe('🧪 ClientManager Component', () => {
       );
 
       await waitFor(() => {
-        const clientNames = screen
-          .getAllByRole('heading', { level: 4 })
-          .map((h) => h.textContent);
+        const clientNames = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
         expect(clientNames[0]).toBe('Acme Corp');
       });
     });
 
-    it('devrait permettre de trier par chiffre d\'affaires', async () => {
+    it("devrait permettre de trier par chiffre d'affaires", async () => {
       render(
         <BrowserRouter>
           <Routes>
@@ -315,7 +313,7 @@ describe('🧪 ClientManager Component', () => {
   });
 
   describe('Calcul des statistiques clients', () => {
-    it('devrait calculer correctement le chiffre d\'affaires par client', async () => {
+    it("devrait calculer correctement le chiffre d'affaires par client", async () => {
       render(
         <BrowserRouter>
           <Routes>
@@ -367,9 +365,7 @@ describe('🧪 ClientManager Component', () => {
         },
       ];
 
-      vi.mocked(useDataHooks.useInvoices).mockReturnValueOnce(
-        mockInvoicesWithCredit as Invoice[]
-      );
+      vi.mocked(useDataHooks.useInvoices).mockReturnValueOnce(mockInvoicesWithCredit as Invoice[]);
 
       render(
         <BrowserRouter>
@@ -447,7 +443,7 @@ describe('🧪 ClientManager Component', () => {
   describe('Validation des données', () => {
     it('devrait valider les clients chargés', async () => {
       const { validateClient } = await import('../services/validationService');
-      
+
       render(
         <BrowserRouter>
           <Routes>
@@ -463,7 +459,7 @@ describe('🧪 ClientManager Component', () => {
   });
 
   describe('État vide', () => {
-    it('devrait afficher un message quand aucun client n\'existe', async () => {
+    it("devrait afficher un message quand aucun client n'existe", async () => {
       vi.mocked(useDataHooks.useClients).mockReturnValueOnce([]);
 
       render(

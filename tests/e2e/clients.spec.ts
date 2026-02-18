@@ -33,7 +33,7 @@ test.describe('👥 Client Management', () => {
       // Vérifier que les stats sont affichées
       const statsCard = page.locator('[data-testid="client-stats"]');
       await expect(statsCard).toBeVisible();
-      
+
       // Doit afficher au moins 1 client
       await expect(statsCard).toContainText('1');
     });
@@ -68,7 +68,7 @@ test.describe('👥 Client Management', () => {
       await page.locator('input[name="name"]').fill(clientName);
       await page.locator('input[name="email"]').fill(clientEmail);
       await page.locator('input[name="address"]').fill('123 rue de Test');
-      
+
       // Champs spécifiques France
       await page.locator('select[name="country"]').selectOption('FR');
       await page.locator('select[name="currency"]').selectOption('EUR');
@@ -105,7 +105,7 @@ test.describe('👥 Client Management', () => {
       await page.locator('input[name="name"]').fill(fullName);
       await page.locator('input[name="email"]').fill(clientEmail);
       await page.locator('input[name="address"]').fill('45 avenue Test');
-      
+
       // Soumettre
       await page.locator('button[type="submit"]:has-text("Créer")').click();
 
@@ -130,7 +130,7 @@ test.describe('👥 Client Management', () => {
       await page.locator('input[name="name"]').fill(companyName);
       await page.locator('input[name="email"]').fill(clientEmail);
       await page.locator('input[name="address"]').fill('Berliner Str. 10');
-      
+
       // Pays EU (ex: Allemagne)
       await page.locator('select[name="country"]').selectOption('DE');
       await page.locator('input[name="tvaNumber"]').fill('DE123456789');
@@ -160,7 +160,7 @@ test.describe('👥 Client Management', () => {
       await page.locator('input[name="name"]').fill(companyName);
       await page.locator('input[name="email"]').fill(clientEmail);
       await page.locator('input[name="address"]').fill('123 Main Street');
-      
+
       // Pays hors UE (ex: USA)
       await page.locator('select[name="country"]').selectOption('US');
       await page.locator('select[name="currency"]').selectOption('USD');
@@ -245,11 +245,11 @@ test.describe('👥 Client Management', () => {
       await expect(firstClient).toContainText('Alpha');
     });
 
-    test('trie les clients par chiffre d\'affaires', async ({ page }) => {
+    test("trie les clients par chiffre d'affaires", async ({ page }) => {
       // Ce test nécessiterait de créer des factures associées
       // Pour l'instant, on vérifie juste que l'option de tri existe
       const sortSelect = page.locator('select[aria-label*="Trier"]');
-      
+
       if (await sortSelect.isVisible()) {
         await sortSelect.selectOption('revenue');
         // Vérifier que le tri est appliqué (pas d'erreur)
@@ -259,7 +259,7 @@ test.describe('👥 Client Management', () => {
   });
 
   test.describe('📝 Modification de client', () => {
-    test('modifie les informations d\'un client', async ({ page }) => {
+    test("modifie les informations d'un client", async ({ page }) => {
       const originalName = 'Client Original';
       const updatedName = 'Client Modifié';
 
@@ -339,7 +339,7 @@ test.describe('👥 Client Management', () => {
   });
 
   test.describe('📊 Navigation et détails', () => {
-    test('navigue vers la page de détails d\'un client', async ({ page }) => {
+    test("navigue vers la page de détails d'un client", async ({ page }) => {
       const clientName = 'Client Détails';
       await createTestClient(page, { name: clientName, email: 'details@test.com' });
 
@@ -367,7 +367,7 @@ test.describe('👥 Client Management', () => {
       await createTestClient(page, { name: clientName, email: 'back@test.com' });
 
       await page.locator(`text=${clientName}`).click();
-      
+
       // Cliquer sur retour
       await page.locator('button[aria-label*="Retour"]').click();
 
@@ -404,13 +404,13 @@ test.describe('👥 Client Management', () => {
   });
 
   test.describe('📈 Statistiques et rapports', () => {
-    test('calcule le chiffre d\'affaires total des clients', async ({ page }) => {
+    test("calcule le chiffre d'affaires total des clients", async ({ page }) => {
       await createTestClient(page, { name: 'Stats Client', email: 'stats@test.com' });
 
       // Vérifier l'affichage des stats
       const statsSection = page.locator('[data-testid="client-stats"]');
       await expect(statsSection).toBeVisible();
-      
+
       // Vérifier que le CA total est affiché
       await expect(statsSection.locator('text=/chiffre.*affaires/i')).toBeVisible();
     });
@@ -467,7 +467,7 @@ async function createTestClient(
 
   // Attendre la confirmation
   await page.locator('[role="status"]:has-text("créé")').waitFor({ timeout: 5000 });
-  
+
   // Fermer le modal si nécessaire
   const closeButton = page.locator('button[aria-label*="Fermer"]');
   if (await closeButton.isVisible()) {

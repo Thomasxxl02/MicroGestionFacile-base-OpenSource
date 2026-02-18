@@ -142,7 +142,7 @@ describe('📊 Database Schema', () => {
 
   describe('Types de données', () => {
     it('devrait supporter les nombres décimaux', () => {
-      const amounts = [100.50, 1000.99, 0.01];
+      const amounts = [100.5, 1000.99, 0.01];
 
       amounts.forEach((amount) => {
         expect(typeof amount).toBe('number');
@@ -226,7 +226,7 @@ describe('📊 Database Schema', () => {
       expect(schemaVersions[2].clients).toContain('email');
     });
 
-    it('devrait supporter l\'ajout de nouvelles tables', () => {
+    it("devrait supporter l'ajout de nouvelles tables", () => {
       const schema1 = { invoices: {}, clients: {} };
       const schema2 = { invoices: {}, clients: {}, products: {} };
 

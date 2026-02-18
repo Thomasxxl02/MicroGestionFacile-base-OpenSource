@@ -34,7 +34,7 @@ test.describe('📦 Product & Service Management', () => {
       // Vérifier que les stats sont affichées
       const statsCard = page.locator('[data-testid="product-stats"]');
       await expect(statsCard).toBeVisible();
-      
+
       // Doit afficher au moins 1 article
       await expect(statsCard).toContainText('1');
     });
@@ -75,9 +75,9 @@ test.describe('📦 Product & Service Management', () => {
 
       await page.locator('input[name="name"]').fill(serviceName);
       await page.locator('input[name="shortDescription"]').fill('Formation 2 jours');
-      await page.locator('textarea[name="description"]').fill(
-        'Formation complète sur React, TypeScript et patterns avancés'
-      );
+      await page
+        .locator('textarea[name="description"]')
+        .fill('Formation complète sur React, TypeScript et patterns avancés');
       await page.locator('input[name="price"]').fill('1200');
       await page.locator('select[name="unit"]').selectOption('journée');
       await page.locator('select[name="taxRate"]').selectOption('20');
@@ -146,7 +146,7 @@ test.describe('📦 Product & Service Management', () => {
       await page.locator('input[name="brand"]').fill('Apple');
       await page.locator('input[name="price"]').fill('1329');
       await page.locator('input[name="stock"]').fill('5');
-      
+
       // Informations légales
       await page.locator('input[name="ecoParticipation"]').fill('0.50');
       await page.locator('input[name="repairabilityIndex"]').fill('6.2');
@@ -248,7 +248,7 @@ test.describe('📦 Product & Service Management', () => {
   });
 
   test.describe('📝 Modification de produit', () => {
-    test('modifie le prix d\'un produit', async ({ page }) => {
+    test("modifie le prix d'un produit", async ({ page }) => {
       const productName = 'Produit à Modifier';
       await createTestProduct(page, { name: productName, price: 100, type: 'service' });
 
@@ -266,7 +266,7 @@ test.describe('📦 Product & Service Management', () => {
       await expect(page.locator('text=/150/i')).toBeVisible();
     });
 
-    test('modifie le stock d\'un produit', async ({ page }) => {
+    test("modifie le stock d'un produit", async ({ page }) => {
       const productName = 'Produit Stock';
       await createTestProduct(page, {
         name: productName,
@@ -330,7 +330,7 @@ test.describe('📦 Product & Service Management', () => {
 
       const download = await downloadPromise;
       const path = await download.path();
-      
+
       // Vérifier que le fichier existe
       expect(path).toBeTruthy();
     });
@@ -342,10 +342,10 @@ test.describe('📦 Product & Service Management', () => {
 
       // Prix HT: 100€
       await expect(page.locator('text=100')).toBeVisible();
-      
+
       // TVA 20%: devrait afficher 20€ ou le taux
       await expect(page.locator('text=/20%/i')).toBeVisible();
-      
+
       // Prix TTC: 120€
       await expect(page.locator('text=/120/i')).toBeVisible();
     });
@@ -399,7 +399,7 @@ test.describe('📦 Product & Service Management', () => {
   });
 
   test.describe('ℹ️ Informations légales', () => {
-    test('affiche l\'éco-participation', async ({ page }) => {
+    test("affiche l'éco-participation", async ({ page }) => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
       const productTab = page.locator('[role="tab"]:has-text("Produit")');
@@ -416,7 +416,7 @@ test.describe('📦 Product & Service Management', () => {
       await expect(page.locator('text=/éco.*1[.,]50/i')).toBeVisible();
     });
 
-    test('affiche l\'indice de réparabilité', async ({ page }) => {
+    test("affiche l'indice de réparabilité", async ({ page }) => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
       const productTab = page.locator('[role="tab"]:has-text("Produit")');
@@ -439,7 +439,7 @@ test.describe('📦 Product & Service Management', () => {
       await expect(page.locator('text=/garantie.*2 ans/i')).toBeVisible();
     });
 
-    test('affiche l\'origine du produit', async ({ page }) => {
+    test("affiche l'origine du produit", async ({ page }) => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
       await page.locator('input[name="name"]').fill('Produit Made in France');

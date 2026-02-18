@@ -336,7 +336,10 @@ const SupplierManager: React.FC = () => {
   };
 
   return (
-    <div data-testid="suppliers-container" className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10">
+    <div
+      data-testid="suppliers-container"
+      className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10"
+    >
       <Header
         title="Fournisseurs"
         description="Gérez votre réseau de partenaires et surveillez vos flux de dépenses"

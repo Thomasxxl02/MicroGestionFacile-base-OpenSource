@@ -124,8 +124,8 @@ GEMINI_API_KEY=sk-... npm run api`}
               <code className="bg-amber-100 px-2 py-1 rounded text-xs font-mono">
                 GEMINI_API_KEY
               </code>{' '}
-              n&apos;est JAMAIS exposée publiquement. Utilisez un reverse proxy (Nginx, CloudFlare) et
-              HTTPS en production.
+              n&apos;est JAMAIS exposée publiquement. Utilisez un reverse proxy (Nginx, CloudFlare)
+              et HTTPS en production.
             </p>
           </div>
         </div>

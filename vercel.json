@@ -1,5 +1,16 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run type-check && npm run lint",
   "outputDirectory": "dist",
-  "framework": "vite"
+  "framework": "vite",
+  "env": {
+    "CI": "true",
+    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+  },
+  "ignoreCommand": "git diff --quiet HEAD~1 HEAD -- . ':(exclude).github' ':(exclude)docs' ':(exclude)tests' ':(exclude)*.md'",
+  "regions": ["iad1"],
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 60
+    }
+  }
 }

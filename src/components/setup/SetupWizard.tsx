@@ -95,7 +95,10 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialData }) =>
   const isVatExempt = useWatch({ control, name: 'isVatExempt' });
 
   return (
-    <div data-testid="setup-wizard" className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+    <div
+      data-testid="setup-wizard"
+      className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4"
+    >
       <div className="w-full max-w-2xl">
         {/* Progress Bar */}
         <div className="mb-8 px-4">

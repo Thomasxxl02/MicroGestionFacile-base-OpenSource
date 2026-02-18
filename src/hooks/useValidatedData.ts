@@ -77,7 +77,7 @@ export const useValidatedInvoices = (): ValidatedHookResult<Invoice> => {
         } else {
           validCount++;
         }
-      } catch (_err) {
+      } catch {
         invalidCount++;
         errors.push({
           field: `invoices[${index}]`,
@@ -156,7 +156,7 @@ export const useValidatedExpenses = (): ValidatedHookResult<Expense> => {
         } else {
           validCount++;
         }
-      } catch (_err) {
+      } catch {
         invalidCount++;
         errors.push({
           field: `expenses[${index}]`,

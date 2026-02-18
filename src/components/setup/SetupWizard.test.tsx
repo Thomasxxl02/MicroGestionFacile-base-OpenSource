@@ -39,7 +39,7 @@ describe('🧙 SetupWizard Component', () => {
     expect(screen.getByTestId('setup-wizard')).toBeInTheDocument();
   });
 
-  it('devrait afficher l\'étape de bienvenue par défaut', () => {
+  it("devrait afficher l'étape de bienvenue par défaut", () => {
     render(<MockSetupWizard onComplete={mockOnComplete} initialData={mockInitialData} />);
 
     expect(screen.getByText(/bienvenue/i)).toBeInTheDocument();

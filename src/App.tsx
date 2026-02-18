@@ -90,7 +90,6 @@ const App: React.FC = () => {
         const localExpenses = localStorage.getItem('autogest_expenses');
         if (localExpenses) await db.expenses.bulkAdd(JSON.parse(localExpenses));
 
-
         logger.info('Migration from localStorage to IndexedDB complete');
       }
 
@@ -110,10 +109,7 @@ const App: React.FC = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).improvedBackupService = improvedBackupService;
       // eslint-disable-next-line no-console
-      console.log(
-        '%c✅ Services available globally for tests',
-        'color: green; font-weight: bold;'
-      );
+      console.log('%c✅ Services available globally for tests', 'color: green; font-weight: bold;');
     };
     void initialize();
   }, [userProfile.siret]);

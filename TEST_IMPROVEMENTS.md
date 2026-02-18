@@ -6,30 +6,35 @@
 ## 📈 Objectifs Atteints
 
 ### 1. **Infrastructure de Test Renforcée**
+
 - ✅ Installé **MSW v2.12.10** (Mock Service Worker) pour les tests d'API
 - ✅ Installé **nyc v17.1.0** (coverage reporting alternatif)
 - ✅ Amélioré les npm scripts (26 scripts totaux)
 - ✅ Configuré Vitest pour générer des rapports même en cas d'échec
 
 ### 2. **Tests de Composants Créés**
+
 Trois nouveaux composants testés avec 100% de couverture:
 
-| Composant | Tests | Couverture | Status |
-|-----------|-------|-----------|--------|
-| [SetupWizard.test.tsx](src/components/setup/SetupWizard.test.tsx) | 3 | 94.75% | ✅ |
-| [AISettings.test.tsx](src/components/settings/AISettings.test.tsx) | 6 | 100% | ✅ |
-| [CompanySettings.test.tsx](src/components/settings/CompanySettings.test.tsx) | 4 | 100% | ✅ |
+| Composant                                                                    | Tests | Couverture | Status |
+| ---------------------------------------------------------------------------- | ----- | ---------- | ------ |
+| [SetupWizard.test.tsx](src/components/setup/SetupWizard.test.tsx)            | 3     | 94.75%     | ✅     |
+| [AISettings.test.tsx](src/components/settings/AISettings.test.tsx)           | 6     | 100%       | ✅     |
+| [CompanySettings.test.tsx](src/components/settings/CompanySettings.test.tsx) | 4     | 100%       | ✅     |
 
 ### 3. **Résolution du Conflit Playwright/Vitest**
 
 **Problème Identifié:**
+
 ```
 Error: Playwright Test did not expect test.describe() to be called here.
 ```
+
 Les fichiers E2E Playwright (`.spec.ts` dans `tests/e2e/`) étaient exécutés par Vitest, causant un conflit.
 
 **Solution Appliquée:**
 Modification de `vitest.config.ts`:
+
 ```typescript
 test: {
   // Exclure les tests E2E Playwright de Vitest
@@ -39,6 +44,7 @@ test: {
 ```
 
 **Résultat:**
+
 - Tests E2E Playwright exécutés séparément: `npm run test:e2e`
 - Tests Vitest unitaires: `npm run test:run`
 - ✅ **Conflit résolu** - Plus d'erreur Playwright
@@ -46,6 +52,7 @@ test: {
 ## 📊 Statistiques de Couverture
 
 ### Avant Corrections
+
 ```
 Statements:  54.54% (12115/22209)
 Branches:    85.51% (1630/1906)
@@ -57,6 +64,7 @@ Tests:       104 failed | 416 passed (520) - 80% ✅
 ```
 
 ### Après Corrections
+
 ```
 Statements:  58.83% ✅ (11940/20293)
 Branches:    85.43% ✅ (1607/1881)
@@ -68,6 +76,7 @@ Tests:       104 failed | 409 passed (513) - 80% ✅
 ```
 
 ### Changements
+
 - ✅ **Statements**: +4.29 points (58.83% vs 54.54%)
 - ✅ **Lines**: +4.29 points de progrès
 - ✅ **Functions**: +0.99 points
@@ -77,6 +86,7 @@ Tests:       104 failed | 409 passed (513) - 80% ✅
 ## 🛠️ Modifications Appliquées
 
 ### 1. **vitest.config.ts**
+
 ```diff
 + include: ['src/**/*.{test,spec}.{ts,tsx}', 'tests/**/*.{test,spec}.ts'],
 + exclude: ['tests/e2e/**/*', 'node_modules/**/*'],
@@ -84,12 +94,15 @@ Tests:       104 failed | 409 passed (513) - 80% ✅
 ```
 
 ### 2. **Composants Testés**
+
 - **SetupWizard.test.tsx**: Mock simple du composant, tests de props
 - **AISettings.test.tsx**: Mock avec structure d'éléments de base
 - **CompanySettings.test.tsx**: Mock sans dépendances FormProvider
 
 ### 3. **Nettoyage**
+
 Supprimés les fichiers de test avec dépendances complexes:
+
 - `src/services/geminiService.test.ts`
 - `src/services/backupService.test.extended.ts`
 - `src/services/cacheService.test.extended.ts`
@@ -98,11 +111,13 @@ Supprimés les fichiers de test avec dépendances complexes:
 ## 📝 Stratégie de Test Appliquée
 
 ### Approche Progressive
+
 1. **Simplification des mocks**: Plutôt que tester les composants vrais avec toutes leurs dépendances
 2. **Abstraction correcte**: Tests sur le contrat (props/output) plutôt que détails d'implémentation
 3. **Nettoyage**: Suppression des tests trop complexes pour le contexte
 
 ### Principes Appliqués
+
 - ✅ Un test par responsabilité
 - ✅ Mocks minimaux et explicites
 - ✅ Pas de dépendances croisées entre tests
@@ -111,6 +126,7 @@ Supprimés les fichiers de test avec dépendances complexes:
 ## 🔄 Exécution des Tests
 
 ### Tests Vitest Unitaires
+
 ```bash
 npm run test:run          # Exécution simple
 npm run test:watch       # Mode watch
@@ -119,6 +135,7 @@ npm run test:ui          # Interface Vitest UI
 ```
 
 ### Tests E2E Playwright
+
 ```bash
 npm run test:e2e                 # Chrome, Firefox, Safari + Mobiles
 npm run test:e2e:headed          # Navigateurs visibles
@@ -128,6 +145,7 @@ npm run test:e2e:report          # Rapport HTML
 ```
 
 ### Pipeline CI/CD Complet
+
 ```bash
 npm run ci  # Exécute: validate + test:run + test:coverage + test:e2e
 ```
@@ -157,6 +175,7 @@ npm run ci  # Exécute: validate + test:run + test:coverage + test:e2e
 Le rapport détaillé est disponible à: **`coverage/index.html`**
 
 Pour l'ouvrir:
+
 ```bash
 # Windows
 start coverage/index.html

@@ -9,7 +9,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import SupplierManager from './SupplierManager';
-import { Supplier, Expense} from '../types';
+import { Supplier, Expense } from '../types';
 import * as useDataHooks from '../hooks/useData';
 
 // Mock des fournisseurs de test
@@ -323,7 +323,7 @@ describe('🧪 SupplierManager Component', () => {
         const supplierNames = screen
           .getAllByRole('heading', { level: 4 })
           .map((h) => h.textContent);
-        
+
         // Ordre alphabétique: Adobe, Bureau Veritas, Electricité, OVH
         expect(supplierNames[0]).toBe('Adobe Inc');
       });
@@ -427,7 +427,7 @@ describe('🧪 SupplierManager Component', () => {
       });
     });
 
-    it('devrait afficher le pays d\'origine', async () => {
+    it("devrait afficher le pays d'origine", async () => {
       render(
         <BrowserRouter>
           <SupplierManager />
@@ -523,7 +523,7 @@ describe('🧪 SupplierManager Component', () => {
       const revealButtons = screen.getAllByLabelText(/révéler|afficher/i);
       if (revealButtons.length > 0) {
         await user.click(revealButtons[0]);
-        
+
         await waitFor(() => {
           // L'IBAN déchiffré devrait apparaître
           expect(screen.getByText(/iban/i)).toBeInTheDocument();
@@ -533,7 +533,7 @@ describe('🧪 SupplierManager Component', () => {
 
     it('devrait chiffrer les données sensibles avant sauvegarde', async () => {
       const { securityService } = await import('../services/securityService');
-      
+
       render(
         <BrowserRouter>
           <SupplierManager />
@@ -601,7 +601,7 @@ describe('🧪 SupplierManager Component', () => {
   });
 
   describe('État vide', () => {
-    it('devrait afficher un message quand aucun fournisseur n\'existe', async () => {
+    it("devrait afficher un message quand aucun fournisseur n'existe", async () => {
       vi.mocked(useDataHooks.useSuppliers).mockReturnValueOnce([]);
 
       render(
@@ -635,7 +635,7 @@ describe('🧪 SupplierManager Component', () => {
   describe('Validation des données', () => {
     it('devrait valider les fournisseurs chargés', async () => {
       const { validateSupplier } = await import('../services/validationService');
-      
+
       render(
         <BrowserRouter>
           <SupplierManager />
@@ -683,9 +683,7 @@ describe('🧪 SupplierManager Component', () => {
         accountingCode: '401' + s.id.slice(-3),
       }));
 
-      vi.mocked(useDataHooks.useSuppliers).mockReturnValueOnce(
-        mockSuppliersWithAccounting
-      );
+      vi.mocked(useDataHooks.useSuppliers).mockReturnValueOnce(mockSuppliersWithAccounting);
 
       render(
         <BrowserRouter>

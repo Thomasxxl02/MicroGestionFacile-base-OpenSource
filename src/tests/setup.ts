@@ -172,17 +172,20 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 })) as any;
 
 // Mock getBoundingClientRect for charts to have proper dimensions
-Element.prototype.getBoundingClientRect = vi.fn(() => ({
-  width: 500,
-  height: 400,
-  top: 0,
-  left: 0,
-  bottom: 400,
-  right: 500,
-  x: 0,
-  y: 0,
-  toJSON: () => ({}),
-} as any));
+Element.prototype.getBoundingClientRect = vi.fn(
+  () =>
+    ({
+      width: 500,
+      height: 400,
+      top: 0,
+      left: 0,
+      bottom: 400,
+      right: 500,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    }) as any
+);
 
 // Mock getComputedStyle for proper dimension calculations
 window.getComputedStyle = vi.fn().mockReturnValue({

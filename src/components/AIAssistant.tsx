@@ -48,7 +48,10 @@ const AIAssistant: React.FC = () => {
   };
 
   return (
-    <div data-testid="ai-container" className="h-[calc(100vh-8rem)] max-w-5xl mx-auto flex flex-col bg-card dark:bg-card rounded-[3rem] shadow-premium border border-border overflow-hidden animate-fade-in">
+    <div
+      data-testid="ai-container"
+      className="h-[calc(100vh-8rem)] max-w-5xl mx-auto flex flex-col bg-card dark:bg-card rounded-[3rem] shadow-premium border border-border overflow-hidden animate-fade-in"
+    >
       <div className="bg-gradient-to-r from-primary to-indigo-600 p-8 flex items-center justify-between relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
         <div className="flex items-center gap-6 relative z-10">

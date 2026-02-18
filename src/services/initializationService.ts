@@ -1,7 +1,7 @@
 /**
  * initializationService.ts
  * 🚀 Initialisation prioritaire de l'app AVANT que React ne se monte
- * 
+ *
  * Responsabilités:
  * - Migration localStorage -> IndexedDB
  * - Initialisation de Dexie
@@ -21,14 +21,14 @@ let initializationPromise: Promise<void> | null = null;
 async function migrateFromLocalStorage(): Promise<void> {
   try {
     logger.debug('Starting localStorage -> IndexedDB migration');
-    
+
     // Priorité absolue: PROFIL utilisateur
     // Ceci doit être fait EN PREMIER car useUserProfile() en dépend
     const localProfile = localStorage.getItem('autogest_profile');
     if (localProfile) {
       const profile = JSON.parse(localProfile);
       const existing = await db.userProfile.get('current');
-      
+
       // Only migrate if not already in IndexedDB
       if (!existing) {
         await db.userProfile.put({
@@ -76,10 +76,7 @@ async function migrateFromLocalStorage(): Promise<void> {
       logger.info('✅ All data migrated successfully');
     }
   } catch (error) {
-    logger.error(
-      'Migration failed',
-      error instanceof Error ? error : new Error(String(error))
-    );
+    logger.error('Migration failed', error instanceof Error ? error : new Error(String(error)));
     throw error;
   }
 }
@@ -101,7 +98,7 @@ export async function initializeApplication(): Promise<void> {
   initializationPromise = (async () => {
     try {
       console.info('[INIT] 🚀 Starting application initialization...');
-      
+
       // Étape 1: Effectuer la migration localStorage -> IndexedDB
       // C'est CRITIQUE pour que useUserProfile() trouve le profil
       await migrateFromLocalStorage();
@@ -113,7 +110,7 @@ export async function initializeApplication(): Promise<void> {
       (window as any).db = db;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).logger = logger;
-      
+
       console.info('[INIT] ✅ Services exposed to window');
       console.info('[INIT] ✅ Application ready for React mount');
 

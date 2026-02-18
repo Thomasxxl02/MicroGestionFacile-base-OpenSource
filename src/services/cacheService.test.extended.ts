@@ -13,14 +13,14 @@ describe('💾 CacheService', () => {
   describe('Stockage en cache', () => {
     it('devrait créer un cache simple', () => {
       const cache = new Map();
-      
+
       cache.set('key1', { value: 'data1' });
       expect(cache.get('key1')).toEqual({ value: 'data1' });
     });
 
     it('devrait gérer plusieurs entrées', () => {
       const cache = new Map();
-      
+
       cache.set('invoice-1', { id: '1', total: 100 });
       cache.set('client-1', { id: 'c1', name: 'Client A' });
       cache.set('product-1', { id: 'p1', price: 50 });
@@ -31,17 +31,17 @@ describe('💾 CacheService', () => {
 
     it('devrait pouvoir supprimer des entrées', () => {
       const cache = new Map();
-      
+
       cache.set('key1', 'value1');
       expect(cache.has('key1')).toBe(true);
-      
+
       cache.delete('key1');
       expect(cache.has('key1')).toBe(false);
     });
   });
 
   describe('TTL et expiration', () => {
-    it('devrait pouvoir tracker une date d\'expiration', () => {
+    it("devrait pouvoir tracker une date d'expiration", () => {
       const cacheEntry = {
         value: 'data',
         expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
@@ -151,7 +151,7 @@ describe('💾 CacheService', () => {
   describe('Performance', () => {
     it('devrait avoir un accès O(1)', () => {
       const cache = new Map();
-      
+
       // Ajouter 1000 items
       for (let i = 0; i < 1000; i++) {
         cache.set(`key-${i}`, `value-${i}`);

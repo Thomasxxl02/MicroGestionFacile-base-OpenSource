@@ -165,11 +165,7 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
       const data = new TextEncoder().encode('plaintext');
       const iv = new Uint8Array(12);
 
-      const encrypted = await global.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        data
-      );
+      const encrypted = await global.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
 
       expect(encrypted).toBeDefined();
       expect(encrypted instanceof ArrayBuffer).toBe(true);
@@ -188,11 +184,7 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
       );
 
       // Decrypt
-      const decrypted = await global.crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        encrypted
-      );
+      const decrypted = await global.crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted);
 
       expect(decrypted).toBeDefined();
       expect(decrypted instanceof ArrayBuffer).toBe(true);
@@ -203,11 +195,7 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
       const data = new Uint8Array([1, 2, 3, 4, 5]);
       const iv = new Uint8Array(12);
 
-      const encrypted = await global.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        data
-      );
+      const encrypted = await global.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
 
       expect(encrypted instanceof ArrayBuffer).toBe(true);
       expect((encrypted as ArrayBuffer).byteLength).toBeGreaterThan(0);
@@ -219,17 +207,9 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
       const iv1 = new Uint8Array(12);
       const iv2 = global.crypto.getRandomValues(new Uint8Array(12));
 
-      const enc1 = await global.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: iv1 },
-        key,
-        data
-      );
+      const enc1 = await global.crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv1 }, key, data);
 
-      const enc2 = await global.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: iv2 },
-        key,
-        data
-      );
+      const enc2 = await global.crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv2 }, key, data);
 
       expect(enc1).toBeDefined();
       expect(enc2).toBeDefined();
@@ -248,7 +228,7 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
   });
 
   describe('Gestion des erreurs', () => {
-    it('ne devrait pas lever d\'erreur sur les opérations basiques', () => {
+    it("ne devrait pas lever d'erreur sur les opérations basiques", () => {
       expect(() => {
         global.crypto.randomUUID();
       }).not.toThrow();
@@ -264,11 +244,7 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
       const emptyData = new Uint8Array(0);
       const iv = new Uint8Array(12);
 
-      const encrypted = await global.crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        emptyData
-      );
+      const encrypted = await global.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, emptyData);
 
       expect(encrypted).toBeDefined();
     });
@@ -280,11 +256,7 @@ describe('🔐 EncryptionService - Crypto Runtime', () => {
       const sizes = [1, 100, 1000, 10000];
       for (const size of sizes) {
         const data = new Uint8Array(size);
-        const encrypted = await global.crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv },
-          key,
-          data
-        );
+        const encrypted = await global.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
         expect(encrypted).toBeDefined();
       }
     });

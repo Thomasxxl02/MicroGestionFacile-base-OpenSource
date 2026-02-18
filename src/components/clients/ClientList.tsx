@@ -337,7 +337,10 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
   };
 
   return (
-    <div data-testid="clients-container" className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10">
+    <div
+      data-testid="clients-container"
+      className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10"
+    >
       <Header
         title="Clients"
         description="Gérez votre base client et suivez le chiffre d'affaires généré par chacun."

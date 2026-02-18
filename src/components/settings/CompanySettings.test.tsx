@@ -28,7 +28,7 @@ describe('🏢 CompanySettings Component', () => {
     expect(screen.getByText(/Informations légales et fiscales/i)).toBeInTheDocument();
   });
 
-  it('devrait afficher l\'input de saisie', () => {
+  it("devrait afficher l'input de saisie", () => {
     render(<MockCompanySettings />);
 
     const input = screen.getByPlaceholderText(/Ex: Ma Micro-Entreprise/i);

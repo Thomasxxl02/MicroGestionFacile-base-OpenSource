@@ -22,14 +22,39 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ userProfile }) => {
   const { isMobileMenuOpen, setMobileMenuOpen, isDarkMode, toggleDarkMode } = useUIStore();
   const menuItems: { path: string; label: string; icon: React.ReactNode; testId: string }[] = [
-    { path: '/', label: 'Tableau de bord', icon: <LayoutDashboard size={20} />, testId: 'nav-dashboard' },
-    { path: '/invoices', label: 'Devis & Factures', icon: <FileText size={20} />, testId: 'nav-invoices' },
+    {
+      path: '/',
+      label: 'Tableau de bord',
+      icon: <LayoutDashboard size={20} />,
+      testId: 'nav-dashboard',
+    },
+    {
+      path: '/invoices',
+      label: 'Devis & Factures',
+      icon: <FileText size={20} />,
+      testId: 'nav-invoices',
+    },
     { path: '/clients', label: 'Clients', icon: <Users size={20} />, testId: 'nav-clients' },
-    { path: '/suppliers', label: 'Fournisseurs', icon: <Truck size={20} />, testId: 'nav-suppliers' },
+    {
+      path: '/suppliers',
+      label: 'Fournisseurs',
+      icon: <Truck size={20} />,
+      testId: 'nav-suppliers',
+    },
     { path: '/products', label: 'Catalogue', icon: <Package size={20} />, testId: 'nav-products' },
-    { path: '/accounting', label: 'Comptabilité', icon: <Calculator size={20} />, testId: 'nav-accounting' },
+    {
+      path: '/accounting',
+      label: 'Comptabilité',
+      icon: <Calculator size={20} />,
+      testId: 'nav-accounting',
+    },
     { path: '/ai', label: 'Assistant IA', icon: <Sparkles size={20} />, testId: 'nav-ai' },
-    { path: '/settings', label: 'Paramètres', icon: <Settings size={20} />, testId: 'nav-settings' },
+    {
+      path: '/settings',
+      label: 'Paramètres',
+      icon: <Settings size={20} />,
+      testId: 'nav-settings',
+    },
   ];
 
   return (

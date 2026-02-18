@@ -47,7 +47,7 @@ describe('🔐 KeyManagementService', () => {
     it('devrait pouvoir générer des valeurs aléatoires', () => {
       const array = new Uint8Array(32);
       const random = global.crypto.getRandomValues(array);
-      
+
       expect(random).toHaveLength(32);
       expect(random instanceof Uint8Array).toBe(true);
       // Vérifier qu'au moins une valeur est différente de 0
@@ -59,7 +59,7 @@ describe('🔐 KeyManagementService', () => {
   describe('Dérivation de clés', () => {
     it('devrait pouvoir appeler deriveBits pour PBKDF2', async () => {
       const salt = global.crypto.getRandomValues(new Uint8Array(16));
-      
+
       // Simulate key derivation (simplified)
       const key = { type: 'secret' } as CryptoKey;
       const derived = await global.crypto.subtle.deriveBits(
@@ -67,7 +67,7 @@ describe('🔐 KeyManagementService', () => {
         key,
         256
       );
-      
+
       expect(derived).toBeDefined();
       expect(derived instanceof ArrayBuffer).toBe(true);
     });
@@ -75,10 +75,10 @@ describe('🔐 KeyManagementService', () => {
     it('devrait pouvoir créer des clés différentes avec salts différents', async () => {
       const salt1 = global.crypto.getRandomValues(new Uint8Array(16));
       const salt2 = global.crypto.getRandomValues(new Uint8Array(16));
-      
+
       // Les salts sont différents
       expect(salt1).not.toEqual(salt2);
-      
+
       // Les deux pourraient générer des clés différentes (mais c'est le mock qui dicte)
       // Dans la réalité, yes, dans le mock, on obtient des résultats basés sur entrée
     });
@@ -115,7 +115,7 @@ describe('🔐 KeyManagementService', () => {
     });
   });
 
-  describe('Gestion d\'erreurs de sécurité', () => {
+  describe("Gestion d'erreurs de sécurité", () => {
     it('devrait rejeter les passphrases vides', () => {
       const passphrase = '';
       // Dans une implémentation réelle, ceci lèverait une erreur

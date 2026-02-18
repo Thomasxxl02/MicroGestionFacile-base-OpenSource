@@ -33,7 +33,7 @@ test.describe('🚚 Supplier Management', () => {
 
       const statsCard = page.locator('[data-testid="supplier-stats"]');
       await expect(statsCard).toBeVisible();
-      
+
       await expect(statsCard).toContainText('1');
     });
   });
@@ -85,7 +85,7 @@ test.describe('🚚 Supplier Management', () => {
 
     test('crée un fournisseur avec RIB', async ({ page }) => {
       const supplierName = 'Fournisseur avec RIB';
-      
+
       await page.locator('button:has-text("Nouveau fournisseur")').click();
 
       await page.locator('input[name="name"]').fill(supplierName);
@@ -140,8 +140,16 @@ test.describe('🚚 Supplier Management', () => {
 
   test.describe('🔍 Recherche et filtrage', () => {
     test('recherche un fournisseur par nom', async ({ page }) => {
-      await createTestSupplier(page, { name: 'AWS Services', email: 'aws@test.com', category: 'Hébergement' });
-      await createTestSupplier(page, { name: 'Microsoft Azure', email: 'azure@test.com', category: 'Hébergement' });
+      await createTestSupplier(page, {
+        name: 'AWS Services',
+        email: 'aws@test.com',
+        category: 'Hébergement',
+      });
+      await createTestSupplier(page, {
+        name: 'Microsoft Azure',
+        email: 'azure@test.com',
+        category: 'Hébergement',
+      });
 
       await page.locator('input[placeholder*="Rechercher"]').fill('AWS');
 
@@ -150,8 +158,16 @@ test.describe('🚚 Supplier Management', () => {
     });
 
     test('recherche un fournisseur par catégorie', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Search Test 1', email: 'test1@test.com', category: 'Logiciels' });
-      await createTestSupplier(page, { name: 'Search Test 2', email: 'test2@test.com', category: 'Hébergement' });
+      await createTestSupplier(page, {
+        name: 'Search Test 1',
+        email: 'test1@test.com',
+        category: 'Logiciels',
+      });
+      await createTestSupplier(page, {
+        name: 'Search Test 2',
+        email: 'test2@test.com',
+        category: 'Hébergement',
+      });
 
       await page.locator('input[placeholder*="Rechercher"]').fill('Logiciels');
 
@@ -160,8 +176,16 @@ test.describe('🚚 Supplier Management', () => {
     });
 
     test('filtre par catégorie', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Supplier Cat 1', email: 'cat1@test.com', category: 'Énergie' });
-      await createTestSupplier(page, { name: 'Supplier Cat 2', email: 'cat2@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: 'Supplier Cat 1',
+        email: 'cat1@test.com',
+        category: 'Énergie',
+      });
+      await createTestSupplier(page, {
+        name: 'Supplier Cat 2',
+        email: 'cat2@test.com',
+        category: 'Services',
+      });
 
       const categoryFilter = page.locator('select[aria-label*="Catégorie"]');
       if (await categoryFilter.isVisible()) {
@@ -173,7 +197,11 @@ test.describe('🚚 Supplier Management', () => {
     });
 
     test('affiche un message quand aucun résultat', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Test Supplier', email: 'test@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: 'Test Supplier',
+        email: 'test@test.com',
+        category: 'Services',
+      });
 
       await page.locator('input[placeholder*="Rechercher"]').fill('FournisseurInexistant12345');
 
@@ -183,8 +211,16 @@ test.describe('🚚 Supplier Management', () => {
 
   test.describe('↕️ Tri des fournisseurs', () => {
     test('trie les fournisseurs par nom', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Zebra Corp', email: 'zebra@test.com', category: 'Services' });
-      await createTestSupplier(page, { name: 'Alpha Ltd', email: 'alpha@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: 'Zebra Corp',
+        email: 'zebra@test.com',
+        category: 'Services',
+      });
+      await createTestSupplier(page, {
+        name: 'Alpha Ltd',
+        email: 'alpha@test.com',
+        category: 'Services',
+      });
 
       const sortSelect = page.locator('select[aria-label*="Trier"]');
       if (await sortSelect.isVisible()) {
@@ -197,8 +233,16 @@ test.describe('🚚 Supplier Management', () => {
 
     test('trie par dépenses totales', async ({ page }) => {
       // Créer des fournisseurs (nécessiterait des dépenses associées pour tester complètement)
-      await createTestSupplier(page, { name: 'High Spending', email: 'high@test.com', category: 'Services' });
-      await createTestSupplier(page, { name: 'Low Spending', email: 'low@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: 'High Spending',
+        email: 'high@test.com',
+        category: 'Services',
+      });
+      await createTestSupplier(page, {
+        name: 'Low Spending',
+        email: 'low@test.com',
+        category: 'Services',
+      });
 
       const sortSelect = page.locator('select[aria-label*="Trier"]');
       if (await sortSelect.isVisible()) {
@@ -208,8 +252,16 @@ test.describe('🚚 Supplier Management', () => {
     });
 
     test('trie par catégorie', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Supplier A', email: 'a@test.com', category: 'Logiciels' });
-      await createTestSupplier(page, { name: 'Supplier B', email: 'b@test.com', category: 'Hébergement' });
+      await createTestSupplier(page, {
+        name: 'Supplier A',
+        email: 'a@test.com',
+        category: 'Logiciels',
+      });
+      await createTestSupplier(page, {
+        name: 'Supplier B',
+        email: 'b@test.com',
+        category: 'Hébergement',
+      });
 
       const sortSelect = page.locator('select[aria-label*="Trier"]');
       if (await sortSelect.isVisible()) {
@@ -220,11 +272,15 @@ test.describe('🚚 Supplier Management', () => {
   });
 
   test.describe('📝 Modification de fournisseur', () => {
-    test('modifie les informations d\'un fournisseur', async ({ page }) => {
+    test("modifie les informations d'un fournisseur", async ({ page }) => {
       const originalName = 'Fournisseur Original';
       const updatedName = 'Fournisseur Modifié';
 
-      await createTestSupplier(page, { name: originalName, email: 'edit@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: originalName,
+        email: 'edit@test.com',
+        category: 'Services',
+      });
 
       const supplierCard = page.locator(`text=${originalName}`).locator('..').locator('..');
       await supplierCard.hover();
@@ -239,10 +295,14 @@ test.describe('🚚 Supplier Management', () => {
       await expect(page.locator(`text=${updatedName}`)).toBeVisible();
     });
 
-    test('modifie le RIB d\'un fournisseur', async ({ page }) => {
+    test("modifie le RIB d'un fournisseur", async ({ page }) => {
       const supplierName = 'Fournisseur RIB';
-      
-      await createTestSupplier(page, { name: supplierName, email: 'rib@test.com', category: 'Services' });
+
+      await createTestSupplier(page, {
+        name: supplierName,
+        email: 'rib@test.com',
+        category: 'Services',
+      });
 
       const supplierCard = page.locator(`text=${supplierName}`).locator('..').locator('..');
       await supplierCard.hover();
@@ -263,7 +323,11 @@ test.describe('🚚 Supplier Management', () => {
   test.describe('🗑️ Suppression', () => {
     test('supprime un fournisseur sans dépenses', async ({ page }) => {
       const supplierName = 'Fournisseur à Supprimer';
-      await createTestSupplier(page, { name: supplierName, email: 'delete@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: supplierName,
+        email: 'delete@test.com',
+        category: 'Services',
+      });
 
       const supplierCard = page.locator(`text=${supplierName}`).locator('..').locator('..');
       await supplierCard.hover();
@@ -277,9 +341,13 @@ test.describe('🚚 Supplier Management', () => {
       await expect(page.locator(`text=${supplierName}`)).not.toBeVisible();
     });
 
-    test('empêche la suppression d\'un fournisseur avec dépenses', async ({ page }) => {
+    test("empêche la suppression d'un fournisseur avec dépenses", async ({ page }) => {
       const supplierName = 'Fournisseur avec Dépenses';
-      await createTestSupplier(page, { name: supplierName, email: 'withdeps@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: supplierName,
+        email: 'withdeps@test.com',
+        category: 'Services',
+      });
 
       // TODO: Créer une dépense associée au fournisseur
       // Pour l'instant on simule juste la tentative de suppression
@@ -287,10 +355,10 @@ test.describe('🚚 Supplier Management', () => {
       const supplierCard = page.locator(`text=${supplierName}`).locator('..').locator('..');
       await supplierCard.hover();
       const deleteButton = supplierCard.locator('button[aria-label*="Supprimer"]');
-      
+
       if (await deleteButton.isVisible()) {
         await deleteButton.click();
-        
+
         // Devrait afficher un message d'erreur
         await expect(page.locator('text=/impossible.*dépenses/i')).toBeVisible();
       }
@@ -308,7 +376,7 @@ test.describe('🚚 Supplier Management', () => {
 
       // Le RIB ne doit pas être visible en clair
       await expect(page.locator('text=FR7612345678901234567890123')).not.toBeVisible();
-      
+
       // Devrait afficher des astérisques ou un masque
       await expect(page.locator('text=/\\*\\*\\*\\*/i')).toBeVisible();
     });
@@ -324,13 +392,13 @@ test.describe('🚚 Supplier Management', () => {
       const revealButton = page.locator('button[aria-label*="Révéler IBAN"]');
       if (await revealButton.isVisible()) {
         await revealButton.click();
-        
+
         // Le RIB devrait maintenant être visible
         await expect(page.locator('text=/FR76/i')).toBeVisible();
       }
     });
 
-    test('enregistre l\'accès aux données sensibles dans l\'audit', async ({ page }) => {
+    test("enregistre l'accès aux données sensibles dans l'audit", async ({ page }) => {
       await createTestSupplier(page, {
         name: 'Supplier Audit',
         email: 'audit@test.com',
@@ -341,7 +409,7 @@ test.describe('🚚 Supplier Management', () => {
       const revealButton = page.locator('button[aria-label*="Révéler IBAN"]');
       if (await revealButton.isVisible()) {
         await revealButton.click();
-        
+
         // Vérifier qu'un log d'audit est créé (visible dans la console ou via notification)
         await page.waitForTimeout(500);
       }
@@ -372,7 +440,10 @@ test.describe('🚚 Supplier Management', () => {
       await expect(page.locator('text=/dépenses/i')).toBeVisible();
     });
 
-    test('affiche la date de dernière activité', async ({ page, authenticatedPage: _authenticatedPage }) => {
+    test('affiche la date de dernière activité', async ({
+      page,
+      authenticatedPage: _authenticatedPage,
+    }) => {
       await createTestSupplier(page, {
         name: 'Supplier Activity',
         email: 'activity@test.com',
@@ -383,7 +454,9 @@ test.describe('🚚 Supplier Management', () => {
       await expect(page.locator('text=Supplier Activity')).toBeVisible();
 
       // Navigation vers détails pour vérifier la date d'activité
-      const supplierRow = page.locator('[data-testid="supplier-row"]:has-text("Supplier Activity")');
+      const supplierRow = page.locator(
+        '[data-testid="supplier-row"]:has-text("Supplier Activity")'
+      );
       if (await supplierRow.isVisible()) {
         const activityDate = page.locator('[data-testid="supplier-activity-date"]');
         // La date d'activité peut ne pas être visible si aucune dépense n'existe
@@ -398,9 +471,21 @@ test.describe('🚚 Supplier Management', () => {
 
   test.describe('📁 Catégories', () => {
     test('affiche les catégories disponibles', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Cat Test 1', email: 'cat1@test.com', category: 'Hébergement' });
-      await createTestSupplier(page, { name: 'Cat Test 2', email: 'cat2@test.com', category: 'Logiciels' });
-      await createTestSupplier(page, { name: 'Cat Test 3', email: 'cat3@test.com', category: 'Énergie' });
+      await createTestSupplier(page, {
+        name: 'Cat Test 1',
+        email: 'cat1@test.com',
+        category: 'Hébergement',
+      });
+      await createTestSupplier(page, {
+        name: 'Cat Test 2',
+        email: 'cat2@test.com',
+        category: 'Logiciels',
+      });
+      await createTestSupplier(page, {
+        name: 'Cat Test 3',
+        email: 'cat3@test.com',
+        category: 'Énergie',
+      });
 
       const categoryFilter = page.locator('select[aria-label*="Catégorie"]');
       if (await categoryFilter.isVisible()) {
@@ -438,7 +523,11 @@ test.describe('🚚 Supplier Management', () => {
 
   test.describe('📄 Export CSV', () => {
     test('exporte la liste des fournisseurs', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Export Test', email: 'export@test.com', category: 'Services' });
+      await createTestSupplier(page, {
+        name: 'Export Test',
+        email: 'export@test.com',
+        category: 'Services',
+      });
 
       const downloadPromise = page.waitForEvent('download');
       await page.locator('button:has-text("Exporter")').click();
@@ -449,8 +538,12 @@ test.describe('🚚 Supplier Management', () => {
   });
 
   test.describe('🏷️ Statuts', () => {
-    test('change le statut d\'un fournisseur', async ({ page }) => {
-      await createTestSupplier(page, { name: 'Status Test', email: 'status@test.com', category: 'Services' });
+    test("change le statut d'un fournisseur", async ({ page }) => {
+      await createTestSupplier(page, {
+        name: 'Status Test',
+        email: 'status@test.com',
+        category: 'Services',
+      });
 
       const supplierCard = page.locator('text=Status Test').locator('..').locator('..');
       await supplierCard.hover();
@@ -476,7 +569,9 @@ test.describe('🚚 Supplier Management', () => {
       await page.locator('input[name="name"]').fill('Supplier with Notes');
       await page.locator('input[name="email"]').fill('notes@test.com');
       await page.locator('select[name="category"]').selectOption('Services');
-      await page.locator('textarea[name="notes"]').fill('Fournisseur prioritaire, paiement sous 15 jours');
+      await page
+        .locator('textarea[name="notes"]')
+        .fill('Fournisseur prioritaire, paiement sous 15 jours');
 
       await page.locator('button[type="submit"]:has-text("Créer")').click();
 

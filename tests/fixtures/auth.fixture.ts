@@ -22,7 +22,7 @@ export const test = base.extend<AuthFixtures>({
   authenticatedPage: async ({ page, context }, use: (value: void) => Promise<void>) => {
     // Générer un profil utilisateur test
     const testProfile = generateTestData.userProfile();
-    
+
     // Préparer le profil configuré
     const configuredProfile = {
       ...testProfile,
@@ -34,12 +34,15 @@ export const test = base.extend<AuthFixtures>({
     // Le profil sera migré vers IndexedDB par App.tsx dans useEffect
     await context.addInitScript((profile: any) => {
       // Stocker dans localStorage - App.tsx le migrera via useEffect
-      localStorage.setItem('autogest_profile', JSON.stringify({
-        ...profile,
-        id: 'current',
-        isConfigured: true,
-      }));
-      
+      localStorage.setItem(
+        'autogest_profile',
+        JSON.stringify({
+          ...profile,
+          id: 'current',
+          isConfigured: true,
+        })
+      );
+
       console.info('[INIT_SCRIPT] Profile stored in localStorage');
     }, configuredProfile);
 
@@ -47,7 +50,7 @@ export const test = base.extend<AuthFixtures>({
     console.info('[TEST] Navigating to / with baseURL http://localhost:3000');
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     console.info('[TEST] Page DOM loaded');
-    
+
     // 🔑 CRITICAL WAIT: Donner du temps à React et Dexie pour:
     // 1. React se monter
     // 2. useUserProfile() commencer à lire depuis IndexedDB
@@ -61,7 +64,7 @@ export const test = base.extend<AuthFixtures>({
     const maxAttempts = 5;
     let dashboardFound = false;
 
-    for (let attempts = 0; attempts < maxAttempts && !dashboardFound; attempts++) {
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
       // Vérifier si dashboard est visible
       try {
         dashboardFound = await page.locator('[data-testid="dashboard"]').isVisible({
@@ -88,7 +91,10 @@ export const test = base.extend<AuthFixtures>({
 
       if (hasWizard && attempts < 2) {
         // Le profil n'a pas été chargé, reload et retry
-        console.info('[TEST] ⚠️  SetupWizard visible (profile not loaded), reload attempt', attempts + 1);
+        console.info(
+          '[TEST] ⚠️  SetupWizard visible (profile not loaded), reload attempt',
+          attempts + 1
+        );
         await page.reload({ waitUntil: 'domcontentloaded' });
         await page.waitForTimeout(2000);
       } else if (hasWizard) {

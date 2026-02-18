@@ -42,11 +42,7 @@ describe('ThresholdMonitor', () => {
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // Vérification du titre principal
@@ -54,7 +50,7 @@ describe('ThresholdMonitor', () => {
       expect(screen.getByText('Plafonds annuels et franchises de TVA')).toBeInTheDocument();
 
       // Vérification section CA
-      expect(screen.getByText('Chiffre d\'Affaires')).toBeInTheDocument();
+      expect(screen.getByText("Chiffre d'Affaires")).toBeInTheDocument();
       expect(screen.getByText('Prestations de Services')).toBeInTheDocument();
       expect(screen.getAllByText('45 000 €')[0]).toBeInTheDocument();
       expect(screen.getByText('/ 77 700 €')).toBeInTheDocument();
@@ -78,16 +74,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 25000, threshold: 36800, percent: 67.9, isOverLimit: false, limit: 39100 },
+        services: {
+          amount: 25000,
+          threshold: 36800,
+          percent: 67.9,
+          isOverLimit: false,
+          limit: 39100,
+        },
         shouldPayVat: false,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       const okBadges = screen.getAllByText('Ok');
@@ -103,16 +101,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 32000, threshold: 36800, percent: 87.0, isOverLimit: false, limit: 39100 },
+        services: {
+          amount: 32000,
+          threshold: 36800,
+          percent: 87.0,
+          isOverLimit: false,
+          limit: 39100,
+        },
         shouldPayVat: false,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       const approacheBadges = screen.getAllByText('Approche');
@@ -128,23 +128,19 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { 
-          amount: 37000, 
-          threshold: 36800, 
-          percent: 100.5, 
-          isOverLimit: false, 
+        services: {
+          amount: 37000,
+          threshold: 36800,
+          percent: 100.5,
+          isOverLimit: false,
           isOverThreshold: true,
-          limit: 39100 
+          limit: 39100,
         },
         shouldPayVat: false,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       const seuilBadges = screen.getAllByText('Seuil atteint');
@@ -160,22 +156,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { 
-          amount: 42000, 
-          threshold: 36800, 
-          percent: 114.1, 
+        services: {
+          amount: 42000,
+          threshold: 36800,
+          percent: 114.1,
           isOverLimit: true,
-          limit: 39100 
+          limit: 39100,
         },
         shouldPayVat: true,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       const depassementBadges = screen.getAllByText('Dépassement');
@@ -191,16 +183,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 30000, threshold: 36800, percent: 81.5, isOverLimit: false, limit: 39100 },
+        services: {
+          amount: 30000,
+          threshold: 36800,
+          percent: 81.5,
+          isOverLimit: false,
+          limit: 39100,
+        },
         shouldPayVat: false,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       expect(screen.getByText('Il reste 27 700 €')).toBeInTheDocument(); // CA: 77700 - 50000
@@ -216,16 +210,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 40000, threshold: 36800, percent: 108.7, isOverLimit: true, limit: 39100 },
+        services: {
+          amount: 40000,
+          threshold: 36800,
+          percent: 108.7,
+          isOverLimit: true,
+          limit: 39100,
+        },
         shouldPayVat: true,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       const attentionMessages = screen.getAllByText('Attention : Seuil dépassé');
@@ -269,13 +265,7 @@ describe('ThresholdMonitor', () => {
         shouldPayVat: true,
       };
 
-      render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="sales"
-        />
-      );
+      render(<ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="sales" />);
 
       // Vérification section CA
       expect(screen.getByText('Achat / Revente')).toBeInTheDocument();
@@ -299,18 +289,18 @@ describe('ThresholdMonitor', () => {
       };
 
       const vatStatus = {
-        sales: { amount: 50000, threshold: 91900, percent: 54.4, isOverLimit: false, limit: 101000 },
+        sales: {
+          amount: 50000,
+          threshold: 91900,
+          percent: 54.4,
+          isOverLimit: false,
+          limit: 101000,
+        },
         services: { amount: 0, threshold: 36800, percent: 0, isOverLimit: false, limit: 39100 },
         shouldPayVat: false,
       };
 
-      render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="sales"
-        />
-      );
+      render(<ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="sales" />);
 
       // Vérifier qu'il n'y a qu'un seul item dans chaque section (ventes seulement)
       // On s'attend à trouver un seul ThresholdItem par section
@@ -357,13 +347,7 @@ describe('ThresholdMonitor', () => {
         shouldPayVat: true,
       };
 
-      render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="mixed"
-        />
-      );
+      render(<ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="mixed" />);
 
       // Vérification qu'on a bien toutes les sections
       expect(screen.getByText('Prestations de Services')).toBeInTheDocument();
@@ -388,7 +372,7 @@ describe('ThresholdMonitor', () => {
       expect(screen.getByText('/ 91 900 €')).toBeInTheDocument();
     });
 
-    it('affiche le message d\'information pour activité mixte', () => {
+    it("affiche le message d'information pour activité mixte", () => {
       const caStatus = {
         sales: { amount: 100000, threshold: 188700, percent: 53.0, isOverLimit: false },
         services: { amount: 50000, threshold: 77700, percent: 64.4, isOverLimit: false },
@@ -396,28 +380,32 @@ describe('ThresholdMonitor', () => {
       };
 
       const vatStatus = {
-        sales: { amount: 100000, threshold: 91900, percent: 108.8, isOverLimit: true, limit: 101000 },
-        services: { amount: 50000, threshold: 36800, percent: 135.9, isOverLimit: true, limit: 39100 },
+        sales: {
+          amount: 100000,
+          threshold: 91900,
+          percent: 108.8,
+          isOverLimit: true,
+          limit: 101000,
+        },
+        services: {
+          amount: 50000,
+          threshold: 36800,
+          percent: 135.9,
+          isOverLimit: true,
+          limit: 39100,
+        },
         shouldPayVat: true,
       };
 
-      render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="mixed"
-        />
-      );
+      render(<ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="mixed" />);
 
       expect(
         screen.getByText(/En activité mixte, votre CA global ne doit pas dépasser 188 700 €/)
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(/la partie services est limitée à 77 700 €/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/la partie services est limitée à 77 700 €/)).toBeInTheDocument();
     });
 
-    it('n\'affiche pas le message d\'information pour activité non mixte', () => {
+    it("n'affiche pas le message d'information pour activité non mixte", () => {
       const caStatus = {
         sales: { amount: 0, threshold: 188700, percent: 0, isOverLimit: false },
         services: { amount: 50000, threshold: 77700, percent: 64.4, isOverLimit: false },
@@ -426,21 +414,21 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 50000, threshold: 36800, percent: 135.9, isOverLimit: true, limit: 39100 },
+        services: {
+          amount: 50000,
+          threshold: 36800,
+          percent: 135.9,
+          isOverLimit: true,
+          limit: 39100,
+        },
         shouldPayVat: true,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
-      expect(
-        screen.queryByText(/En activité mixte/)
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/En activité mixte/)).not.toBeInTheDocument();
     });
   });
 
@@ -454,16 +442,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 50000, threshold: 36800, percent: 135.9, isOverLimit: true, limit: 39100 },
+        services: {
+          amount: 50000,
+          threshold: 36800,
+          percent: 135.9,
+          isOverLimit: true,
+          limit: 39100,
+        },
         shouldPayVat: true,
       };
 
       const { container } = render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // Vérifier que les barres de progression ont un width de style
@@ -492,29 +482,25 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { 
-          amount: 37500, 
-          threshold: 36800, 
-          percent: 101.9, 
-          isOverLimit: false, 
+        services: {
+          amount: 37500,
+          threshold: 36800,
+          percent: 101.9,
+          isOverLimit: false,
           isOverThreshold: true,
-          limit: 39100 
+          limit: 39100,
         },
         shouldPayVat: false,
       };
 
       const { container } = render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // Vérifier la présence de la ligne de seuil (border-r-2 border-dashed)
       const thresholdLine = container.querySelector('.border-dashed.border-destructive\\/50');
       expect(thresholdLine).toBeInTheDocument();
-      
+
       // Vérifier que le title contient le montant de la limite
       expect(thresholdLine?.getAttribute('title')).toContain('39100');
     });
@@ -530,16 +516,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 123456.78, threshold: 36800, percent: 335.5, isOverLimit: true, limit: 39100 },
+        services: {
+          amount: 123456.78,
+          threshold: 36800,
+          percent: 335.5,
+          isOverLimit: true,
+          limit: 39100,
+        },
         shouldPayVat: true,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // En français: 123 456,78 mais ici on a des nombres entiers affichés comme "123 457" (arrondi)
@@ -561,11 +549,7 @@ describe('ThresholdMonitor', () => {
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       expect(screen.getByText('999 €')).toBeInTheDocument();
@@ -582,31 +566,25 @@ describe('ThresholdMonitor', () => {
       };
 
       const vatStatus = {
-        sales: { 
-          amount: 95000, 
-          threshold: 91900, 
-          percent: 103.4, 
-          isOverLimit: false, 
+        sales: {
+          amount: 95000,
+          threshold: 91900,
+          percent: 103.4,
+          isOverLimit: false,
           isOverThreshold: true,
-          limit: 101000 
+          limit: 101000,
         }, // Seuil atteint
-        services: { 
-          amount: 42000, 
-          threshold: 36800, 
-          percent: 114.1, 
+        services: {
+          amount: 42000,
+          threshold: 36800,
+          percent: 114.1,
           isOverLimit: true,
-          limit: 39100 
+          limit: 39100,
         }, // Dépassement
         shouldPayVat: true,
       };
 
-      render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="mixed"
-        />
-      );
+      render(<ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="mixed" />);
 
       // Vérifier les 4 types de badges
       expect(screen.getByText('Ok')).toBeInTheDocument(); // CA ventes
@@ -631,11 +609,7 @@ describe('ThresholdMonitor', () => {
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       expect(screen.getAllByText('0 €')).toHaveLength(4); // 2 pour CA, 2 pour TVA (début de barre)
@@ -652,27 +626,29 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 36800, threshold: 36800, percent: 100, isOverLimit: false, limit: 39100 },
+        services: {
+          amount: 36800,
+          threshold: 36800,
+          percent: 100,
+          isOverLimit: false,
+          limit: 39100,
+        },
         shouldPayVat: false,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // À 100%, on devrait voir "Seuil atteint" (ou "Approche" si > 80%)
       expect(screen.getAllByText('77 700 €').length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText('36 800 €').length).toBeGreaterThanOrEqual(1);
-      
+
       // Quand amount = threshold exactement, le badge devrait être "Approche" (>80%)
       // car isOverThreshold nécessite current > threshold (pas >=)
       const approcheBadges = screen.queryAllByText('Approche');
       expect(approcheBadges.length).toBeGreaterThanOrEqual(1);
-      
+
       // Vérifier qu'il reste 0 €
       expect(screen.getAllByText('Il reste 0 €').length).toBeGreaterThanOrEqual(1);
     });
@@ -686,16 +662,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 250000, threshold: 36800, percent: 679.3, isOverLimit: true, limit: 39100 },
+        services: {
+          amount: 250000,
+          threshold: 36800,
+          percent: 679.3,
+          isOverLimit: true,
+          limit: 39100,
+        },
         shouldPayVat: true,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       expect(screen.getAllByText('250 000 €')).toHaveLength(2);
@@ -712,28 +690,24 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { 
+        services: {
           amount: 38000, // Entre 36800 (threshold) et 39100 (limit)
-          threshold: 36800, 
-          percent: 103.3, 
+          threshold: 36800,
+          percent: 103.3,
           isOverLimit: false,
           isOverThreshold: true,
-          limit: 39100 
+          limit: 39100,
         },
         shouldPayVat: false,
       };
 
       render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       expect(screen.getAllByText('38 000 €').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('/ 36 800 €')).toBeInTheDocument();
-      
+
       // Devrait afficher "Seuil atteint" mais pas "Dépassement"
       expect(screen.getByText('Seuil atteint')).toBeInTheDocument();
       expect(screen.queryByText('Dépassement')).not.toBeInTheDocument();
@@ -750,16 +724,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 30000, threshold: 36800, percent: 81.5, isOverLimit: false, limit: 39100 },
+        services: {
+          amount: 30000,
+          threshold: 36800,
+          percent: 81.5,
+          isOverLimit: false,
+          limit: 39100,
+        },
         shouldPayVat: false,
       };
 
       const { container } = render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // Vérifier la structure générale (pas de test trop spécifique au markup)
@@ -776,16 +752,18 @@ describe('ThresholdMonitor', () => {
 
       const vatStatus = {
         sales: { amount: 0, threshold: 91900, percent: 0, isOverLimit: false, limit: 101000 },
-        services: { amount: 30000, threshold: 36800, percent: 81.5, isOverLimit: false, limit: 39100 },
+        services: {
+          amount: 30000,
+          threshold: 36800,
+          percent: 81.5,
+          isOverLimit: false,
+          limit: 39100,
+        },
         shouldPayVat: false,
       };
 
       const { container } = render(
-        <ThresholdMonitor
-          caStatus={caStatus}
-          vatStatus={vatStatus}
-          activityType="services"
-        />
+        <ThresholdMonitor caStatus={caStatus} vatStatus={vatStatus} activityType="services" />
       );
 
       // Vérifier qu'il y a des icônes SVG

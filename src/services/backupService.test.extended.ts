@@ -74,10 +74,8 @@ describe('💾 BackupService Extended', () => {
         id: 'inv-001',
         number: 'FAC-2025-001',
         date: '2025-02-18',
-        total: 1200.50,
-        items: [
-          { description: 'Service 1', quantity: 1, unitPrice: 1200.50, total: 1200.50 },
-        ],
+        total: 1200.5,
+        items: [{ description: 'Service 1', quantity: 1, unitPrice: 1200.5, total: 1200.5 }],
         client: { id: 'c1', name: 'Client A' },
         status: 'PAID',
       };
@@ -87,7 +85,7 @@ describe('💾 BackupService Extended', () => {
       const restored = JSON.parse(json);
 
       expect(restored.invoices[0]).toEqual(invoice);
-      expect(restored.invoices[0].items[0].unitPrice).toBe(1200.50);
+      expect(restored.invoices[0].items[0].unitPrice).toBe(1200.5);
     });
   });
 
@@ -159,7 +157,7 @@ describe('💾 BackupService Extended', () => {
   });
 
   describe('Intégrité des données', () => {
-    it('devrait maintenir l\'intégrité des dates', () => {
+    it("devrait maintenir l'intégrité des dates", () => {
       const date = new Date().toISOString();
       const backup = {
         createdAt: date,
@@ -175,17 +173,17 @@ describe('💾 BackupService Extended', () => {
 
     it('devrait gérer les montants décimaux', () => {
       const invoice = {
-        subtotal: 1000.50,
-        tax: 200.10,
-        total: 1200.60,
+        subtotal: 1000.5,
+        tax: 200.1,
+        total: 1200.6,
       };
 
       const backup = JSON.stringify(invoice);
       const restored = JSON.parse(backup);
 
-      expect(restored.subtotal).toBe(1000.50);
-      expect(restored.tax).toBe(200.10);
-      expect(restored.total).toBe(1200.60);
+      expect(restored.subtotal).toBe(1000.5);
+      expect(restored.tax).toBe(200.1);
+      expect(restored.total).toBe(1200.6);
     });
   });
 

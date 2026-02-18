@@ -61,6 +61,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.11.1",
     "@faker-js/faker": "^10.3.0",
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
@@ -77,6 +78,7 @@
     "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.18",
     "autoprefixer": "^10.4.24",
+    "axe-playwright": "^2.2.2",
     "concurrently": "^8.2.2",
     "esbuild": "^0.27.3",
     "eslint": "^9.39.2",

@@ -230,7 +230,7 @@ describe('🧪 AccountingManager Component', () => {
       });
     });
 
-    it('devrait afficher l\'onglet bilan par défaut', async () => {
+    it("devrait afficher l'onglet bilan par défaut", async () => {
       render(
         <BrowserRouter>
           <AccountingManager />
@@ -244,7 +244,7 @@ describe('🧪 AccountingManager Component', () => {
   });
 
   describe('Calculs financiers', () => {
-    it('devrait calculer correctement le chiffre d\'affaires', async () => {
+    it("devrait calculer correctement le chiffre d'affaires", async () => {
       render(
         <BrowserRouter>
           <AccountingManager />
@@ -519,7 +519,7 @@ describe('🧪 AccountingManager Component', () => {
   });
 
   describe('Export FEC', () => {
-    it('devrait permettre d\'exporter le FEC', async () => {
+    it("devrait permettre d'exporter le FEC", async () => {
       const user = userEvent.setup();
       const { downloadFEC } = await import('../services/fecService');
 
@@ -539,7 +539,7 @@ describe('🧪 AccountingManager Component', () => {
   });
 
   describe('Journal comptable', () => {
-    it('devrait afficher l\'onglet journal', async () => {
+    it("devrait afficher l'onglet journal", async () => {
       const user = userEvent.setup();
       render(
         <BrowserRouter>
