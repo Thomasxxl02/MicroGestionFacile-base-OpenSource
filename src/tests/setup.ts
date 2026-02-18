@@ -163,3 +163,31 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
+
+// Mock ResizeObserver for Recharts and other components that use it
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+})) as any;
+
+// Mock getBoundingClientRect for charts to have proper dimensions
+Element.prototype.getBoundingClientRect = vi.fn(() => ({
+  width: 500,
+  height: 400,
+  top: 0,
+  left: 0,
+  bottom: 400,
+  right: 500,
+  x: 0,
+  y: 0,
+  toJSON: () => ({}),
+} as any));
+
+// Mock getComputedStyle for proper dimension calculations
+window.getComputedStyle = vi.fn().mockReturnValue({
+  width: '500px',
+  height: '400px',
+  display: 'block',
+  position: 'relative',
+} as any);
