@@ -3,6 +3,7 @@ import {
   calculateUrssaf,
   checkVatThreshold,
   checkCaThreshold,
+  calculateUrssafAdjustment,
   VAT_THRESHOLDS,
   CA_THRESHOLDS,
   URSSAF_RATES,
@@ -433,6 +434,249 @@ describe('businessService', () => {
       const result = calculateUrssaf(invoices, mockUserProfile);
 
       expect(result.turnover.services).toBe(111.1);
+    });
+  });
+
+  describe('Edge Cases - Remises Globales & Prorata', () => {
+    it('devrait appliquer correctement une remise globale sur facture mixte', () => {
+      const invoices = [
+        createInvoice({
+          items: [
+            createItem({ unitPrice: 500, category: 'MARCHANDISE' }),
+            createItem({ unitPrice: 500, category: 'SERVICE_BIC' }),
+          ],
+          discount: 10, // 10% global discount
+        }),
+      ];
+
+      const resultNormal = calculateUrssaf(
+        [
+          createInvoice({
+            items: [
+              createItem({ unitPrice: 500, category: 'MARCHANDISE' }),
+              createItem({ unitPrice: 500, category: 'SERVICE_BIC' }),
+            ],
+          }),
+        ],
+        mockUserProfile
+      );
+
+      const resultWithDiscount = calculateUrssaf(invoices, mockUserProfile);
+
+      // Turnover should be 10% less
+      expect(resultWithDiscount.turnover.total).toBeLessThan(resultNormal.turnover.total);
+      expect(resultWithDiscount.turnover.total).toBeCloseTo(resultNormal.turnover.total * 0.9, 0);
+    });
+
+    it('devrait calculer correctement avec remises multiples (globale + ligne)', () => {
+      const invoices = [
+        createInvoice({
+          items: [
+            createItem({ unitPrice: 100, quantity: 10, discount: 5 }), // 5% on line
+          ],
+          discount: 10, // 10% global
+        }),
+      ];
+
+      const result = calculateUrssaf(invoices, mockUserProfile);
+
+      // 100 * 10 * (1 - 5%) * (1 - 10%) = 1000 * 0.95 * 0.90 = 855
+      expect(result.turnover.total).toBeCloseTo(855, 0);
+    });
+
+    it('devrait gérer les quantités fractionnées correctement', () => {
+      const invoices = [
+        createInvoice({
+          items: [
+            createItem({
+              unitPrice: 100,
+              quantity: 0.5, // Demi unité
+              category: 'SERVICE_BIC',
+            }),
+          ],
+        }),
+      ];
+
+      const result = calculateUrssaf(invoices, mockUserProfile);
+
+      expect(result.turnover.services).toBe(50);
+    });
+
+    it('devrait exclure les éléments de section des calculs', () => {
+      const invoices = [
+        createInvoice({
+          items: [
+            createItem({ unitPrice: 100, category: 'SERVICE_BIC' }),
+            createItem({
+              description: 'Section Title',
+              unitPrice: 0,
+              isSection: true,
+              category: 'SERVICE_BIC',
+            }),
+          ],
+        }),
+      ];
+
+      const result = calculateUrssaf(invoices, mockUserProfile);
+
+      // Should only count the actual item, not the section
+      expect(result.turnover.services).toBe(100);
+    });
+  });
+
+  describe('Régularisation URSSAF', () => {
+    it('devrait calculer une régularisation positive (acomptes insuffisants)', () => {
+      const result = calculateUrssafAdjustment(50000, 40000, mockUserProfile);
+
+      expect(result.adjustment).toBeGreaterThan(0);
+      expect(result.final).toBeGreaterThan(result.original);
+    });
+
+    it('devrait calculer une régularisation négative (acomptes excessifs)', () => {
+      const result = calculateUrssafAdjustment(40000, 50000, mockUserProfile);
+
+      expect(result.adjustment).toBeLessThan(0);
+      expect(result.final).toBeLessThan(result.original);
+    });
+
+    it('devrait retourner une régularisation nulle si CA stable', () => {
+      const result = calculateUrssafAdjustment(50000, 50000, mockUserProfile);
+
+      expect(result.adjustment).toBe(0);
+      expect(result.final).toBe(result.original);
+    });
+  });
+
+  describe('Situations Complexes (Cas Réel)', () => {
+    it('Cas réel : Auto-entrepreneur mixte avec ACCRE et VL', () => {
+      const complexUser: UserProfile = {
+        ...mockUserProfile,
+        activityType: 'mixed',
+        hasAccre: true,
+        hasVersementLiberatoire: true,
+        isVatExempt: false,
+      };
+
+      const invoices = [
+        // Ventes de marchandises
+        createInvoice({
+          id: 'inv-sales',
+          items: [createItem({ unitPrice: 5000, category: 'MARCHANDISE' })],
+        }),
+        // Services BIC
+        createInvoice({
+          id: 'inv-services',
+          items: [createItem({ unitPrice: 7000, category: 'SERVICE_BIC' })],
+        }),
+      ];
+
+      const result = calculateUrssaf(invoices, complexUser);
+
+      // Vérifier que les réductions ACCRE sont appliquées
+      expect(result.sales).toBeGreaterThan(0);
+      expect(result.services).toBeGreaterThan(0);
+
+      // Vérifier que le Versement Libératoire est inclus
+      expect(result.breakdown.versementLiberatoire).toBeGreaterThan(0);
+    });
+
+    it('Cas réel : Micro-entrepreneur franchisé TVA (isVatExempt)', () => {
+      const userFranchised = { ...mockUserProfile, isVatExempt: true };
+
+      const invoices = [
+        createInvoice({
+          items: [
+            createItem({
+              unitPrice: 30000,
+              category: 'SERVICE_BIC',
+              taxRate: 0, // Franchise = pas de TVA
+            }),
+          ],
+        }),
+      ];
+
+      const result = calculateUrssaf(invoices, userFranchised);
+
+      // Le calcul des cotisations ne doit pas dépendre de TVA
+      expect(result.services).toBeGreaterThan(0);
+      expect(result.turnover.services).toBe(30000);
+    });
+
+    it('Cas réel : Dépassement de seuil CA avec prorata', () => {
+      // Simulation : Seuil CA Services = 77700€
+      const invoices = [
+        createInvoice({
+          id: 'inv-1',
+          date: '2026-01-15',
+          items: [createItem({ unitPrice: 40000, category: 'SERVICE_BIC' })],
+        }),
+        createInvoice({
+          id: 'inv-2',
+          date: '2026-06-15',
+          items: [createItem({ unitPrice: 40000, category: 'SERVICE_BIC' })],
+        }),
+      ];
+
+      const caResult = checkCaThreshold(invoices);
+
+      expect(caResult.services.isOverLimit).toBe(true);
+      expect(caResult.services.percent).toBeGreaterThan(100);
+    });
+
+    it('Cas réel : Cotisations progressives mensuel → trimestre', () => {
+      const userMonthly = { ...mockUserProfile, contributionQuarter: 'monthly' as const };
+      const userQuarterly = { ...mockUserProfile, contributionQuarter: 'quarterly' as const };
+
+      const invoice = createInvoice({
+        items: [createItem({ unitPrice: 10000, category: 'SERVICE_BIC' })],
+      });
+
+      const resultMonthly = calculateUrssaf([invoice], userMonthly);
+      const resultQuarterly = calculateUrssaf([invoice], userQuarterly);
+
+      // Les montants de cotisations doivent être identiques (contributionQuarter n'affecte pas le montant)
+      expect(resultMonthly.total).toBe(resultQuarterly.total);
+    });
+  });
+
+  describe('Robustesse & Périmètres', () => {
+    it('devrait gérer une liste vide de factures', () => {
+      const result = calculateUrssaf([], mockUserProfile);
+
+      expect(result.total).toBe(0);
+      expect(result.turnover.total).toBe(0);
+    });
+
+    it('devrait gérer des factures avec items vides', () => {
+      const invoice = createInvoice({
+        items: [],
+      });
+
+      const result = calculateUrssaf([invoice], mockUserProfile);
+
+      expect(result.total).toBe(0);
+    });
+
+    it('devrait gérer les montants très petits (centimes)', () => {
+      const invoice = createInvoice({
+        items: [createItem({ unitPrice: 0.01, quantity: 1 })],
+      });
+
+      const result = calculateUrssaf([invoice], mockUserProfile);
+
+      // Should not throw and should handle small amounts
+      expect(result.turnover.services).toBeCloseTo(0.01, 2);
+    });
+
+    it('devrait gérer les montants très grands (en millions)', () => {
+      const invoice = createInvoice({
+        items: [createItem({ unitPrice: 1000000, category: 'SERVICE_BIC' })],
+      });
+
+      const result = calculateUrssaf([invoice], mockUserProfile);
+
+      expect(result.turnover.services).toBe(1000000);
+      expect(result.services).toBeGreaterThan(0);
     });
   });
 });

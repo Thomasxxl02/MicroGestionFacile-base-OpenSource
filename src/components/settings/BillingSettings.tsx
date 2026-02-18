@@ -204,7 +204,7 @@ const BillingSettings: React.FC = () => {
 
           <div className="space-y-2">
             <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-              Type d'activité
+              Type d&apos;activité
             </label>
             <select
               {...register('activityType')}
@@ -259,7 +259,7 @@ const BillingSettings: React.FC = () => {
                     Versement Libératoire
                   </span>
                   <span className="text-[10px] text-slate-400 font-medium">
-                    Paiement de l'IR avec les cotisations
+                    Paiement de l&apos;IR avec les cotisations
                   </span>
                 </div>
                 <input

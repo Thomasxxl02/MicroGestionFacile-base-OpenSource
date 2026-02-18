@@ -128,6 +128,7 @@ const SettingsManager: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <form
+        data-testid="settings-container"
         onSubmit={handleSubmit(onSubmit)}
         className="min-h-screen pb-20 animate-fade-in max-w-7xl mx-auto"
       >

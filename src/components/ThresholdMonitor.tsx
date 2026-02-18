@@ -175,7 +175,7 @@ const ThresholdMonitor: React.FC<ThresholdMonitorProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <Euro size={16} className="text-primary" />
             <h4 className="text-sm font-black uppercase tracking-widest text-foreground/70">
-              Chiffre d'Affaires
+              Chiffre d&apos;Affaires
             </h4>
           </div>
 

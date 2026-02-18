@@ -18,12 +18,8 @@ export const UserProfileSchema = z.object({
   bic: z.string().optional(),
   tvaNumber: z.string().optional(), // Numéro de TVA intracommunautaire
   legalMentions: z.string().optional(),
-  // IA & Assistance
-  defaultAI: z.enum(['gemini', 'chatgpt', 'claude', 'mistral']).default('gemini').optional(),
-  geminiKey: z.string().optional(),
-  chatgptKey: z.string().optional(),
-  claudeKey: z.string().optional(),
-  mistralKey: z.string().optional(),
+  // IA & Assistance (clés API supprimées - utiliser proxy serveur)
+  defaultAI: z.enum(['gemini']).default('gemini').optional(),
   defaultInvoiceNotes: z.string().optional(),
   logo: z.string().optional(),
   signature: z.string().optional(), // Image de signature (Data URL)

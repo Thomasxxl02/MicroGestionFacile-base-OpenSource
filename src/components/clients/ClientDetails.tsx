@@ -233,7 +233,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ clients, invoices }) => {
                 <h3 className="text-xs font-black uppercase tracking-widest">Notes internes</h3>
               </div>
               <p className="text-sm text-amber-900/70 font-medium leading-relaxed italic">
-                "{client.notes}"
+                &quot;{client.notes}&quot;
               </p>
             </Card>
           )}

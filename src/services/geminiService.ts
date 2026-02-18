@@ -1,42 +1,45 @@
-import { GoogleGenAI } from '@google/genai';
+import { logger } from './loggerService';
 
-// Initialize with a helper to support dynamic keys from user settings
-const getAIInstance = (customKey?: string) => {
-  const apiKey = customKey || process.env.API_KEY || '';
-  return new GoogleGenAI({ apiKey });
-};
+// Configuration du proxy API
+const API_PROXY_URL = import.meta.env.VITE_API_PROXY_URL || 'http://localhost:3001';
+
+interface AIProxyResponse {
+  success: boolean;
+  data?: string;
+  error?: string;
+  message?: string;
+}
 
 export const generateAssistantResponse = async (
   query: string,
   context?: string,
-  userKey?: string
+  _userKey?: string // Ignoré - utiliser le proxy serveur
 ): Promise<string> => {
   try {
-    const ai = getAIInstance(userKey);
-    const model = 'gemini-3-flash-preview';
-
-    const systemPrompt = `Tu es un assistant expert pour les auto-entrepreneurs en France.
-    Tu connais les règles de l'URSSAF, les seuils de TVA (Franchise en base), les plafonds de Chiffre d'Affaires, et les obligations de facturation.
-    Réponds de manière concise, professionnelle et utile.
-    Si on te demande de rédiger un email ou un texte, fais-le avec un ton courtois.
-    Contexte actuel de l'utilisateur (si pertinent) : ${context || 'Aucun contexte spécifique'}`;
-
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: query,
-      config: {
-        systemInstruction: systemPrompt,
-        thinkingConfig: { thinkingBudget: 0 }, // Disable thinking for faster simple Q&A
+    const response = await fetch(`${API_PROXY_URL}/api/ai/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        query,
+        context,
+        model: 'gemini-3-flash-preview',
+        responseMimeType: 'text/plain',
+      }),
     });
 
-    return response.text || "Désolé, je n'ai pas pu générer de réponse.";
-  } catch (error: unknown) {
-    console.error('Erreur Gemini:', error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    if (errorMessage.includes('API_KEY_INVALID')) {
-      return 'Clé API invalide. Veuillez vérifier vos réglages.';
+    if (!response.ok) {
+      const error = (await response.json()) as AIProxyResponse;
+      logger.error('Erreur API Proxy', new Error(error.message || 'Erreur inconnue'));
+      return "Une erreur est survenue lors de la consultation de l'assistant IA.";
     }
+
+    const result = (await response.json()) as AIProxyResponse;
+    return result.data || "Désolé, je n'ai pas pu générer de réponse.";
+  } catch (error: unknown) {
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    logger.error('Erreur Gemini Service', errorObj);
     return "Une erreur est survenue lors de la consultation de l'assistant IA.";
   }
 };
@@ -48,45 +51,56 @@ export interface VatPrediction {
   projectedCA: number;
 }
 
+const isValidVatPrediction = (data: unknown): data is VatPrediction => {
+  if (!data || typeof data !== 'object') return false;
+  const obj = data as Record<string, unknown>;
+  return (
+    typeof obj.isLikelyToExceed === 'boolean' &&
+    (obj.monthsBeforeExceeding === null || typeof obj.monthsBeforeExceeding === 'number') &&
+    typeof obj.recommendation === 'string' &&
+    typeof obj.projectedCA === 'number'
+  );
+};
+
 export const analyzePredictiveVat = async (
   currentCA: number,
-  monthlyHistory: { month: string; amount: number }[],
+  monthlyHistory: Array<{ month: string; amount: number }>,
   activityType: 'sales' | 'services' | 'mixed',
-  userKey?: string
+  _userKey?: string // Ignoré - utiliser le proxy serveur
 ): Promise<VatPrediction> => {
   try {
-    const ai = getAIInstance(userKey);
-    const threshold = activityType === 'sales' ? 91900 : 36800;
-
-    const prompt = `Analyse les données de Chiffre d'Affaires suivantes pour un micro-entrepreneur en France (${activityType === 'sales' ? 'Vente de marchandises' : 'Prestation de services'}) :
-    CA actuel cumulé cette année : ${currentCA}€
-    Historique mensuel : ${JSON.stringify(monthlyHistory)}
-    Seuil de franchise de TVA : ${threshold}€
-
-    Prédit si l'utilisateur va dépasser le seuil d'ici la fin de l'année. 
-    Réponds uniquement au format JSON avec ces clés : 
-    "isLikelyToExceed" (boolean), 
-    "monthsBeforeExceeding" (number ou null s'il ne dépasse pas), 
-    "projectedCA" (number pour la fin d'année),
-    "recommendation" (string courte sur le passage au régime réel).`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
+    const response = await fetch(`${API_PROXY_URL}/api/ai/analyze-vat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        currentCA,
+        monthlyHistory,
+        activityType,
+      }),
     });
 
-    const data = JSON.parse(response.text || '{}');
-    return {
-      isLikelyToExceed: data.isLikelyToExceed || false,
-      monthsBeforeExceeding: data.monthsBeforeExceeding ?? null,
-      projectedCA: data.projectedCA || currentCA,
-      recommendation: data.recommendation || 'Continuez à suivre votre CA régulièrement.',
-    };
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = (await response.json()) as { success: boolean; data: unknown };
+
+    // Validation stricte du JSON retourné
+    if (!result.success || !isValidVatPrediction(result.data)) {
+      logger.error('Validation échouée pour VatPrediction', new Error('Format invalide'));
+      return {
+        isLikelyToExceed: false,
+        monthsBeforeExceeding: null,
+        projectedCA: currentCA,
+        recommendation: "Impossible de générer l'analyse pour le moment.",
+      };
+    }
+
+    return result.data as VatPrediction;
   } catch (error) {
-    console.error('Erreur Analyse TVA:', error);
+    logger.error('Erreur Analyse TVA', error instanceof Error ? error : new Error(String(error)));
     return {
       isLikelyToExceed: false,
       monthsBeforeExceeding: null,
@@ -97,8 +111,8 @@ export const analyzePredictiveVat = async (
 };
 
 export const ocrExpense = async (
-  imageBase64: string,
-  userKey?: string
+  _imageBase64: string,
+  _userKey?: string // Ignoré - utiliser le proxy serveur
 ): Promise<{
   description: string;
   amount: number;
@@ -107,72 +121,41 @@ export const ocrExpense = async (
   date: string;
   supplierName?: string;
 } | null> => {
-  try {
-    const ai = getAIInstance(userKey);
-
-    // Clean base64 string if it contains data prefix
-    const base64Data = imageBase64.split(',')[1] || imageBase64;
-
-    const prompt = `Analyse cette image de ticket de caisse ou facture d'achat.
-    Extrais les informations suivantes au format JSON :
-    - description (nom du marchand ou brièvement l'objet)
-    - amount (montant TOTAL TTC en nombre)
-    - vatAmount (montant de la TVA total en nombre)
-    - category (choisis parmi : Achats, Restaurant, Transport, Fournitures, Services, Autre)
-    - date (au format YYYY-MM-DD)
-    - supplierName (le nom propre du fournisseur/marchand, ex: "Amazon", "Total", "Leroy Merlin")`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: [
-        {
-          inlineData: {
-            data: base64Data,
-            mimeType: 'image/jpeg',
-          },
-        },
-        { text: prompt },
-      ],
-    });
-
-    // Use a regex to extract JSON from text if it's wrapped in markers
-    const text = response.text || '';
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
-
-    const data = JSON.parse(jsonMatch[0]);
-    return {
-      description: data.description || 'Dépense OCR',
-      amount: Number(data.amount) || 0,
-      vatAmount: Number(data.vatAmount) || 0,
-      category: data.category || 'Achats',
-      date: data.date || new Date().toISOString().split('T')[0],
-      supplierName: data.supplierName,
-    };
-  } catch (error) {
-    console.error('Erreur OCR Gemini:', error);
-    return null;
-  }
+  // Note: OCR via le proxy n'est pas encore implémenté
+  // Cette fonction reste côté client pour l'instant ou doit être migrée au serveur proxy
+  logger.warn('OCR Gemini non disponible - utiliser le serveur proxy Gemini Vision');
+  return null;
 };
 
 export const suggestInvoiceDescription = async (
   clientName: string,
   serviceType: string,
-  userKey?: string
+  _userKey?: string // Ignoré - utiliser le proxy serveur
 ): Promise<string> => {
   try {
-    const ai = getAIInstance(userKey);
-    const prompt = `Génère une description professionnelle courte pour une ligne de facture destinée au client "${clientName}" pour un service de type : "${serviceType}". 
-     La description doit être claire et formelle. Ne donne que la description, pas de guillemets.`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
+    const response = await fetch(`${API_PROXY_URL}/api/ai/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: `Génère une description professionnelle courte pour une ligne de facture destinée au client "${clientName}" pour un service de type : "${serviceType}". La description doit être claire et formelle. Ne donne que la description, pas de guillemets.`,
+        model: 'gemini-3-flash-preview',
+        responseMimeType: 'text/plain',
+      }),
     });
 
-    return response.text?.trim() || serviceType;
+    if (!response.ok) {
+      return serviceType;
+    }
+
+    const result = (await response.json()) as AIProxyResponse;
+    return result.data?.trim() || serviceType;
   } catch (error) {
-    console.error('Erreur Gemini:', error);
+    logger.error(
+      'Erreur génération description',
+      error instanceof Error ? error : new Error(String(error))
+    );
     return serviceType;
   }
 };

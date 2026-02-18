@@ -22,7 +22,7 @@ const CompanySettings: React.FC = () => {
           </div>
           <div>
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
-              Identité de l'Entreprise
+              Identité de l&apos;Entreprise
             </h2>
             <p className="text-slate-500 font-medium">Informations légales et fiscales</p>
           </div>
@@ -31,7 +31,7 @@ const CompanySettings: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
           <div className="space-y-2">
             <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-              Nom de l'entreprise
+              Nom de l&apos;entreprise
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-900 transition-colors">

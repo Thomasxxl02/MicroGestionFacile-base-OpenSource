@@ -95,7 +95,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialData }) =>
   const isVatExempt = useWatch({ control, name: 'isVatExempt' });
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+    <div data-testid="setup-wizard" className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Progress Bar */}
         <div className="mb-8 px-4">
@@ -178,7 +178,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialData }) =>
                           <Building size={24} />
                         </div>
                         <h2 className="text-2xl font-black text-slate-900">
-                          Identité de l'entreprise
+                          Identité de l&apos;entreprise
                         </h2>
                       </div>
 
@@ -267,13 +267,14 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialData }) =>
                           </div>
                           <p className="text-sm text-slate-500 font-medium">
                             Cochez cette case si vous bénéficiez de la franchise en base de TVA (pas
-                            de TVA collectée, mention "TVA non applicable" sur les factures).
+                            de TVA collectée, mention &quot;TVA non applicable&quot; sur les
+                            factures).
                           </p>
                         </div>
 
                         <div className="space-y-2">
                           <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                            Type d'activité principal
+                            Type d&apos;activité principal
                           </label>
                           <select
                             {...methods.register('activityType')}
@@ -335,7 +336,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialData }) =>
 
                     {currentStep === steps.length - 1 ? (
                       <Button type="submit" variant="gradient" className="px-8">
-                        C'est parti !
+                        C&apos;est parti !
                       </Button>
                     ) : (
                       <Button

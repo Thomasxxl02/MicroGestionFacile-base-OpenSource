@@ -11,6 +11,9 @@ import { toast } from 'sonner';
 import { calculateHash } from '../lib/utils';
 import { generateFacturX_XML, getNextDocumentNumber } from '../services/businessService';
 import { generateImmutablePDF_Server, generatePDF } from '../services/pdfService';
+import { useAsync } from '../hooks/useAsync';
+import { logger } from '../services/loggerService';
+import { validateInvoice } from '../services/validationService';
 
 // Lazy loading sub-components to reduce initial chunk size
 const InvoiceList = lazy(() => import('./invoices/InvoiceList'));
@@ -35,6 +38,13 @@ const InvoiceManager: React.FC = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  // useAsync for save operations with retry logic (2 retries, 1s delay)
+  const { execute: executeSave } = useAsync<void>({
+    retryCount: 2,
+    retryDelay: 1000,
+    showToast: false, // Handle toasts manually
+  });
+
   const handleExportFacturX = (invoice: Invoice) => {
     const client = clients.find((c) => c.id === invoice.clientId);
     const xml = generateFacturX_XML(invoice, userProfile, client);
@@ -50,69 +60,115 @@ const InvoiceManager: React.FC = () => {
 
   const handleSave = async (data: Partial<Invoice>, clientId: string, isEdit: boolean) => {
     if (!clientId) {
-      toast.error('Veuillez sélectionner un client.');
+      toast.error('❌ Veuillez sélectionner un client.');
+      return;
+    }
+
+    // 🛡️ Vérifier que le client existe
+    const clientExists = clients.some((c) => c.id === clientId);
+    if (!clientExists) {
+      toast.error("❌ Le client sélectionné n'existe plus.");
       return;
     }
 
     try {
-      if (!isEdit) {
-        const docToSave: Invoice = {
-          ...data,
-          id: Date.now().toString(),
-          clientId,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          number: '', // Will be set below
-          type: data.type || 'invoice',
-          date: data.date || new Date().toISOString().split('T')[0],
-          dueDate: data.dueDate || new Date().toISOString().split('T')[0],
-          items: data.items || [],
-          status: data.status || 'draft',
-          total: data.total || 0,
-        };
+      await executeSave(
+        async () => {
+          if (!isEdit) {
+            const docToSave: Invoice = {
+              ...data,
+              id: Date.now().toString(),
+              clientId,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              number: '', // Will be set below
+              type: data.type || 'invoice',
+              date: data.date || new Date().toISOString().split('T')[0],
+              dueDate: data.dueDate || new Date().toISOString().split('T')[0],
+              items: data.items || [],
+              status: data.status || 'draft',
+              total: data.total || 0,
+            };
 
-        docToSave.number = getNextDocumentNumber(invoices, docToSave.type, userProfile);
+            docToSave.number = getNextDocumentNumber(invoices, docToSave.type, userProfile);
 
-        // Integrity hashing before storage
-        docToSave.integrityHash = await calculateHash(JSON.stringify(docToSave));
+            // Integrity hashing before storage
+            docToSave.integrityHash = await calculateHash(JSON.stringify(docToSave));
 
-        await db.invoices.add(docToSave);
-      } else if (data.id) {
-        const existing = await db.invoices.get(data.id);
-        if (existing?.type === 'invoice' && existing.status !== 'draft') {
-          toast.error('Cette facture est émise et ne peut plus être modifiée.');
-          return;
-        }
+            // 🛡️ Valider la facture avant sauvegarde
+            const validationResult = await validateInvoice(docToSave, docToSave.id);
+            if (!validationResult.valid) {
+              const errors = validationResult.errors
+                .slice(0, 3)
+                .map((e) => e.message)
+                .join(', ');
+              toast.error(`❌ Erreur validation facture: ${errors}`);
+              throw new Error(`Validation failed: ${errors}`);
+            }
 
-        const updatedData = {
-          ...data,
-          clientId,
-          updatedAt: new Date().toISOString(),
-        };
+            await db.invoices.add(docToSave);
+          } else if (data.id) {
+            const existing = await db.invoices.get(data.id);
+            if (existing?.type === 'invoice' && existing.status !== 'draft') {
+              toast.error('❌ Cette facture est émise et ne peut plus être modifiée.');
+              throw new Error('Invoice is locked');
+            }
 
-        // Re-calculate hash for the updated document
-        // Fetch full doc to ensure complete hashing if partial data passed
-        if (existing) {
-          const fullDoc = { ...existing, ...updatedData };
-          updatedData.integrityHash = await calculateHash(JSON.stringify(fullDoc));
-        }
+            const updatedData = {
+              ...data,
+              clientId,
+              updatedAt: new Date().toISOString(),
+            };
 
-        await db.invoices.update(data.id, updatedData);
-      }
+            // Re-calculate hash for the updated document
+            if (existing) {
+              const fullDoc = { ...existing, ...updatedData };
+              updatedData.integrityHash = await calculateHash(JSON.stringify(fullDoc));
 
-      toast.success(isEdit ? 'Modification enregistrée' : 'Nouveau document créé');
+              // 🛡️ Valider les données mises à jour
+              const validationResult = await validateInvoice(fullDoc, fullDoc.id);
+              if (!validationResult.valid) {
+                const errors = validationResult.errors
+                  .slice(0, 3)
+                  .map((e) => e.message)
+                  .join(', ');
+                toast.error(`❌ Erreur validation facture: ${errors}`);
+                throw new Error(`Validation failed: ${errors}`);
+              }
+            }
+
+            await db.invoices.update(data.id, updatedData);
+          }
+        },
+        isEdit ? 'Updating invoice' : 'Creating invoice'
+      );
+
+      toast.success(isEdit ? '✅ Modification enregistrée' : '✅ Nouveau document créé');
+      logger.info(`Invoice ${isEdit ? 'updated' : 'created'}`, { invoiceId: data.id, clientId });
       navigate('/invoices');
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde :', error);
-      toast.error('Erreur lors de la sauvegarde.');
+      logger.error(
+        'Invoice save failed',
+        error instanceof Error ? error : new Error(String(error))
+      );
+      if (!(error instanceof Error && error.message.includes('Validation failed'))) {
+        toast.error('💥 Erreur lors de la sauvegarde.');
+      }
     }
   };
 
   const confirmDelete = async () => {
     if (deleteId) {
-      await db.invoices.delete(deleteId);
-      toast.success('Document supprimé');
-      setDeleteId(null);
+      try {
+        await db.invoices.delete(deleteId);
+        const invoice = invoices.find((i) => i.id === deleteId);
+        toast.success(`✅ Facture ${invoice?.number || 'n°?'} supprimée`);
+        setDeleteId(null);
+        setIsConfirmOpen(false);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur inconnue';
+        toast.error(`❌ Erreur suppression: ${message}`);
+      }
     }
   };
 
@@ -207,7 +263,7 @@ const InvoiceManager: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div data-testid="invoices-container" className="min-h-screen bg-[#F8FAFC]">
       <Header title="Facturation & Devis" description="Gérez votre cycle de vente de A à Z" />
 
       <main className="p-8 pb-24">

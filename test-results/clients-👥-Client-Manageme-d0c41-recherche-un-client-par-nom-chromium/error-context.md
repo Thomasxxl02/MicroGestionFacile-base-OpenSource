@@ -1,0 +1,112 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - img "App Logo" [ref=e7]
+          - heading "Altenwerth and Sons" [level=1] [ref=e9]
+        - navigation [ref=e10]:
+          - generic [ref=e11]: Navigation principale
+          - link "Tableau de bord" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e14]
+            - generic [ref=e19]: Tableau de bord
+          - link "Devis & Factures" [ref=e21] [cursor=pointer]:
+            - /url: /invoices
+            - img [ref=e23]
+            - generic [ref=e26]: Devis & Factures
+          - link "Clients" [active] [ref=e28] [cursor=pointer]:
+            - /url: /clients
+            - img [ref=e30]
+            - generic [ref=e35]: Clients
+          - link "Fournisseurs" [ref=e37] [cursor=pointer]:
+            - /url: /suppliers
+            - img [ref=e39]
+            - generic [ref=e44]: Fournisseurs
+          - link "Catalogue" [ref=e46] [cursor=pointer]:
+            - /url: /products
+            - img [ref=e48]
+            - generic [ref=e52]: Catalogue
+          - link "Comptabilité" [ref=e54] [cursor=pointer]:
+            - /url: /accounting
+            - img [ref=e56]
+            - generic [ref=e58]: Comptabilité
+          - link "Assistant IA" [ref=e60] [cursor=pointer]:
+            - /url: /ai
+            - img [ref=e62]
+            - generic [ref=e65]: Assistant IA
+          - link "Paramètres" [ref=e67] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e69]
+            - generic [ref=e72]: Paramètres
+        - generic [ref=e74]:
+          - button "Mode Sombre" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]:
+              - img [ref=e77]
+              - generic [ref=e79]: Mode Sombre
+          - generic [ref=e82] [cursor=pointer]:
+            - generic [ref=e83]: AL
+            - generic [ref=e84]:
+              - paragraph [ref=e85]: Altenwerth and Sons
+              - paragraph [ref=e86]: Propriétaire
+      - main [ref=e88]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - img [ref=e95]
+              - generic [ref=e100]:
+                - heading "Clients" [level=2] [ref=e101]
+                - paragraph [ref=e102]: Gérez votre base client et suivez le chiffre d'affaires généré par chacun.
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - button "Actifs" [ref=e106] [cursor=pointer]
+                - button "Archivés" [ref=e107] [cursor=pointer]
+              - generic [ref=e108]:
+                - button "Export" [ref=e109] [cursor=pointer]:
+                  - img [ref=e110]
+                  - text: Export
+                - button "Ajouter" [ref=e113] [cursor=pointer]:
+                  - img [ref=e114]
+                  - text: Ajouter
+          - generic [ref=e115]:
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - paragraph [ref=e123]: Portefeuille
+              - heading "0 Clients" [level=3] [ref=e124]
+              - generic [ref=e125]: Clients actifs
+            - generic [ref=e128]:
+              - img [ref=e129]
+              - paragraph [ref=e132]: Panier Moyen
+              - heading "0 €" [level=3] [ref=e133]
+              - paragraph [ref=e134]: Revenu moyen par client
+            - generic [ref=e136]:
+              - img [ref=e137]
+              - paragraph [ref=e139]: Meilleur Client
+              - heading "Aucun" [level=3] [ref=e140]
+              - paragraph [ref=e141]: Pas encore de CA
+          - generic [ref=e142]:
+            - generic [ref=e143]:
+              - generic [ref=e144]:
+                - img [ref=e145]
+                - textbox "Rechercher par nom, email, siret..." [ref=e148]
+              - generic [ref=e149]:
+                - generic [ref=e150]:
+                  - img [ref=e151]
+                  - generic [ref=e153]: Trier par
+                - combobox [ref=e154] [cursor=pointer]:
+                  - option "Alphabétique (A-Z)" [selected]
+                  - option "Chiffre d'Affaires"
+                  - option "Activité Récente"
+                  - option "Dernier ajouté"
+            - generic [ref=e155]:
+              - img [ref=e157]
+              - heading "Aucun client trouvé" [level=3] [ref=e162]
+              - paragraph [ref=e163]: Commencez par ajouter votre premier client pour éditer vos factures et suivre votre activité.
+              - button "Nouveau client" [ref=e164] [cursor=pointer]
+      - region "Notifications alt+T"
+  - generic [ref=e165]: "0"
+```

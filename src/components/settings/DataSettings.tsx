@@ -124,7 +124,7 @@ const DataSettings: React.FC = () => {
               Importer les données
             </h3>
             <p className="text-slate-500 text-sm mt-2 font-medium">
-              Restaurez vos données à partir d'un fichier de sauvegarde JSON.
+              Restaurez vos données à partir d&apos;un fichier de sauvegarde JSON.
             </p>
             <input type="file" className="hidden" accept=".json" onChange={handleImportData} />
           </label>
@@ -164,7 +164,7 @@ const DataSettings: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <div className="flex-1 space-y-4">
               <p className="text-slate-600 font-bold text-sm leading-relaxed">
-                Activez l'exportation automatique de vos données pour éviter toute perte
+                Activez l&apos;exportation automatique de vos données pour éviter toute perte
                 accidentelle. Le système déclenchera un téléchargement de votre base de données à la
                 fréquence choisie.
               </p>

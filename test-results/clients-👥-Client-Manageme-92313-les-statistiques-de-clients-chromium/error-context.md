@@ -1,0 +1,60 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications alt+T"
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - img "App Logo" [ref=e7]
+        - heading "Altenwerth and Sons" [level=1] [ref=e9]
+      - navigation [ref=e10]:
+        - generic [ref=e11]: Navigation principale
+        - link "Tableau de bord" [ref=e12] [cursor=pointer]:
+          - /url: /
+          - img [ref=e14]
+          - generic [ref=e19]: Tableau de bord
+        - link "Devis & Factures" [ref=e21] [cursor=pointer]:
+          - /url: /invoices
+          - img [ref=e23]
+          - generic [ref=e26]: Devis & Factures
+        - link "Clients" [ref=e28] [cursor=pointer]:
+          - /url: /clients
+          - img [ref=e30]
+          - generic [ref=e35]: Clients
+        - link "Fournisseurs" [ref=e37] [cursor=pointer]:
+          - /url: /suppliers
+          - img [ref=e39]
+          - generic [ref=e44]: Fournisseurs
+        - link "Catalogue" [ref=e46] [cursor=pointer]:
+          - /url: /products
+          - img [ref=e48]
+          - generic [ref=e52]: Catalogue
+        - link "Comptabilité" [ref=e54] [cursor=pointer]:
+          - /url: /accounting
+          - img [ref=e56]
+          - generic [ref=e58]: Comptabilité
+        - link "Assistant IA" [ref=e60] [cursor=pointer]:
+          - /url: /ai
+          - img [ref=e62]
+          - generic [ref=e65]: Assistant IA
+        - link "Paramètres" [ref=e67] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e69]
+          - generic [ref=e72]: Paramètres
+      - generic [ref=e74]:
+        - button "Mode Sombre" [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]:
+            - img [ref=e77]
+            - generic [ref=e79]: Mode Sombre
+        - generic [ref=e82] [cursor=pointer]:
+          - generic [ref=e83]: AL
+          - generic [ref=e84]:
+            - paragraph [ref=e85]: Altenwerth and Sons
+            - paragraph [ref=e86]: Propriétaire
+    - main [ref=e88]:
+      - generic [ref=e91]:
+        - img [ref=e92]
+        - paragraph [ref=e94]: Chargement...
+    - region "Notifications alt+T"
+```

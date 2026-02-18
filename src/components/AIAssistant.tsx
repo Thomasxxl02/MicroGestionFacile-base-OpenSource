@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
 import { generateAssistantResponse } from '../services/geminiService';
-import { Send, Bot, User, Sparkles, MessageSquare, AlertCircle } from 'lucide-react';
-
-import { useUserProfile } from '../hooks/useData';
+import { Send, Bot, User, Sparkles, MessageSquare } from 'lucide-react';
 
 const AIAssistant: React.FC = () => {
-  const { profile: userProfile } = useUserProfile();
+  // Note: userProfile n'est plus utilisé car la clé API est gérée côté serveur
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       role: 'model',
@@ -42,11 +40,7 @@ const AIAssistant: React.FC = () => {
       .map((m) => `${m.role}: ${m.content}`)
       .join('\n');
 
-    const responseText = await generateAssistantResponse(
-      userMsg.content,
-      context,
-      userProfile.geminiKey
-    );
+    const responseText = await generateAssistantResponse(userMsg.content, context);
 
     const modelMsg: ChatMessage = { role: 'model', content: responseText, timestamp: Date.now() };
     setMessages((prev) => [...prev, modelMsg]);
@@ -54,7 +48,7 @@ const AIAssistant: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)] max-w-5xl mx-auto flex flex-col bg-card dark:bg-card rounded-[3rem] shadow-premium border border-border overflow-hidden animate-fade-in">
+    <div data-testid="ai-container" className="h-[calc(100vh-8rem)] max-w-5xl mx-auto flex flex-col bg-card dark:bg-card rounded-[3rem] shadow-premium border border-border overflow-hidden animate-fade-in">
       <div className="bg-gradient-to-r from-primary to-indigo-600 p-8 flex items-center justify-between relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
         <div className="flex items-center gap-6 relative z-10">
@@ -77,19 +71,6 @@ const AIAssistant: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 dark:bg-muted/5 scroll-smooth scrollbar-hide">
-        {!userProfile.geminiKey && (
-          <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-[2rem] flex items-start gap-4 text-amber-600 dark:text-amber-400">
-            <AlertCircle className="shrink-0 mt-1" size={22} strokeWidth={2.5} />
-            <div className="space-y-1">
-              <p className="text-[11px] font-black uppercase tracking-widest">Clé API manquante</p>
-              <p className="text-sm font-medium opacity-80 leading-relaxed">
-                Veuillez configurer votre clé API Google Gemini dans les <strong>Paramètres</strong>{' '}
-                pour activer l'assistant intelligent.
-              </p>
-            </div>
-          </div>
-        )}
-
         {messages.map((msg, idx) => (
           <div
             key={idx}

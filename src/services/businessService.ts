@@ -20,17 +20,58 @@ export const CA_THRESHOLDS = {
 };
 
 // URSSAF Rates (2025/2026 approximation)
+/**
+ * Taux de cotisations URSSAF pour micro-entrepreneurs
+ * Références légales : Code de la Sécurité Sociale L.131-6-1 et suivants
+ * Mise à jour : 2026
+ *
+ * @see https://www.urssaf.fr/portail/home/taux-et-baremes.html
+ */
 export const URSSAF_RATES = {
-  SERVICES: 0.212, // Professional / Services
-  SALES: 0.123, // Purchase/Resale
-  BNC_LIBERAL: 0.231, // Liberal (CIPAV or General)
-  CFP_SERVICES: 0.002, // Contribution Formation Professionnelle
-  CFP_SALES: 0.001,
-  VERSEMEMENT_LIBERATOIRE_SALES: 0.01,
-  VERSEMEMENT_LIBERATOIRE_SERVICES: 0.017,
-  VERSEMEMENT_LIBERATOIRE_BNC: 0.022,
+  SERVICES: 0.212, // BIC Services / Professions libérales : 21,2%
+  SALES: 0.123, // Achat-revente / Fournitures : 12,3%
+  BNC_LIBERAL: 0.231, // Professions libérales (CIPAV) : 23,1%
+  CFP_SERVICES: 0.002, // Contribution Formation Professionnelle Services : 0,2%
+  CFP_SALES: 0.001, // Contribution Formation Professionnelle Ventes : 0,1%
+  VERSEMEMENT_LIBERATOIRE_SALES: 0.01, // Option VL Ventes (acompte IR) : 1,0%
+  VERSEMEMENT_LIBERATOIRE_SERVICES: 0.017, // Option VL Services : 1,7%
+  VERSEMEMENT_LIBERATOIRE_BNC: 0.022, // Option VL BNC : 2,2%
 };
 
+/**
+ * Calcule les cotisations URSSAF sur la base des chiffres d'affaires déclarés
+ *
+ * Logique :
+ * 1. Filtre les factures payées (seules applicables pour la cotisation)
+ * 2. Sépare les ventes (marchandises) des services (BIC/BNC)
+ * 3. Applique les taux de cotisations + ACCRE si applicable
+ * 4. Ajoute les options : Versement Libératoire (VL) et CFP
+ * 5. Arrondit à l'entier inférieur (règle comptable)
+ *
+ * @param invoices - Liste des factures (statut et items)
+ * @param userProfile - Profil utilisateur (ACCRE, VL, type d'activité)
+ * @returns Objet avec cotisations détaillées, ventilation et chiffres d'affaires
+ *
+ * @example
+ * ```typescript
+ * const urssaf = calculateUrssaf(invoices, profile);
+ * // {
+ * //   sales: 150,           // Cotisations Achat-revente
+ * //   services: 250,        // Cotisations BIC Services
+ * //   total: 400,           // Total cotisations
+ * //   breakdown: {
+ * //     cotisations: 385,        // Cotisations sociales pures
+ * //     versementLiberatoire: 15, // Option VL (acompte IR)
+ * //     cfp: 2                    // Contribution Formation Professionnelle
+ * //   },
+ * //   turnover: {
+ * //     sales: 1000,   // CA HT ventes
+ * //     services: 2000, // CA HT services
+ * //     total: 3000    // CA HT total
+ * //   }
+ * // }
+ * ```
+ */
 export const calculateUrssaf = (invoices: Invoice[], userProfile: UserProfile) => {
   let totalSalesHT = new Decimal(0);
   let totalServicesHT = new Decimal(0);
@@ -205,7 +246,98 @@ export const checkCaThreshold = (invoices: Invoice[]) => {
 };
 
 /**
+ * Calcule la régularisation URSSAF (différence entre déclaration et réalité)
+ *
+ * Utilisée pour les ajustements en fin d'année fiscal
+ *
+ * @param actualTurnover - CA réel de l'année complète
+ * @param declaredTurnover - CA déclaré aux trimestres/mois previous
+ * @param userProfile - Profil de cotisations
+ * @returns Montant à régulariser (positif = à verser, négatif = crédit)
+ */
+export const calculateUrssafAdjustment = (
+  actualTurnover: number,
+  declaredTurnover: number,
+  userProfile: UserProfile
+): { adjustment: number; original: number; final: number } => {
+  const actual = calculateUrssaf(
+    [
+      {
+        id: 'virtual',
+        number: 'VIRTUAL-001',
+        clientId: 'virtual',
+        date: new Date().toISOString().split('T')[0],
+        dueDate: new Date().toISOString().split('T')[0],
+        subtotal: actualTurnover,
+        taxAmount: 0,
+        total: actualTurnover,
+        status: 'paid',
+        items: [
+          {
+            id: '1',
+            description: 'CA virtuel',
+            quantity: 1,
+            unit: 'h',
+            unitPrice: actualTurnover,
+            category: 'SERVICE_BIC',
+            taxRate: 0,
+            discount: 0,
+            isSection: false,
+          },
+        ],
+        type: 'invoice',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as Invoice,
+    ],
+    userProfile
+  );
+
+  const declared = calculateUrssaf(
+    [
+      {
+        id: 'virtual',
+        number: 'VIRTUAL-001',
+        clientId: 'virtual',
+        date: new Date().toISOString().split('T')[0],
+        dueDate: new Date().toISOString().split('T')[0],
+        subtotal: declaredTurnover,
+        taxAmount: 0,
+        total: declaredTurnover,
+        status: 'paid',
+        items: [
+          {
+            id: '1',
+            description: 'CA déclaré',
+            quantity: 1,
+            unit: 'h',
+            unitPrice: declaredTurnover,
+            category: 'SERVICE_BIC',
+            taxRate: 0,
+            discount: 0,
+            isSection: false,
+          },
+        ],
+        type: 'invoice',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as Invoice,
+    ],
+    userProfile
+  );
+
+  return {
+    adjustment: actual.total - declared.total,
+    original: declared.total,
+    final: actual.total,
+  };
+};
+
+/**
  * Calcule la prochaine échéance fiscale URSSAF
+ *
+ * Détermine la date limite de déclaration/paiement des cotisations
+ * selon le régime de contribution (mensuel ou trimestriel)
  */
 export const getNextUrssafDeadline = (userProfile: UserProfile) => {
   const today = new Date();

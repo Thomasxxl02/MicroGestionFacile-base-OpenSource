@@ -4,11 +4,15 @@ import Sidebar from './components/Sidebar';
 import { UserProfile } from './types';
 import { Menu, Loader2 } from 'lucide-react';
 import { db } from './services/db';
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { backupService } from './services/backupService';
 import { useUIStore } from './store';
 import { useUserProfile } from './hooks/useData';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { logger } from './services/loggerService';
+import { encryptionService } from './services/encryptionService';
+import { improvedBackupService } from './services/improvedBackupService';
 
 // Lazy loading managers for better performance
 const Dashboard = lazy(() => import('./components/Dashboard'));
@@ -37,8 +41,36 @@ const App: React.FC = () => {
 
   // --- MIGRATION & INITIALIZATION ---
   useEffect(() => {
-    const migrate = async () => {
+    const initialize = async () => {
+      // Initialize logging service
+      logger.debug('Application initialization started', { version: '0.0.0' });
+
+      // Initialize encryption service with SIRET as seed (unique identifier)
+      try {
+        await encryptionService.initialize(userProfile.siret || 'default-seed');
+        const encryptionOk = await encryptionService.test();
+        if (encryptionOk) {
+          logger.info('Encryption service initialized successfully');
+        } else {
+          logger.warn('Encryption service test failed');
+        }
+      } catch (error) {
+        logger.error(
+          'Failed to initialize encryption',
+          error instanceof Error ? error : new Error(String(error))
+        );
+      }
+
       // Check if migration is needed
+      const hasProfile = await db.userProfile.get('current');
+      if (!hasProfile) {
+        // CRITICAL: Toujours migrer le profil depuis localStorage, même si d'autres données existent
+        const localProfile = localStorage.getItem('autogest_profile');
+        if (localProfile) {
+          await db.userProfile.put({ ...JSON.parse(localProfile), id: 'current' });
+        }
+      }
+
       const hasInvoices = await db.invoices.count();
       if (hasInvoices === 0) {
         const localInvoices = localStorage.getItem('autogest_invoices');
@@ -56,20 +88,33 @@ const App: React.FC = () => {
         const localExpenses = localStorage.getItem('autogest_expenses');
         if (localExpenses) await db.expenses.bulkAdd(JSON.parse(localExpenses));
 
-        const localProfile = localStorage.getItem('autogest_profile');
-        if (localProfile) {
-          await db.userProfile.put({ ...JSON.parse(localProfile), id: 'current' });
-        }
 
-        console.error('Migration from localStorage to IndexedDB complete.');
-        toast.success('Données migrées avec succès vers IndexedDB');
+        logger.info('Migration from localStorage to IndexedDB complete');
       }
 
       // Initialize automatic backup service
       backupService.initialize();
+      logger.info('Backup service initialized');
+
+      // EXPOSE SERVICES TO WINDOW FOR TESTING
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).db = db;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).logger = logger;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).encryptionService = encryptionService;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).backupService = backupService;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).improvedBackupService = improvedBackupService;
+      // eslint-disable-next-line no-console
+      console.log(
+        '%c✅ Services available globally for tests',
+        'color: green; font-weight: bold;'
+      );
     };
-    void migrate();
-  }, []);
+    void initialize();
+  }, [userProfile.siret]);
 
   if (isProfileLoading) {
     return (
@@ -95,63 +140,71 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-indigo-100 dark:selection:bg-indigo-900 selection:text-indigo-900 transition-colors duration-300 relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px] animate-pulse-soft"></div>
-        <div
-          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px] animate-pulse-soft"
-          style={{ animationDelay: '2s' }}
-        ></div>
-      </div>
+    <ErrorBoundary>
+      <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-indigo-100 dark:selection:bg-indigo-900 selection:text-indigo-900 transition-colors duration-300 relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px] animate-pulse-soft"></div>
+          <div
+            className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px] animate-pulse-soft"
+            style={{ animationDelay: '2s' }}
+          ></div>
+        </div>
 
-      <Sidebar userProfile={userProfile} />
+        <Sidebar userProfile={userProfile} />
 
-      <main className="flex-1 lg:ml-72 p-6 lg:p-12 xl:p-20 overflow-x-hidden relative">
-        {/* Mobile Header */}
-        <div className="lg:hidden flex justify-between items-center mb-12 sticky top-0 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl z-30 py-6 border-b border-slate-200/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-premium">
-              <span className="font-black text-xs uppercase tracking-tighter">MG</span>
+        <main className="flex-1 lg:ml-72 p-6 lg:p-12 xl:p-20 overflow-x-hidden relative">
+          {/* Mobile Header */}
+          <div className="lg:hidden flex justify-between items-center mb-12 sticky top-0 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl z-30 py-6 border-b border-slate-200/50">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-premium">
+                <span className="font-black text-xs uppercase tracking-tighter">MG</span>
+              </div>
+              <h1 className="text-xl font-black text-slate-900 leading-none">MICRO GESTION</h1>
             </div>
-            <h1 className="text-xl font-black text-slate-900 leading-none">MICRO GESTION</h1>
+            <button
+              data-testid="menu-toggle"
+              onClick={() => setMobileMenuOpen(true)}
+              className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-soft border-2 border-slate-100 text-slate-900 active:scale-90 transition-all"
+            >
+              <Menu size={24} strokeWidth={3} />
+            </button>
           </div>
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-soft border-2 border-slate-100 text-slate-900 active:scale-90 transition-all"
-          >
-            <Menu size={24} strokeWidth={3} />
-          </button>
-        </div>
 
-        <div className="max-w-7xl mx-auto">
-          <Suspense fallback={<LoadingFallback />}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={location.pathname.split('/')[1]}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Routes location={location} key={location.pathname}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/invoices/*" element={<InvoiceManager />} />
-                  <Route path="/clients/*" element={<ClientManager />} />
-                  <Route path="/suppliers" element={<SupplierManager />} />
-                  <Route path="/products" element={<ProductManager />} />
-                  <Route path="/accounting" element={<AccountingManager />} />
-                  <Route path="/ai" element={<AIAssistant />} />
-                  <Route path="/settings" element={<SettingsManager />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </motion.div>
-            </AnimatePresence>
-          </Suspense>
-        </div>
-      </main>
-      <Toaster position="top-right" richColors closeButton theme={isDarkMode ? 'dark' : 'light'} />
-    </div>
+          <div className="max-w-7xl mx-auto">
+            <Suspense fallback={<LoadingFallback />}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={location.pathname.split('/')[1]}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Routes location={location} key={location.pathname}>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/invoices/*" element={<InvoiceManager />} />
+                    <Route path="/clients/*" element={<ClientManager />} />
+                    <Route path="/suppliers" element={<SupplierManager />} />
+                    <Route path="/products" element={<ProductManager />} />
+                    <Route path="/accounting" element={<AccountingManager />} />
+                    <Route path="/ai" element={<AIAssistant />} />
+                    <Route path="/settings" element={<SettingsManager />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </motion.div>
+              </AnimatePresence>
+            </Suspense>
+          </div>
+        </main>
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+          theme={isDarkMode ? 'dark' : 'light'}
+        />
+      </div>
+    </ErrorBoundary>
   );
 };
 

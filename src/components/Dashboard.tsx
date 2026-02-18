@@ -31,18 +31,43 @@ import Card from './ui/Card';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import EmptyState from './ui/EmptyState';
-import { useInvoices, useExpenses, useUserProfile } from '../hooks/useData';
+import {
+  useValidatedInvoices,
+  useValidatedExpenses,
+  useValidatedUserProfile,
+} from '../hooks/useValidatedData';
 import { useUIStore } from '../store';
 import ThresholdMonitor from './ThresholdMonitor';
 import { ShieldCheck, Server, Cloud, CheckCircle } from 'lucide-react';
+import { useAsync } from '../hooks/useAsync';
+import { logger } from '../services/loggerService';
+import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
-  const invoices = useInvoices();
-  const expenses = useExpenses();
-  const { profile: userProfile } = useUserProfile();
+  // 🛡️ Utiliser les hooks validés pour garantir l'intégrité des données
+  const { data: invoices, errorSummary: invoicesError } = useValidatedInvoices();
+  const { data: expenses, errorSummary: expensesError } = useValidatedExpenses();
+  const { profile: userProfile, errorSummary: profileError } = useValidatedUserProfile();
+
   const navigate = useNavigate();
   const { isDarkMode } = useUIStore();
   const [vatPrediction, setVatPrediction] = useState<VatPrediction | null>(null);
+
+  // 🚨 Afficher les erreurs de validation
+  useEffect(() => {
+    if (invoicesError) {
+      logger.warn('Validation invoices', { error: invoicesError });
+      toast.warning(invoicesError);
+    }
+    if (expensesError) {
+      logger.warn('Validation expenses', { error: expensesError });
+      toast.warning(expensesError);
+    }
+    if (profileError) {
+      logger.error('Validation profile', new Error(profileError));
+      toast.error(profileError);
+    }
+  }, [invoicesError, expensesError, profileError]);
 
   const businessStats = useMemo(() => {
     const urssaf = calculateUrssaf(invoices, userProfile);
@@ -102,24 +127,39 @@ const Dashboard: React.FC = () => {
       .toNumber();
   }, [expenses]);
 
+  // useAsync for VAT prediction with retry logic
+  const { execute } = useAsync<VatPrediction>({
+    retryCount: 2,
+    retryDelay: 2000,
+    showToast: false, // Handle silently, this is optional analytics
+  });
+
   useEffect(() => {
-    const fetchPrediction = async () => {
-      const currentRevenue = totalRevenue;
-      if (currentRevenue > 0 && !vatPrediction) {
-        try {
-          const prediction = await analyzePredictiveVat(
+    const currentRevenue = totalRevenue;
+    if (currentRevenue > 0 && !vatPrediction) {
+      execute(
+        () =>
+          analyzePredictiveVat(
             currentRevenue,
             monthlyHistoryForAI,
             userProfile.activityType || 'services'
+          ),
+        'VAT prediction analysis'
+      )
+        .then((result) => {
+          if (result) {
+            setVatPrediction(result);
+            logger.info('VAT prediction loaded', { isLikelyToExceed: result.isLikelyToExceed });
+          }
+        })
+        .catch((error) => {
+          logger.error(
+            'Failed to get VAT prediction',
+            error instanceof Error ? error : new Error(String(error))
           );
-          setVatPrediction(prediction);
-        } catch (error) {
-          console.error('Failed to get VAT prediction', error);
-        }
-      }
-    };
-    void fetchPrediction();
-  }, [totalRevenue, monthlyHistoryForAI, userProfile.activityType, vatPrediction]);
+        });
+    }
+  }, [totalRevenue, monthlyHistoryForAI, userProfile.activityType, vatPrediction, execute]);
 
   const monthlyData = useMemo(() => {
     const data: Record<string, { income: Decimal; credit: Decimal }> = {};
@@ -168,7 +208,7 @@ const Dashboard: React.FC = () => {
   const { vatStatus, caStatus, deadline } = businessStats;
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-7xl mx-auto pb-16">
+    <div data-testid="dashboard" className="space-y-12 animate-fade-in max-w-7xl mx-auto pb-16">
       <Header
         title={`Bonjour, ${userProfile.companyName?.split(' ')[0] || ''}`}
         description="Voici l'aperçu de votre activité et vos indicateurs clés."
@@ -230,7 +270,7 @@ const Dashboard: React.FC = () => {
               <span className="font-black text-amber-600 dark:text-amber-400">
                 {vatPrediction.monthsBeforeExceeding} mois
               </span>
-              . Projection de fin d'année :{' '}
+              . Projection de fin d&apos;année :{' '}
               <span className="font-black">
                 {vatPrediction.projectedCA.toLocaleString('fr-FR')} €
               </span>
@@ -265,7 +305,7 @@ const Dashboard: React.FC = () => {
                 <Euro size={28} strokeWidth={2.5} />
               </div>
               <Badge variant="emerald" dot className="shadow-none border-transparent bg-muted/50">
-                Net d'avoirs
+                Net d&apos;avoirs
               </Badge>
             </div>
 

@@ -7,7 +7,12 @@ import './index.css';
 import { registerSW } from 'virtual:pwa-register';
 
 // Register service worker for offline mode
-registerSW({ immediate: true });
+try {
+  registerSW({ immediate: true });
+} catch (error) {
+  console.warn('[INDEX] PWA registration failed:', error);
+  // Continue without PWA
+}
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

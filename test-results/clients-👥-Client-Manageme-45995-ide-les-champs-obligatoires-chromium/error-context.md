@@ -1,0 +1,223 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications alt+T"
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - img "App Logo" [ref=e7]
+          - heading "Altenwerth and Sons" [level=1] [ref=e9]
+        - navigation [ref=e10]:
+          - generic [ref=e11]: Navigation principale
+          - link "Tableau de bord" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e14]
+            - generic [ref=e19]: Tableau de bord
+          - link "Devis & Factures" [ref=e21] [cursor=pointer]:
+            - /url: /invoices
+            - img [ref=e23]
+            - generic [ref=e26]: Devis & Factures
+          - link "Clients" [ref=e28] [cursor=pointer]:
+            - /url: /clients
+            - img [ref=e30]
+            - generic [ref=e35]: Clients
+          - link "Fournisseurs" [ref=e37] [cursor=pointer]:
+            - /url: /suppliers
+            - img [ref=e39]
+            - generic [ref=e44]: Fournisseurs
+          - link "Catalogue" [ref=e46] [cursor=pointer]:
+            - /url: /products
+            - img [ref=e48]
+            - generic [ref=e52]: Catalogue
+          - link "Comptabilité" [ref=e54] [cursor=pointer]:
+            - /url: /accounting
+            - img [ref=e56]
+            - generic [ref=e58]: Comptabilité
+          - link "Assistant IA" [ref=e60] [cursor=pointer]:
+            - /url: /ai
+            - img [ref=e62]
+            - generic [ref=e65]: Assistant IA
+          - link "Paramètres" [ref=e67] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e69]
+            - generic [ref=e72]: Paramètres
+        - generic [ref=e74]:
+          - button "Mode Sombre" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]:
+              - img [ref=e77]
+              - generic [ref=e79]: Mode Sombre
+          - generic [ref=e82] [cursor=pointer]:
+            - generic [ref=e83]: AL
+            - generic [ref=e84]:
+              - paragraph [ref=e85]: Altenwerth and Sons
+              - paragraph [ref=e86]: Propriétaire
+      - main [ref=e88]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - img [ref=e95]
+              - generic [ref=e100]:
+                - heading "Clients" [level=2] [ref=e101]
+                - paragraph [ref=e102]: Gérez votre base client et suivez le chiffre d'affaires généré par chacun.
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - button "Actifs" [ref=e106] [cursor=pointer]
+                - button "Archivés" [ref=e107] [cursor=pointer]
+              - generic [ref=e108]:
+                - button "Export" [ref=e109] [cursor=pointer]:
+                  - img [ref=e110]
+                  - text: Export
+                - button "Ajouter" [ref=e113] [cursor=pointer]:
+                  - img [ref=e114]
+                  - text: Ajouter
+          - generic [ref=e115]:
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - paragraph [ref=e123]: Portefeuille
+              - heading "0 Clients" [level=3] [ref=e124]
+              - generic [ref=e125]: Clients actifs
+            - generic [ref=e128]:
+              - img [ref=e129]
+              - paragraph [ref=e132]: Panier Moyen
+              - heading "0 €" [level=3] [ref=e133]
+              - paragraph [ref=e134]: Revenu moyen par client
+            - generic [ref=e136]:
+              - img [ref=e137]
+              - paragraph [ref=e139]: Meilleur Client
+              - heading "Aucun" [level=3] [ref=e140]
+              - paragraph [ref=e141]: Pas encore de CA
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - heading "Nouveau client" [level=3] [ref=e147]
+                - paragraph [ref=e148]: Renseignez les informations de votre client pour vos factures.
+              - button "Fermer" [ref=e149] [cursor=pointer]:
+                - img [ref=e150]
+            - generic [ref=e154]:
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - button "Entreprise" [ref=e157] [cursor=pointer]:
+                    - img [ref=e158]
+                    - text: Entreprise
+                  - button "Particulier" [ref=e162] [cursor=pointer]:
+                    - img [ref=e163]
+                    - text: Particulier
+                - generic [ref=e166]:
+                  - generic [ref=e167]: "Modèles rapides :"
+                  - generic [ref=e168]:
+                    - button "🇫🇷 FR B2B" [ref=e169] [cursor=pointer]
+                    - button "🇪🇺 UE B2B" [ref=e170] [cursor=pointer]
+                    - button "🌎 INT'L" [ref=e171] [cursor=pointer]
+              - generic [ref=e172]:
+                - generic [ref=e173]:
+                  - generic [ref=e174]:
+                    - img [ref=e175]
+                    - heading "Identité du client" [level=4] [ref=e178]
+                  - generic [ref=e179]:
+                    - generic [ref=e180]:
+                      - generic [ref=e181]:
+                        - img [ref=e182]
+                        - text: Nom de la société
+                      - 'textbox "Ex: MaSuperBoite SAS" [ref=e186]'
+                    - generic [ref=e187]:
+                      - generic [ref=e188]:
+                        - img [ref=e189]
+                        - text: Email
+                      - textbox "contact@exemple.com" [ref=e192]
+                    - generic [ref=e193]:
+                      - generic [ref=e194]:
+                        - img [ref=e195]
+                        - text: Téléphone
+                      - textbox "06 00 00 00 00" [ref=e197]
+                - generic [ref=e198]:
+                  - generic [ref=e199]:
+                    - img [ref=e200]
+                    - heading "Contexte National" [level=4] [ref=e203]
+                  - generic [ref=e204]:
+                    - generic [ref=e205]:
+                      - generic [ref=e206]:
+                        - img [ref=e207]
+                        - text: Pays (ISO)
+                      - textbox "FR, DE, US..." [ref=e210]
+                    - generic [ref=e211]:
+                      - generic [ref=e212]:
+                        - generic [ref=e213]:
+                          - img [ref=e214]
+                          - text: Devise
+                        - textbox "EUR, USD..." [ref=e219]
+                      - generic [ref=e220]:
+                        - generic [ref=e221]:
+                          - img [ref=e222]
+                          - text: Langue
+                        - textbox "fr, en, de..." [ref=e226]
+                    - generic [ref=e227]:
+                      - generic [ref=e228]:
+                        - img [ref=e229]
+                        - text: Adresse postale
+                      - textbox "N°, Rue, Code Postal, Ville" [ref=e232]
+                - generic [ref=e233]:
+                  - generic [ref=e234]:
+                    - img [ref=e235]
+                    - heading "Données Facturation" [level=4] [ref=e239]
+                  - generic [ref=e240]:
+                    - generic [ref=e241]:
+                      - generic [ref=e242]:
+                        - img [ref=e243]
+                        - text: Régime Fiscal
+                      - combobox [ref=e245] [cursor=pointer]:
+                        - option "National (Avec TVA)" [selected]
+                        - option "UE B2B (Auto-liquidation)"
+                        - option "Export / Hors UE (HT)"
+                    - generic [ref=e246]:
+                      - generic [ref=e247]:
+                        - img [ref=e248]
+                        - text: Délai Paiement (Jours)
+                      - spinbutton [ref=e250]
+                    - generic [ref=e251]:
+                      - generic [ref=e252]:
+                        - generic [ref=e253]:
+                          - img [ref=e254]
+                          - text: SIRET / Identifiant local
+                        - 'textbox "Ex: 802 123 456 00012" [ref=e257]'
+                      - generic [ref=e258]:
+                        - generic [ref=e259]:
+                          - img [ref=e260]
+                          - text: TVA Intracom. / VAT No.
+                        - 'textbox "Ex: FR 12 802123456" [ref=e262]'
+              - generic [ref=e263]:
+                - generic [ref=e264]:
+                  - img [ref=e265]
+                  - text: Notes privées & Consignes
+                - 'textbox "Ex: Facturation HT (Export US), Contact : Jane Smith..." [ref=e268]'
+            - generic [ref=e270]:
+              - button "Annuler" [ref=e271] [cursor=pointer]
+              - button "Sauver & Facturer" [ref=e272] [cursor=pointer]:
+                - img [ref=e273]
+                - text: Sauver & Facturer
+              - button "Enregistrer" [ref=e275] [cursor=pointer]:
+                - img [ref=e276]
+                - text: Enregistrer
+          - generic [ref=e279]:
+            - generic [ref=e280]:
+              - generic [ref=e281]:
+                - img [ref=e282]
+                - textbox "Rechercher par nom, email, siret..." [ref=e285]
+              - generic [ref=e286]:
+                - generic [ref=e287]:
+                  - img [ref=e288]
+                  - generic [ref=e290]: Trier par
+                - combobox [ref=e291] [cursor=pointer]:
+                  - option "Alphabétique (A-Z)" [selected]
+                  - option "Chiffre d'Affaires"
+                  - option "Activité Récente"
+                  - option "Dernier ajouté"
+            - generic [ref=e292]:
+              - img [ref=e294]
+              - heading "Aucun client trouvé" [level=3] [ref=e299]
+              - paragraph [ref=e300]: Commencez par ajouter votre premier client pour éditer vos factures et suivre votre activité.
+              - button "Nouveau client" [active] [ref=e301] [cursor=pointer]
+      - region "Notifications alt+T"
+  - generic [ref=e302]: "0"
+```

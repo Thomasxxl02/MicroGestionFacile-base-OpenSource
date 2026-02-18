@@ -2,8 +2,10 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 import { db } from '../../services/db';
 import { Client, Invoice, InvoiceStatus, ClientSchema } from '../../types';
+import { validateClient } from '../../services/validationService';
 import {
   Plus,
   Search,
@@ -223,22 +225,43 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
 
   const onSave = useCallback(
     async (data: Partial<Client>, redirectToInvoice = false) => {
-      if (editingId) {
-        await db.clients.update(editingId, data);
-        setIsPanelOpen(false);
-      } else {
-        const newId = Date.now().toString();
-        const client: Client = {
-          ...(data as Client),
-          id: newId,
-          archived: false,
-        };
-        await db.clients.add(client);
-        setIsPanelOpen(false);
-
-        if (redirectToInvoice) {
-          navigate(`/invoices/new?clientId=${newId}`);
+      try {
+        // 🛡️ Valider le client avant sauvegarde
+        if (!data.id) {
+          data.id = Date.now().toString();
         }
+        const validationResult = await validateClient(data, data.id);
+        if (!validationResult.valid) {
+          const errors = validationResult.errors
+            .slice(0, 3)
+            .map((e) => e.message)
+            .join(', ');
+          toast.error(`❌ Erreur validation client: ${errors}`);
+          return;
+        }
+
+        if (editingId) {
+          await db.clients.update(editingId, data);
+          toast.success('✅ Client mis à jour avec succès');
+          setIsPanelOpen(false);
+        } else {
+          const newId = data.id;
+          const client: Client = {
+            ...(data as Client),
+            id: newId,
+            archived: false,
+          };
+          await db.clients.add(client);
+          toast.success('✅ Client créé avec succès');
+          setIsPanelOpen(false);
+
+          if (redirectToInvoice) {
+            navigate(`/invoices/new?clientId=${newId}`);
+          }
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur inconnue';
+        toast.error(`💥 Erreur sauvegarde client: ${message}`);
       }
     },
     [editingId, navigate]
@@ -254,9 +277,16 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
 
   const confirmDelete = async () => {
     if (deleteId) {
-      await db.clients.delete(deleteId);
-      setDeleteId(null);
-      setIsConfirmOpen(false);
+      try {
+        await db.clients.delete(deleteId);
+        const clientName = clients.find((c) => c.id === deleteId)?.name || 'Client';
+        toast.success(`✅ ${clientName} supprimé avec succès`);
+        setDeleteId(null);
+        setIsConfirmOpen(false);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur inconnue';
+        toast.error(`❌ Erreur suppression: ${message}`);
+      }
     }
   };
 
@@ -307,7 +337,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
   };
 
   return (
-    <div className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10">
+    <div data-testid="clients-container" className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10">
       <Header
         title="Clients"
         description="Gérez votre base client et suivez le chiffre d'affaires généré par chacun."
@@ -342,7 +372,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
       />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="client-stats">
         <Card className="p-8 border-none shadow-premium bg-gradient-to-br from-primary to-primary/80 text-primary-foreground overflow-hidden relative group">
           <Users
             className="absolute -right-6 -bottom-6 w-32 h-32 opacity-20 group-hover:scale-110 transition-transform duration-700"
@@ -486,7 +516,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
                   onClick={() => applyTemplate('intl_export')}
                   className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black hover:border-blue-500 hover:text-blue-600 transition-all shadow-sm"
                 >
-                  🌎 INT'L
+                  🌎 INT&apos;L
                 </button>
               </div>
             </div>
@@ -757,7 +787,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
               className="bg-transparent text-[11px] font-black uppercase tracking-widest text-foreground outline-none cursor-pointer appearance-none"
             >
               <option value="name">Alphabétique (A-Z)</option>
-              <option value="revenue">Chiffre d'Affaires</option>
+              <option value="revenue">Chiffre d&apos;Affaires</option>
               <option value="activity">Activité Récente</option>
               <option value="date">Dernier ajouté</option>
             </select>
@@ -774,6 +804,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
                 <Card
                   key={client.id}
                   hoverable
+                  data-testid="client-card"
                   className={`p-10 flex flex-col group relative overflow-hidden h-full ${client.archived ? 'grayscale opacity-75' : ''} border-none shadow-premium bg-gradient-to-br from-white to-slate-50 dark:from-slate-900/40 dark:to-slate-900/10`}
                 >
                   <div className="flex justify-between items-start mb-8 relative z-10">
@@ -893,6 +924,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
           </div>
         ) : (
           <EmptyState
+            data-testid="clients-empty-state"
             icon={Users}
             title={showArchived ? 'Archive vide' : 'Aucun client trouvé'}
             description={

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Supplier } from '../types';
 import { Decimal } from 'decimal.js';
+import { toast } from 'sonner';
 import {
   Plus,
   Search,
@@ -25,10 +26,10 @@ import Button from './ui/Button';
 import Modal from './ui/Modal';
 import ConfirmDialog from './ui/ConfirmDialog';
 import EmptyState from './ui/EmptyState';
-import { toast } from 'sonner';
 import { securityService } from '../services/securityService';
 import { db } from '../services/db';
 import { useSuppliers, useExpenses } from '../hooks/useData';
+import { validateSupplier } from '../services/validationService';
 
 type SortOption = 'name' | 'spending' | 'category';
 
@@ -172,43 +173,62 @@ const SupplierManager: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name) return;
-
-    // Détection changement IBAN pour webhook
-    const existingSupplier = suppliers.find((s) => s.id === editingId);
-    const hasNewIban =
-      formData.iban &&
-      (!existingSupplier ||
-        formData.iban !== (await securityService.decrypt(existingSupplier.iban!)));
-
-    // Chiffrement des données sensibles avant stockage
-    const encryptedIban = formData.iban ? await securityService.encrypt(formData.iban) : '';
-    const encryptedBic = formData.bic ? await securityService.encrypt(formData.bic) : '';
-
-    const finalData = {
-      ...formData,
-      iban: encryptedIban,
-      bic: encryptedBic,
-    } as Supplier;
-
-    if (editingId) {
-      await db.suppliers.update(editingId, finalData);
-      toast.success('Fournisseur mis à jour');
-    } else {
-      const supplier: Supplier = {
-        ...finalData,
-        id: crypto.randomUUID(),
-        status: 'PENDING', // Initialisé à PENDING pour validation workflow
-      };
-      await db.suppliers.add(supplier);
-      toast.success('Fournisseur ajouté (en attente de validation)');
+    if (!formData.name) {
+      toast.error('❌ Le nom du fournisseur est requis');
+      return;
     }
 
-    if (hasNewIban) {
-      mockWebhookNotify(formData.name, true);
-    }
+    try {
+      // Déchiffrement des données sensibles si existant
+      const existingSupplier = suppliers.find((s) => s.id === editingId);
+      const hasNewIban =
+        formData.iban &&
+        (!existingSupplier ||
+          formData.iban !== (await securityService.decrypt(existingSupplier.iban!)));
 
-    setIsPanelOpen(false);
+      // Chiffrement des données sensibles avant stockage
+      const encryptedIban = formData.iban ? await securityService.encrypt(formData.iban) : '';
+      const encryptedBic = formData.bic ? await securityService.encrypt(formData.bic) : '';
+
+      const finalData = {
+        ...formData,
+        iban: encryptedIban,
+        bic: encryptedBic,
+      } as Supplier;
+
+      // 🛡️ Valider le fournisseur
+      const validationResult = await validateSupplier(finalData, editingId || 'new');
+      if (!validationResult.valid) {
+        const errors = validationResult.errors
+          .slice(0, 3)
+          .map((e) => e.message)
+          .join(', ');
+        toast.error(`❌ Erreur validation: ${errors}`);
+        return;
+      }
+
+      if (editingId) {
+        await db.suppliers.update(editingId, finalData);
+        toast.success('✅ Fournisseur mis à jour avec succès');
+      } else {
+        const supplier: Supplier = {
+          ...finalData,
+          id: crypto.randomUUID(),
+          status: 'PENDING',
+        };
+        await db.suppliers.add(supplier);
+        toast.success('✅ Fournisseur ajouté (en attente de validation)');
+      }
+
+      if (hasNewIban) {
+        mockWebhookNotify(formData.name, true);
+      }
+
+      setIsPanelOpen(false);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erreur inconnue';
+      toast.error(`💥 Erreur sauvegarde: ${message}`);
+    }
   };
 
   const toggleRevealSensitive = async (
@@ -258,9 +278,16 @@ const SupplierManager: React.FC = () => {
 
   const confirmDelete = async () => {
     if (deleteId) {
-      await db.suppliers.delete(deleteId);
-      setDeleteId(null);
-      setIsConfirmOpen(false);
+      try {
+        await db.suppliers.delete(deleteId);
+        const supplierName = suppliers.find((s) => s.id === deleteId)?.name || 'Fournisseur';
+        toast.success(`✅ ${supplierName} supprimé avec succès`);
+        setDeleteId(null);
+        setIsConfirmOpen(false);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur inconnue';
+        toast.error(`❌ Erreur suppression: ${message}`);
+      }
     }
   };
 
@@ -309,7 +336,7 @@ const SupplierManager: React.FC = () => {
   };
 
   return (
-    <div className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10">
+    <div data-testid="suppliers-container" className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-10">
       <Header
         title="Fournisseurs"
         description="Gérez votre réseau de partenaires et surveillez vos flux de dépenses"
@@ -340,7 +367,7 @@ const SupplierManager: React.FC = () => {
       />
 
       {/* --- RECAP CARDS --- */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="supplier-stats">
         <div className="bg-card p-10 rounded-[3rem] border border-border shadow-premium group hover:border-primary/20 transition-all duration-500 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-700"></div>
           <div className="flex flex-col gap-6 relative z-10">
@@ -743,6 +770,7 @@ const SupplierManager: React.FC = () => {
               return (
                 <div
                   key={supplier.id}
+                  data-testid="supplier-card"
                   onClick={() => openEdit(supplier)}
                   className="bg-card rounded-[3rem] border border-border shadow-premium overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-primary/30 group cursor-pointer flex flex-col h-full transform hover:-translate-y-2"
                 >
@@ -805,7 +833,7 @@ const SupplierManager: React.FC = () => {
                         <p className="text-3xl font-black tracking-tighter">{stats.count}</p>
                         <div className="flex items-center gap-2 mt-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
                           <ExternalLink size={12} strokeWidth={3} />
-                          Voir l'historique
+                          Voir l&apos;historique
                         </div>
                       </div>
                     </div>
@@ -885,6 +913,7 @@ const SupplierManager: React.FC = () => {
 
         {processedSuppliers.length === 0 && (
           <EmptyState
+            data-testid="suppliers-empty-state"
             icon={Truck}
             title="Aucun fournisseur"
             description="Référencez les fournisseurs chez qui vous effectuez des dépenses pour mieux catégoriser vos frais et optimiser votre comptabilité."

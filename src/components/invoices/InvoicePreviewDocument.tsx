@@ -386,7 +386,7 @@ const InvoicePreviewDocument = ({
                 Bon pour accord (Signature et Cachet)
               </p>
               <div className="border-t border-slate-100 pt-2 text-[9px] text-slate-300 italic">
-                Mention "Lu et approuvÃ©"
+                Mention &quot;Lu et approuvé&quot;
               </div>
               {userProfile.signature && (
                 <div className="mt-2 text-right">

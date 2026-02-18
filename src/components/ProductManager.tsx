@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
+import { toast } from 'sonner';
 import {
   Plus,
   Search,
@@ -26,6 +27,7 @@ import ConfirmDialog from './ui/ConfirmDialog';
 import EmptyState from './ui/EmptyState';
 import { useProducts } from '../hooks/useData';
 import { db } from '../services/db';
+import { validateProduct } from '../services/validationService';
 
 type SortOption = 'name' | 'price' | 'type';
 
@@ -108,13 +110,14 @@ const ProductManager: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name) return;
+    if (!formData.name) {
+      toast.error('❌ Le nom du produit est requis');
+      return;
+    }
 
-    if (editingId) {
-      await db.products.update(editingId, formData);
-    } else {
+    try {
       const product: Product = {
-        id: Date.now().toString(),
+        id: editingId || Date.now().toString(),
         name: formData.name,
         sku: formData.sku,
         brand: formData.brand,
@@ -131,16 +134,44 @@ const ProductManager: React.FC = () => {
         taxCategory: formData.taxCategory || 'SERVICE_BIC',
         stock: formData.type === 'product' ? Number(formData.stock) || 0 : undefined,
       };
-      await db.products.add(product);
+
+      // 🛡️ Valider le produit avant sauvegarde
+      const validationResult = await validateProduct(product, product.id);
+      if (!validationResult.valid) {
+        const errors = validationResult.errors
+          .slice(0, 3)
+          .map((e) => e.message)
+          .join(', ');
+        toast.error(`❌ Erreur validation: ${errors}`);
+        return;
+      }
+
+      if (editingId) {
+        await db.products.update(editingId, product);
+        toast.success('✅ Produit mis à jour avec succès');
+      } else {
+        await db.products.add(product);
+        toast.success('✅ Produit créé avec succès');
+      }
+      setIsPanelOpen(false);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erreur inconnue';
+      toast.error(`💥 Erreur lors de la sauvegarde: ${message}`);
     }
-    setIsPanelOpen(false);
   };
 
   const confirmDelete = async () => {
     if (deleteId) {
-      await db.products.delete(deleteId);
-      setDeleteId(null);
-      setIsConfirmOpen(false);
+      try {
+        await db.products.delete(deleteId);
+        const productName = products.find((p) => p.id === deleteId)?.name || 'Produit';
+        toast.success(`✅ ${productName} supprimé avec succès`);
+        setDeleteId(null);
+        setIsConfirmOpen(false);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur inconnue';
+        toast.error(`❌ Erreur suppression: ${message}`);
+      }
     }
   };
 
@@ -208,7 +239,7 @@ const ProductManager: React.FC = () => {
   }, [products, searchTerm, sortBy]);
 
   return (
-    <div className="space-y-12 animate-fade-in max-w-7xl mx-auto pb-20">
+    <div data-testid="products-container" className="space-y-12 animate-fade-in max-w-7xl mx-auto pb-20">
       <Header
         title="Catalogue"
         description="Gérez vos prestations et produits avec suivi automatique du stock."
@@ -230,7 +261,7 @@ const ProductManager: React.FC = () => {
       />
 
       {/* Statistiques du Catalogue */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6" data-testid="product-stats">
         <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
           <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500">
             <LayoutGrid size={24} />
@@ -584,7 +615,7 @@ const ProductManager: React.FC = () => {
                     }
                   />
                   <p className="text-[10px] text-blue-600/70 font-medium">
-                    Ce stock sera automatiquement décompté lors de l'envoi d'une facture.
+                    Ce stock sera automatiquement décompté lors de l&apos;envoi d&apos;une facture.
                   </p>
                 </div>
               )}
@@ -710,7 +741,7 @@ const ProductManager: React.FC = () => {
                     Accroche
                   </p>
                   <p className="text-sm font-bold text-slate-800 leading-relaxed italic">
-                    "{viewingProduct.shortDescription || 'Aucune accroche définie.'}"
+                    &quot;{viewingProduct.shortDescription || 'Aucune accroche définie.'}&quot;
                   </p>
                 </div>
 
@@ -743,7 +774,7 @@ const ProductManager: React.FC = () => {
                     {viewingProduct.ecoParticipation?.toFixed(2) || '0.00'} € TTC
                   </p>
                   <p className="text-[9px] text-slate-400 italic">
-                    Obligatoire pour l'électronique
+                    Obligatoire pour l&apos;électronique
                   </p>
                 </Card>
 
@@ -838,7 +869,7 @@ const ProductManager: React.FC = () => {
             >
               <option value="name">Alphabétique (A-Z)</option>
               <option value="price">Prix décroissant</option>
-              <option value="type">Type d'élément</option>
+              <option value="type">Type d&apos;élément</option>
             </select>
           </div>
         </div>
@@ -849,6 +880,7 @@ const ProductManager: React.FC = () => {
             {processedProducts.map((p) => (
               <Card
                 key={p.id}
+                data-testid="product-card"
                 className="p-8 border-none bg-white rounded-[3rem] shadow-soft hover:shadow-premium transition-all duration-500 group relative flex flex-col"
               >
                 <div className="flex justify-between items-start mb-8">
@@ -940,6 +972,7 @@ const ProductManager: React.FC = () => {
           </div>
         ) : (
           <EmptyState
+            data-testid="products-empty-state"
             icon={Package}
             title="Catalogue vide"
             description="Organisez vos services et produits pour gagner du temps lors de la création de vos factures. Tout ce que vous vendez commence ici."

@@ -61,11 +61,38 @@ const mockSubtleCrypto: SubtleCrypto = {
   generateKey: vi.fn(),
   exportKey: vi.fn(),
   importKey: vi.fn(),
-  encrypt: vi.fn(),
-  decrypt: vi.fn(),
+  encrypt: vi.fn((_algorithm: any, _key: CryptoKey, data: BufferSource) => {
+    // Mock implementation that returns a ciphertext as ArrayBuffer
+    const plaintext = new Uint8Array(data as ArrayBuffer);
+    const ciphertext = new Uint8Array(plaintext.length + 12); // Add simple encryption
+    for (let i = 0; i < plaintext.length; i++) {
+      ciphertext[i + 12] = plaintext[i] ^ 0xaa; // Simple XOR encryption
+    }
+    // Fill first 12 bytes with IV-like data
+    for (let i = 0; i < 12; i++) {
+      ciphertext[i] = Math.floor(Math.random() * 256);
+    }
+    return Promise.resolve(ciphertext.buffer as ArrayBuffer);
+  }),
+  decrypt: vi.fn((_algorithm: any, _key: CryptoKey, data: BufferSource) => {
+    // Mock implementation that decrypts the simple XOR
+    const encrypted = new Uint8Array(data as ArrayBuffer);
+    const plaintext = new Uint8Array(encrypted.length - 12);
+    for (let i = 0; i < plaintext.length; i++) {
+      plaintext[i] = encrypted[i + 12] ^ 0xaa; // Reverse the XOR
+    }
+    return Promise.resolve(plaintext.buffer as ArrayBuffer);
+  }),
   sign: vi.fn(),
   verify: vi.fn(),
-  deriveBits: vi.fn(),
+  deriveBits: vi.fn((_algorithm: any, _key: CryptoKey, length: number) => {
+    // Return a random buffer of the requested length
+    const derivedBits = new Uint8Array(length / 8);
+    for (let i = 0; i < derivedBits.length; i++) {
+      derivedBits[i] = Math.floor(Math.random() * 256);
+    }
+    return Promise.resolve(derivedBits.buffer);
+  }),
   deriveKey: vi.fn(),
   wrapKey: vi.fn(),
   unwrapKey: vi.fn(),
@@ -73,8 +100,8 @@ const mockSubtleCrypto: SubtleCrypto = {
     // Convert data to string for hashing
     const str = new TextDecoder().decode(new Uint8Array(data as ArrayBuffer));
     const hash = simpleHash(str);
-    return Promise.resolve(hash);
-  }),
+    return Promise.resolve(hash.buffer as ArrayBuffer);
+  }) as (algorithm: AlgorithmIdentifier, data: BufferSource) => Promise<ArrayBuffer>,
 };
 
 const mockCrypto: Crypto = {
@@ -94,14 +121,45 @@ Object.defineProperty(global, 'crypto', {
   value: mockCrypto,
 });
 
-// Mock localStorage
+// Mock localStorage with actual storage behavior
+const store: Record<string, string> = {};
 const localStorageMock: Storage = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  key: vi.fn(),
-  length: 0,
+  getItem: (key: string) => store[key] || null,
+  setItem: (key: string, value: string) => {
+    store[key] = value.toString();
+  },
+  removeItem: (key: string) => {
+    delete store[key];
+  },
+  clear: () => {
+    Object.keys(store).forEach((key) => delete store[key]);
+  },
+  key: (index: number) => {
+    const keys = Object.keys(store);
+    return keys[index] || null;
+  },
+  length: Object.keys(store).length,
 };
 
+// Make length a getter to always return current store size
+Object.defineProperty(localStorageMock, 'length', {
+  get: () => Object.keys(store).length,
+  configurable: true,
+});
+
 global.localStorage = localStorageMock;
+
+// Mock window.matchMedia for dark mode tests
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query: string) => ({
+    matches: query === '(prefers-color-scheme: dark)' ? false : false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});

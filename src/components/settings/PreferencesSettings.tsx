@@ -41,7 +41,7 @@ const PreferencesSettings: React.FC = () => {
               </select>
             </div>
             <p className="text-[10px] text-slate-400 font-medium ml-1">
-              Affecte la langue des documents et de l'interface.
+              Affecte la langue des documents et de l&apos;interface.
             </p>
           </div>
 

@@ -1,4 +1,5 @@
 import { db } from './db';
+import { logger } from './loggerService';
 
 /**
  * Service gérant la sécurité des données sensibles (RIB, IBAN)
@@ -46,7 +47,10 @@ async function getOrCreateKey(): Promise<CryptoKey> {
 
     return key;
   } catch (error) {
-    console.error('Erreur lors de la gestion de la clé de chiffrement:', error);
+    logger.error(
+      'Encryption key management failed',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw new Error("Impossible d'initialiser le système de chiffrement");
   }
 }
@@ -94,7 +98,7 @@ export const securityService = {
 
       return new TextDecoder().decode(decrypted);
     } catch (e) {
-      console.error('Erreur de déchiffrement', e);
+      logger.error('Decryption error', e instanceof Error ? e : new Error(String(e)));
       return '****';
     }
   },

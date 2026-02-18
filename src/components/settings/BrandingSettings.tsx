@@ -145,7 +145,7 @@ const BrandingSettings: React.FC = () => {
               {/* Logo Upload */}
               <div className="space-y-4">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-                  Logo de l'entreprise
+                  Logo de l&apos;entreprise
                 </label>
                 <div className="relative group">
                   {logo ? (
@@ -351,7 +351,7 @@ const BrandingSettings: React.FC = () => {
                         <div className="flex flex-col items-center justify-center h-full bg-slate-50 text-slate-400 gap-4">
                           <Loader2 className="w-12 h-12 animate-spin" />
                           <span className="font-bold uppercase tracking-widest text-[10px]">
-                            Chargement de l'aperçu...
+                            Chargement de l&apos;aperçu...
                           </span>
                         </div>
                       }

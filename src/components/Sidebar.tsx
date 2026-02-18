@@ -21,15 +21,15 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ userProfile }) => {
   const { isMobileMenuOpen, setMobileMenuOpen, isDarkMode, toggleDarkMode } = useUIStore();
-  const menuItems: { path: string; label: string; icon: React.ReactNode }[] = [
-    { path: '/', label: 'Tableau de bord', icon: <LayoutDashboard size={20} /> },
-    { path: '/invoices', label: 'Devis & Factures', icon: <FileText size={20} /> },
-    { path: '/clients', label: 'Clients', icon: <Users size={20} /> },
-    { path: '/suppliers', label: 'Fournisseurs', icon: <Truck size={20} /> },
-    { path: '/products', label: 'Catalogue', icon: <Package size={20} /> },
-    { path: '/accounting', label: 'Comptabilité', icon: <Calculator size={20} /> },
-    { path: '/ai', label: 'Assistant IA', icon: <Sparkles size={20} /> },
-    { path: '/settings', label: 'Paramètres', icon: <Settings size={20} /> },
+  const menuItems: { path: string; label: string; icon: React.ReactNode; testId: string }[] = [
+    { path: '/', label: 'Tableau de bord', icon: <LayoutDashboard size={20} />, testId: 'nav-dashboard' },
+    { path: '/invoices', label: 'Devis & Factures', icon: <FileText size={20} />, testId: 'nav-invoices' },
+    { path: '/clients', label: 'Clients', icon: <Users size={20} />, testId: 'nav-clients' },
+    { path: '/suppliers', label: 'Fournisseurs', icon: <Truck size={20} />, testId: 'nav-suppliers' },
+    { path: '/products', label: 'Catalogue', icon: <Package size={20} />, testId: 'nav-products' },
+    { path: '/accounting', label: 'Comptabilité', icon: <Calculator size={20} />, testId: 'nav-accounting' },
+    { path: '/ai', label: 'Assistant IA', icon: <Sparkles size={20} />, testId: 'nav-ai' },
+    { path: '/settings', label: 'Paramètres', icon: <Settings size={20} />, testId: 'nav-settings' },
   ];
 
   return (
@@ -44,6 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userProfile }) => {
 
       {/* Sidebar Container */}
       <aside
+        data-testid="sidebar"
         className={`
         fixed top-0 left-0 z-30 h-screen w-80 bg-card/80 dark:bg-card/80 backdrop-blur-2xl text-muted-foreground transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) border-r border-border shadow-premium
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -81,6 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userProfile }) => {
             <NavLink
               key={item.path}
               to={item.path}
+              data-testid={item.testId}
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) => `
                 w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group relative overflow-hidden
@@ -104,6 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userProfile }) => {
         {/* User Profile & Dark Mode Toggle Footer */}
         <div className="absolute bottom-0 w-full p-6 space-y-4 bg-gradient-to-t from-card to-transparent border-t border-border/50">
           <button
+            data-testid="theme-toggle"
             onClick={toggleDarkMode}
             className="w-full flex items-center justify-between gap-3 p-4 rounded-2xl bg-muted/50 text-foreground hover:bg-muted transition-all duration-300 border border-border/50 group"
           >

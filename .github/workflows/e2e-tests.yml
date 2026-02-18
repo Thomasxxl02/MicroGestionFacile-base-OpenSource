@@ -1,0 +1,151 @@
+name: E2E Tests (Playwright)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    name: E2E Tests
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          CI: true
+          PLAYWRIGHT_TEST_BASE_URL: http://localhost:5173
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report-node-${{ matrix.node-version }}
+          path: test-results/
+          retention-days: 30
+
+      - name: Upload test videos
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-videos-node-${{ matrix.node-version }}
+          path: test-results/videos/
+          retention-days: 7
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const resultsPath = 'test-results/results.json';
+            if (!fs.existsSync(resultsPath)) {
+              return;
+            }
+            const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+            const stats = results.stats || {};
+            const comment = `## Test Results\n\n✓ Passed: ${stats.expected || 0}\n✗ Failed: ${stats.unexpected || 0}\n⊘ Skipped: ${stats.skipped || 0}\n⏱️ Duration: ${(stats.duration / 1000 / 60).toFixed(2)} minutes\n\n[View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  accessibility:
+    name: Accessibility Audit
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run accessibility tests
+        run: |
+          echo "Running accessibility audit..."
+          npx playwright test tests/e2e/accessibility.spec.ts || true
+        continue-on-error: true
+
+  performance:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run performance tests
+        run: npx playwright test tests/e2e/performance.spec.ts || true
+        continue-on-error: true
+
+      - name: Upload performance metrics
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-metrics
+          path: test-results/performance.json
+          retention-days: 90

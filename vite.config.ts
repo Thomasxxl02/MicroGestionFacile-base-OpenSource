@@ -6,9 +6,17 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
+    // 🔒 Configuration du serveur avec proxy pour API sécurisée
     server: {
       port: 3000,
       host: '0.0.0.0',
+      proxy: {
+        '/api/ai': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/ai/, '/api/ai'),
+        },
+      },
     },
     plugins: [
       react(),
@@ -44,8 +52,11 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // 🔒 NE PAS exposer les clés API en build-time
+      // Les clés API sensibles doivent rester côté serveur (server/api.ts)
+      'import.meta.env.VITE_API_PROXY_URL': JSON.stringify(
+        env.VITE_API_PROXY_URL || 'http://localhost:3001'
+      ),
     },
     resolve: {
       alias: {

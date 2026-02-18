@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { logger } from './loggerService';
 import { InvoiceItem } from '../types';
 
 const BACKEND_URL = 'http://localhost:4000';
@@ -34,7 +35,10 @@ export const generateImmutablePDF_Server = async (data: InvoicePayload) => {
     link.click();
     toast.success('PDF immuable généré avec succès', { id: toastId });
   } catch (error) {
-    console.error(error);
+    logger.error(
+      'PDF Server generation failed',
+      error instanceof Error ? error : new Error(String(error))
+    );
     toast.error('Le service backend est indisponible. Utilisation de la génération locale.', {
       id: toastId,
     });
@@ -103,7 +107,7 @@ export const generatePDF = async (elementId: string, filename: string, facturX_X
       });
 
       finalPdfBytes = await pdfDoc.save();
-      console.log('Factur-X XML incorporé avec succès');
+      logger.info('Factur-X XML successfully embedded');
     } else {
       finalPdfBytes = new Uint8Array(pdf.output('arraybuffer'));
     }
@@ -117,7 +121,10 @@ export const generatePDF = async (elementId: string, filename: string, facturX_X
 
     toast.success('Le PDF hybride (Factur-X) a été exporté avec succès', { id: toastId });
   } catch (error) {
-    console.error('Erreur lors de la génération du PDF:', error);
+    logger.error(
+      'PDF generation failed',
+      error instanceof Error ? error : new Error(String(error))
+    );
     toast.error('Une erreur est survenue lors de la génération du PDF.', { id: toastId });
   }
 };

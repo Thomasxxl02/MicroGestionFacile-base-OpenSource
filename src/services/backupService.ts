@@ -1,4 +1,5 @@
 import { db, exportDatabase } from './db';
+import { logger } from './loggerService';
 
 const BACKEND_URL = 'http://localhost:4000';
 
@@ -11,7 +12,7 @@ export const backupService = {
    */
   async performBackup(): Promise<boolean> {
     try {
-      console.log('Initiating automatic backup to S3...');
+      logger.info('Initiating automatic backup to S3...');
 
       // 1. Export all data to JSON
       const dataStr = await exportDatabase();
@@ -34,7 +35,7 @@ export const backupService = {
       }
 
       const result = await response.json();
-      console.log('Backup successful:', result);
+      logger.info('Backup successful', result);
 
       // Log the event in audit logs
       await db.auditLogs.add({
@@ -48,7 +49,7 @@ export const backupService = {
 
       return true;
     } catch (error) {
-      console.error('S3 Backup Error:', error);
+      logger.error('S3 Backup Error', error instanceof Error ? error : new Error(String(error)));
       // We don't show a toast by default to avoid annoying the user on every startup/shutdown
       // unless it's a critical error we want them to know about.
       return false;
@@ -102,7 +103,7 @@ export const backupService = {
       }
 
       if (shouldBackup) {
-        console.log('Running automatic scheduled local backup...');
+        logger.info('Running automatic scheduled local backup...');
         await this.triggerLocalDownload();
 
         // Update last backup date
@@ -111,7 +112,10 @@ export const backupService = {
         });
       }
     } catch (error) {
-      console.error('Auto local backup check failed:', error);
+      logger.error(
+        'Auto local backup check failed',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   },
 
@@ -139,7 +143,10 @@ export const backupService = {
         details: 'Scheduled automatic local backup triggered',
       });
     } catch (error) {
-      console.error('Triggering local download failed:', error);
+      logger.error(
+        'Triggering local download failed',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   },
 
@@ -154,6 +161,11 @@ export const backupService = {
         type: 'shutdown_backup',
       }),
       keepalive: true,
-    }).catch(console.error);
+    }).catch((error) =>
+      logger.error(
+        'Shutdown backup failed',
+        error instanceof Error ? error : new Error(String(error))
+      )
+    );
   },
 };

@@ -358,7 +358,7 @@ const AccountingManager: React.FC = () => {
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 max-w-7xl mx-auto pb-20 px-4 md:px-0">
+    <div data-testid="accounting-container" className="space-y-10 animate-in fade-in duration-700 max-w-7xl mx-auto pb-20 px-4 md:px-0">
       <Header
         title="Comptabilité"
         description="Pilotez votre trésorerie et vos obligations fiscales en temps réel."
@@ -418,7 +418,7 @@ const AccountingManager: React.FC = () => {
           </div>
           <div>
             <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider">
-              Période d'analyse
+              Période d&apos;analyse
             </h4>
             <p className="text-xs font-bold text-slate-400">
               {period === 'month' &&
@@ -535,13 +535,13 @@ const AccountingManager: React.FC = () => {
 
             <div className="text-left relative z-10">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg font-black text-slate-900">Scanner avec l'IA</span>
+                <span className="text-lg font-black text-slate-900">Scanner avec l&apos;IA</span>
                 <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-black uppercase tracking-widest rounded-full border border-indigo-200">
                   Gemini Vision
                 </span>
               </div>
               <p className="text-sm font-bold text-slate-500">
-                Posez votre ticket, l'IA s'occupe du reste.
+                Posez votre ticket, l&apos;IA s&apos;occupe du reste.
               </p>
             </div>
           </button>
@@ -551,7 +551,7 @@ const AccountingManager: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-                Date de l'opération
+                Date de l&apos;opération
               </label>
               <div className="relative group">
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-slate-900 transition-colors">
@@ -1148,9 +1148,9 @@ const AccountingManager: React.FC = () => {
                     &gt; ANALYSE DES LIBELLÉS EN COURS...
                   </p>
                   <p className="text-sm leading-relaxed text-slate-300">
-                    J'ai détecté un virement entrant de{' '}
+                    J&apos;ai détecté un virement entrant de{' '}
                     <span className="text-white font-bold">1 200,00 €</span> avec le libellé{' '}
-                    <span className="text-indigo-400">"DURAND - FAC-2026-001"</span>.
+                    <span className="text-indigo-400">&quot;DURAND - FAC-2026-001&quot;</span>.
                   </p>
                   <p className="text-sm leading-relaxed mt-4 text-slate-300">
                     Il correspond à 100% à la{' '}
@@ -1159,7 +1159,7 @@ const AccountingManager: React.FC = () => {
                   </p>
                   <div className="grid grid-cols-2 gap-4 mt-8">
                     <button className="py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all">
-                      Valider l'Écriture
+                      Valider l&apos;Écriture
                     </button>
                     <button className="py-4 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-xs font-black uppercase tracking-widest transition-all">
                       Lien Manuel
@@ -1169,7 +1169,8 @@ const AccountingManager: React.FC = () => {
 
                 <div className="p-6 bg-slate-800/20 rounded-2xl border border-slate-700/30 opacity-50">
                   <p className="text-slate-500 text-[10px] font-bold italic">
-                    Historique : "PRLV SAAS ADOBE" lettré avec "Service Logiciel" (Confiance 92%)
+                    Historique : &quot;PRLV SAAS ADOBE&quot; lettré avec &quot;Service
+                    Logiciel&quot; (Confiance 92%)
                   </p>
                 </div>
               </div>

@@ -212,8 +212,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     setIsGeneratingDesc(true);
     const suggestion = await suggestInvoiceDescription(
       client.name,
-      currentDesc || 'Service général',
-      userProfile.geminiKey
+      currentDesc || 'Service général'
     );
     setIsGeneratingDesc(false);
 
@@ -363,7 +362,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
                 <div className="space-y-4">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2 opacity-60">
-                    Date d'émission
+                    Date d&apos;émission
                   </label>
                   <input
                     type="date"
@@ -375,7 +374,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
                 <div className="space-y-4">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2 opacity-60">
-                    Date d'échéance
+                    Date d&apos;échéance
                   </label>
                   <input
                     type="date"

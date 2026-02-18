@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie';
+import { logger } from './loggerService';
 import {
   Invoice,
   Client,
@@ -72,6 +73,8 @@ export class MyDatabase extends Dexie {
     this.products.hook('reading', (obj) => ProductSchema.parse(obj));
     this.expenses.hook('reading', (obj) => ExpenseSchema.parse(obj));
     this.userProfile.hook('reading', (obj) => {
+      // Handle null/undefined safely (Dexie calls hooks even for empty results)
+      if (!obj) return obj;
       const { id, ...profile } = obj;
       return { id, ...UserProfileSchema.parse(profile) };
     });
@@ -100,7 +103,10 @@ export async function addAuditLog(
     };
     await db.auditLogs.add(log);
   } catch (error) {
-    console.error('Failed to add audit log:', error);
+    logger.error(
+      'Failed to add audit log',
+      error instanceof Error ? error : new Error(String(error))
+    );
   }
 }
 
