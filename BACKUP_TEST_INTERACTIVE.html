@@ -508,7 +508,16 @@
       const item = document.getElementById(`check-${num}`);
       item.classList.remove('pending');
       item.classList.add('done');
-      item.innerHTML = `<span class="checklist-icon status-success" style="display:inline-block;width:20px;height:20px;">✅</span>` + item.textContent.substring(1);
+      const originalText = item.textContent.substring(1);
+      item.innerHTML = '';
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'checklist-icon status-success';
+      iconSpan.style.display = 'inline-block';
+      iconSpan.style.width = '20px';
+      iconSpan.style.height = '20px';
+      iconSpan.textContent = '✅';
+      item.appendChild(iconSpan);
+      item.appendChild(document.createTextNode(originalText));
       state.completedSteps++;
       updateProgress();
     }
