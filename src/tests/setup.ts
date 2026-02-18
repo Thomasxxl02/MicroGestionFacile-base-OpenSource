@@ -36,6 +36,18 @@ afterEach(() => {
   cleanup();
 });
 
+// Add default styles for test containers to ensure charts have proper dimensions
+if (document.documentElement) {
+  document.documentElement.style.width = '100%';
+  document.documentElement.style.height = '100%';
+}
+
+if (document.body) {
+  document.body.style.width = '800px';
+  document.body.style.height = '600px';
+  document.body.style.display = 'block';
+}
+
 // Mock crypto API for tests (used in securityService and utils)
 // Simple hash function for testing (not cryptographically secure)
 const simpleHash = (data: string): Uint8Array => {
@@ -165,32 +177,86 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock ResizeObserver for Recharts and other components that use it
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-})) as any;
+// Simple implementation that prevents errors
+global.ResizeObserver = class ResizeObserver {
+  callback: (entries: ResizeObserverEntry[]) => void;
+
+  constructor(callback: (entries: ResizeObserverEntry[]) => void) {
+    this.callback = callback;
+  }
+
+  observe(element: Element) {
+    // Call callback immediately with proper dimensions
+    const rect = element.getBoundingClientRect();
+    const width = Math.max(rect.width, 500);
+    const height = Math.max(rect.height, 400);
+
+    try {
+      this.callback([
+        {
+          target: element,
+          contentRect: {
+            width,
+            height,
+            top: 0,
+            left: 0,
+            bottom: height,
+            right: width,
+            x: 0,
+            y: 0,
+            toJSON: () => ({}),
+          } as DOMRectReadOnly,
+        } as unknown as ResizeObserverEntry,
+      ]);
+    } catch (e) {
+      // Ignore errors in callback
+    }
+  }
+
+  unobserve() {
+    // No-op
+  }
+
+  disconnect() {
+    // No-op
+  }
+} as any;
 
 // Mock getBoundingClientRect for charts to have proper dimensions
-Element.prototype.getBoundingClientRect = vi.fn(
-  () =>
-    ({
-      width: 500,
-      height: 400,
-      top: 0,
-      left: 0,
-      bottom: 400,
-      right: 500,
-      x: 0,
-      y: 0,
-      toJSON: () => ({}),
-    }) as any
-);
+// Enhanced to calculate dimensions from element styles
+Element.prototype.getBoundingClientRect = vi.fn(function (this: Element) {
+  const styles = window.getComputedStyle(this);
+  const width = parseFloat(styles.width) || 500;
+  const height = parseFloat(styles.height) || 400;
+
+  return {
+    width: Math.max(width, 500), // Ensure minimum dimensions
+    height: Math.max(height, 400),
+    top: 0,
+    left: 0,
+    bottom: Math.max(height, 400),
+    right: Math.max(width, 500),
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  } as any;
+});
 
 // Mock getComputedStyle for proper dimension calculations
-window.getComputedStyle = vi.fn().mockReturnValue({
-  width: '500px',
-  height: '400px',
-  display: 'block',
-  position: 'relative',
-} as any);
+window.getComputedStyle = vi.fn(function () {
+  return {
+    width: '500px',
+    height: '400px',
+    display: 'block',
+    position: 'relative',
+    getPropertyValue: (property: string) => {
+      const styles: Record<string, string> = {
+        width: '500px',
+        height: '400px',
+        display: 'block',
+        position: 'relative',
+      };
+      return styles[property] || '';
+    },
+  } as unknown as CSSStyleDeclaration;
+}) as any;

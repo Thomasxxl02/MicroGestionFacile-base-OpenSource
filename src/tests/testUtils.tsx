@@ -32,16 +32,56 @@ export const RoutesWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 /**
+ * Wrapper pour les composants qui utilisent Recharts
+ * Ajoute des dimensions CSS appropriées au conteneur
+ */
+export const ChartsWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '800px', height: '600px', display: 'flex' }}>
+    {children}
+  </div>
+);
+
+/**
+ * Wrapper combiné pour Routes + Charts
+ * Utilisé pour les composants avec Routes enfants et Recharts
+ */
+export const RoutesChartsWrapper = ({ children }: { children: React.ReactNode }) => (
+  <BrowserRouter>
+    <Routes>
+      <Route
+        path="/*"
+        element={
+          <div style={{ width: '800px', height: '600px', display: 'flex' }}>
+            {children}
+          </div>
+        }
+      />
+    </Routes>
+  </BrowserRouter>
+);
+
+/**
  * Fonction de rendu personnalisée avec wrappers par défaut
  * Utilise BrowserRouter par défaut
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export const renderWithRouter = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'> & { useRoutes?: boolean }
+  options?: Omit<RenderOptions, 'wrapper'> & { useRoutes?: boolean; withCharts?: boolean }
 ) => {
-  const { useRoutes = false, ...renderOptions } = options || {};
-  const Wrapper = useRoutes ? RoutesWrapper : BrowserRouterWrapper;
+  const { useRoutes = false, withCharts = false, ...renderOptions } = options || {};
+  let Wrapper: React.ComponentType<{ children: React.ReactNode }>;
+
+  if (withCharts && useRoutes) {
+    Wrapper = RoutesChartsWrapper;
+  } else if (withCharts) {
+    Wrapper = ChartsWrapper;
+  } else if (useRoutes) {
+    Wrapper = RoutesWrapper;
+  } else {
+    Wrapper = BrowserRouterWrapper;
+  }
+
   return render(ui, { wrapper: Wrapper, ...renderOptions });
 };
 

@@ -423,7 +423,7 @@ describe('🧪 ClientManager Component', () => {
       render(
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<ClientManager />} />
+            <Route path="/*" element={<ClientManager />} />
             <Route path="/:id" element={<div>Client Details</div>} />
           </Routes>
         </BrowserRouter>
