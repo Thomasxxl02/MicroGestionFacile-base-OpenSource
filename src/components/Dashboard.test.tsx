@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import Dashboard from './Dashboard';
-import { renderWithRouter, resetTestData } from '../tests/testUtils.tsx';
+import { renderWithRouter, resetTestData } from '../tests/testUtils';
 
 // Mock des données et services
 vi.mock('../hooks/useValidatedData', () => ({
