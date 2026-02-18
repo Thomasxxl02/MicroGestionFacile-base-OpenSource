@@ -4,10 +4,10 @@
  * Validation de l'affichage des données de gestion
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
 import Dashboard from './Dashboard';
+import { renderWithRouter, resetTestData } from '../tests/testUtils';
 
 // Mock des données et services
 vi.mock('../hooks/useValidatedData', () => ({
@@ -171,35 +171,74 @@ vi.mock('../components/ui/EmptyState', () => ({
 }));
 
 describe('📊 Dashboard Component', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Wrapper = ({ children }: any) => <BrowserRouter>{children}</BrowserRouter>;
+  beforeEach(() => {
+    resetTestData();
+  });
 
   describe('Rendu initial', () => {
     it('devrait se rendre sans erreur', () => {
-      const { container } = render(<Dashboard />, { wrapper: Wrapper });
+      const { container } = renderWithRouter(<Dashboard />);
       expect(container).toBeTruthy();
     });
 
     it('devrait afficher le composant Header', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
 
     it('devrait afficher le ThresholdMonitor', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
       expect(screen.getByTestId('threshold-monitor')).toBeInTheDocument();
     });
 
     it('devrait afficher des cartes de statistiques', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
       const cards = screen.getAllByTestId('card');
       expect(cards.length).toBeGreaterThan(0);
     });
   });
 
+  describe('Affichage des graphiques', () => {
+    it('devrait afficher le graphique des revenus mensuels (BarChart)', () => {
+      renderWithRouter(<Dashboard />);
+      const barChart = screen.getByTestId('recharts-barchart');
+      expect(barChart).toBeInTheDocument();
+    });
+
+    it('devrait avoir des données dans le graphique BarChart', () => {
+      renderWithRouter(<Dashboard />);
+      const barChart = screen.getByTestId('recharts-barchart');
+      const dataAttr = barChart.getAttribute('data-chart-data');
+      expect(dataAttr).toBeTruthy();
+      try {
+        JSON.parse(dataAttr || '[]');
+        expect(true).toBe(true); // Data is valid JSON
+      } catch {
+        expect.fail('Chart data should be valid JSON');
+      }
+    });
+
+    it('devrait afficher les axes X et Y du graphique', () => {
+      renderWithRouter(<Dashboard />);
+      expect(screen.getByTestId('recharts-xaxis')).toBeInTheDocument();
+      expect(screen.getByTestId('recharts-yaxis')).toBeInTheDocument();
+    });
+
+    it('devrait afficher le tooltip du graphique', () => {
+      renderWithRouter(<Dashboard />);
+      expect(screen.getByTestId('recharts-tooltip')).toBeInTheDocument();
+    });
+
+    it('devrait afficher les barres de revenus et avoirs', () => {
+      renderWithRouter(<Dashboard />);
+      const bars = screen.getAllByTestId('recharts-bar');
+      expect(bars.length).toBeGreaterThanOrEqual(2); // Recettes and Avoirs
+    });
+  });
+
   describe('Affichage des données', () => {
     it('devrait afficher les KPIs principaux', async () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
 
       await waitFor(() => {
         // Vérifier que le contenu est rendu (statistiques, montants, etc.)
@@ -210,7 +249,7 @@ describe('📊 Dashboard Component', () => {
 
   describe('Gestion des erreurs', () => {
     it('devrait gérer les erreurs de validation', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
       // Vérifier que le composant se rend même avec erreur
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
@@ -218,12 +257,12 @@ describe('📊 Dashboard Component', () => {
 
   describe('Accessibilité', () => {
     it('devrait contenir un Header avec titre', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
 
     it('devrait contenir des boutons navigables', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
       const buttons = screen.queryAllByTestId('button');
       buttons.forEach((btn) => {
         expect(btn).toBeInTheDocument();
@@ -233,13 +272,13 @@ describe('📊 Dashboard Component', () => {
 
   describe('Intégration avec les hooks', () => {
     it('devrait utiliser les données validées', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
 
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
 
     it('devrait afficher le ThresholdMonitor pour la surveillance des seuils', () => {
-      render(<Dashboard />, { wrapper: Wrapper });
+      renderWithRouter(<Dashboard />);
 
       expect(screen.getByTestId('threshold-monitor')).toBeInTheDocument();
     });

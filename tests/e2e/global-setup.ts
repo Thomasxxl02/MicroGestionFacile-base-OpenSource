@@ -1,5 +1,3 @@
-import { Browser, BrowserContext } from '@playwright/test';
-
 /**
  * Global setup pour les tests E2E
  * Exécuté une seule fois avant tous les tests

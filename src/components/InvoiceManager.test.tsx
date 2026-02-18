@@ -4,10 +4,10 @@
  * Validation de la gestion des factures
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
 import InvoiceManager from './InvoiceManager';
+import { renderWithRouter, resetTestData } from '../tests/testUtils';
 
 // Mock des dépendances
 vi.mock('../hooks/useData', () => ({
@@ -194,32 +194,25 @@ vi.mock('../components/invoices/InvoicePreviewDocument', () => ({
 }));
 
 describe('📄 InvoiceManager Component', () => {
-  const Wrapper = ({ children }: any) => (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={children} />
-        <Route path="/new" element={children} />
-        <Route path="/edit/:id" element={children} />
-        <Route path="/preview/:id" element={children} />
-      </Routes>
-    </BrowserRouter>
-  );
+  beforeEach(() => {
+    resetTestData();
+  });
 
   describe('Rendu initial', () => {
     it('devrait se rendre sans erreur', () => {
-      const { container } = render(<InvoiceManager />, { wrapper: Wrapper });
+      const { container } = renderWithRouter(<InvoiceManager />, { useRoutes: true });
       expect(container).toBeTruthy();
     });
 
     it('devrait afficher le Header', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
     });
 
     it('devrait afficher la liste des factures au démarrage', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('invoice-list')).toBeInTheDocument();
       });
@@ -228,21 +221,21 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('Gestion des factures', () => {
     it('devrait charger les factures existantes', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
     });
 
     it('devrait charger les clients pour sélection', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
     });
 
     it('devrait charger le profil utilisateur', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
@@ -251,7 +244,7 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('Export Factur-X', () => {
     it('devrait générer un fichier XML Factur-X', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       // Vérifier que le composant se rend sans erreur
       expect(screen.getByTestId('header')).toBeInTheDocument();
@@ -260,7 +253,7 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('Validation', () => {
     it('devrait valider les factures avant sauvegarde', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       // Vérifier que le composant se rend sans erreur
       expect(screen.getByTestId('header')).toBeInTheDocument();
@@ -269,7 +262,7 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('Sauvegardes et Opérations', () => {
     it('devrait utiliser useAsync pour les opérations', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
@@ -277,21 +270,21 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('Navigation', () => {
     it('devrait supporter la création de nouvelles factures', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
     });
 
     it("devrait supporter l'édition de factures", async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       const editBtn = await screen.findByTestId('invoice-edit');
       expect(editBtn).toBeInTheDocument();
     });
 
     it('devrait supporter la suppression de factures', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       const deleteBtn = await screen.findByTestId('invoice-delete');
       expect(deleteBtn).toBeInTheDocument();
@@ -300,14 +293,14 @@ describe('📄 InvoiceManager Component', () => {
 
   describe("Gestion d'erreurs", () => {
     it('devrait gérer les clients manquants', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       await waitFor(() => {
         expect(screen.getByTestId('header')).toBeInTheDocument();
       });
     });
 
     it("devrait afficher un message d'erreur si le client n'existe pas", async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       // Le composant devrait gérer l'erreur
       expect(screen.getByTestId('header')).toBeInTheDocument();
@@ -316,13 +309,13 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('État et Hooks', () => {
     it("devrait maintenir l'état de suppression confirmée", async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       // Vérifier que le state exists
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
 
     it("devrait utiliser le store de l'UI", async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
       // Vérifier que le composant se rend
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
@@ -330,7 +323,7 @@ describe('📄 InvoiceManager Component', () => {
 
   describe('Lazy Loading', () => {
     it('devrait utiliser le lazy loading pour les sous-composants', async () => {
-      render(<InvoiceManager />, { wrapper: Wrapper });
+      renderWithRouter(<InvoiceManager />, { useRoutes: true });
 
       // Les composants des factures devraient être chargés avec Suspense
       await waitFor(() => {

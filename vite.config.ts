@@ -14,7 +14,6 @@ export default defineConfig(({ mode }) => {
         '/api/ai': {
           target: 'http://localhost:3001',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/ai/, '/api/ai'),
         },
       },
     },

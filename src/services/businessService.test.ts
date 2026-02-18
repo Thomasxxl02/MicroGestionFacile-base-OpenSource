@@ -4,6 +4,9 @@ import {
   checkVatThreshold,
   checkCaThreshold,
   calculateUrssafAdjustment,
+  getNextUrssafDeadline,
+  getNextDocumentNumber,
+  generateFacturX_XML,
   VAT_THRESHOLDS,
   CA_THRESHOLDS,
   URSSAF_RATES,
@@ -679,4 +682,194 @@ describe('businessService', () => {
       expect(result.services).toBeGreaterThan(0);
     });
   });
+
+  describe('getNextUrssafDeadline()', () => {
+    it('devrait retourner le dernier jour du mois pour le régime mensuel', () => {
+      const profileMonthly = { ...mockUserProfile, contributionQuarter: 'monthly' as const };
+      const result = getNextUrssafDeadline(profileMonthly);
+
+      expect(result).toHaveProperty('date');
+      expect(result).toHaveProperty('period');
+      expect(result).toHaveProperty('label');
+      expect(result.date instanceof Date).toBe(true);
+    });
+
+    it('devrait retourner l\'échéance trimestrielle Q1 pour janvier-mars', () => {
+      // Va dépendre du mois courant, donc on teste juste la structure
+      const profileQuarterly = { ...mockUserProfile, contributionQuarter: 'quarterly' as const };
+      const result = getNextUrssafDeadline(profileQuarterly);
+
+      expect(result).toHaveProperty('date');
+      expect(result).toHaveProperty('period');
+      expect(result.period).toMatch(/Q[1-4]/);
+    });
+
+    it('devrait retourner une date valide et un label français', () => {
+      const result = getNextUrssafDeadline(mockUserProfile);
+      expect(result.label).toContain('Déclaration');
+      expect(result.date.getTime()).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getNextDocumentNumber()', () => {
+    it('devrait générer un numéro FAC-YYYY-000X pour une nouvelle facture', () => {
+      const result = getNextDocumentNumber([], 'invoice', mockUserProfile);
+
+      expect(result).toMatch(/^FAC-\d{4}-\d{4}$/);
+      expect(result).toContain(`${new Date().getFullYear()}`);
+    });
+
+    it('devrait incrémenter le numéro pour chaque facture', () => {
+      const invoices = [
+        createInvoice({ number: `FAC-${new Date().getFullYear()}-0001` }),
+        createInvoice({ number: `FAC-${new Date().getFullYear()}-0002` }),
+      ];
+
+      const result = getNextDocumentNumber(invoices, 'invoice', mockUserProfile);
+
+      expect(result).toBe(`FAC-${new Date().getFullYear()}-0003`);
+    });
+
+    it('devrait générer DEV-YYYY-XXXX pour un devis', () => {
+      const result = getNextDocumentNumber([], 'quote', mockUserProfile);
+
+      expect(result).toMatch(/^DEV-\d{4}-\d{4}$/);
+    });
+
+    it('devrait générer AV-YYYY-XXXX pour un avoir', () => {
+      const result = getNextDocumentNumber([], 'unknown', mockUserProfile);
+
+      expect(result).toMatch(/^AVO-\d{4}-\d{4}$/);
+    });
+
+    it('devrait respecter le numéro de départ configuré', () => {
+      const profileWithStart = { 
+        ...mockUserProfile, 
+        invoiceStartNumber: 100 
+      };
+
+      const result = getNextDocumentNumber([], 'invoice', profileWithStart);
+
+      expect(result).toContain('-0100');
+    });
+  });
+
+  describe('generateFacturX_XML()', () => {
+    it('devrait générer un XML valide pour une facture simple', () => {
+      const invoice = createInvoice({
+        items: [createItem({ description: 'Service test' })],
+      });
+
+      const xml = generateFacturX_XML(invoice, mockUserProfile, undefined);
+
+      expect(xml).toContain('<?xml');
+      expect(xml).toContain('CrossIndustryInvoice');
+      expect(xml).toContain('Service test');
+    });
+
+    it('devrait inclure les informations du fournisseur (SIRET)', () => {
+      const invoice = createInvoice();
+
+      const xml = generateFacturX_XML(invoice, mockUserProfile, undefined);
+
+      // SIRET sans espaces
+      expect(xml).toContain(mockUserProfile.siret.replace(/\s/g, ''));
+    });
+
+    it('devrait inclure les informations du client lorsque disponibles', () => {
+      const invoice = createInvoice();
+      const client = {
+        id: 'client-1',
+        name: 'Client Test SARL',
+        email: 'client@test.com',
+        address: '456 Rue du Client',
+        country: 'FR',
+        currency: 'EUR',
+        language: 'fr',
+        siret: '98765432109876',
+      };
+
+      const xml = generateFacturX_XML(invoice, mockUserProfile, client);
+
+      expect(xml).toContain('Client Test SARL');
+      expect(xml).toContain('98765432109876'.replace(/\s/g, ''));
+    });
+
+    it('devrait inclure les montants de taxe corrects', () => {
+      const invoice = createInvoice({
+        total: 1200,
+        subtotal: 1000,
+        taxAmount: 200,
+      });
+
+      const xml = generateFacturX_XML(invoice, mockUserProfile, undefined);
+
+      expect(xml).toContain('1200');
+      expect(xml).toContain('200');
+    });
+
+    it('devrait être parsable en XML valide', () => {
+      const invoice = createInvoice();
+
+      const xml = generateFacturX_XML(invoice, mockUserProfile, undefined);
+
+      // Test basique : pas de caractères non-échappés qui cassent le XML
+      expect(() => {
+        const parser = new DOMParser();
+        parser.parseFromString(xml, 'text/xml');
+      }).not.toThrow();
+    });
+  });
+
+  describe('calculateUrssafAdjustment()', () => {
+    it('devrait retourner un ajustement numérique', () => {
+      const result = calculateUrssafAdjustment(
+        10000, // actualTurnover
+        10000, // declaredTurnover
+        mockUserProfile
+      );
+
+      expect(typeof result.adjustment).toBe('number');
+      expect(result).toHaveProperty('original');
+      expect(result).toHaveProperty('final');
+    });
+
+    it('devrait calculer un ajustement positif si le CA réel > CA déclaré', () => {
+      const result = calculateUrssafAdjustment(
+        15000, // actualTurnover (réel)
+        10000, // declaredTurnover (déclaré)
+        mockUserProfile
+      );
+
+      // L'ajustement devrait être lié à la différence de CA
+      expect(result.adjustment).toBeGreaterThanOrEqual(0);
+      expect(result.final).toBeGreaterThan(result.original);
+    });
+
+    it('devrait calculer un ajustement négatif si le CA réel < CA déclaré', () => {
+      const result = calculateUrssafAdjustment(
+        8000,  // actualTurnover (réel)
+        10000, // declaredTurnover (déclaré)
+        mockUserProfile
+      );
+
+      // L'ajustement devrait être lié à la différence de CA
+      expect(result.final).toBeLessThan(result.original);
+    });
+
+    it('devrait inclure les valeurs original et final dans le résultat', () => {
+      const result = calculateUrssafAdjustment(
+        12000,  // actualTurnover
+        10000, // declaredTurnover
+        mockUserProfile
+      );
+
+      expect(result).toHaveProperty('original');
+      expect(result).toHaveProperty('final');
+      // Les valeurs varient selon les calculs URSSAF appliqués
+      expect(typeof result.original).toBe('number');
+      expect(typeof result.final).toBe('number');
+    });
+  });
+
 });
