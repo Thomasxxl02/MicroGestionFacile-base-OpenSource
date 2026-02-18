@@ -61,7 +61,7 @@ export const test = base.extend<AuthFixtures>({
     const maxAttempts = 5;
     let dashboardFound = false;
 
-    for (let attempts = 0; attempts < maxAttempts && !dashboardFound; attempts++) {
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
       // Vérifier si dashboard est visible
       try {
         dashboardFound = await page.locator('[data-testid="dashboard"]').isVisible({
