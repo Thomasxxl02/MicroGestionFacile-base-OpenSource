@@ -64,12 +64,11 @@ export const test = base.extend<AuthFixtures>({
 
     while (!dashboardFound && attempts < maxAttempts) {
       // Vérifier si dashboard est visible
-      const isVisible = await page.locator('[data-testid="dashboard"]').isVisible({
+      dashboardFound = await page.locator('[data-testid="dashboard"]').isVisible({
         timeout: 3000,
       }).catch(() => false);
 
-      if (isVisible) {
-        dashboardFound = true;
+      if (dashboardFound) {
         console.log('[TEST] ✅ Dashboard found and visible on attempt', attempts + 1);
         break;
       }

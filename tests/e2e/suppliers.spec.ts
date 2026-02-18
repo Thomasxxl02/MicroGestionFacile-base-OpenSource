@@ -379,7 +379,6 @@ test.describe('🚚 Supplier Management', () => {
       });
 
       // Si des dépenses existent, afficher la dernière date
-      const activityIndicator = page.locator('text=/dernière activité|dernier paiement/i');
       // Peut ne pas être visible si aucune dépense
     });
   });
