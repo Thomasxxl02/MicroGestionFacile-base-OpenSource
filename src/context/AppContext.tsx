@@ -40,7 +40,7 @@ export interface AppContextType {
 /**
  * Le contexte lui-même
  */
-const AppContext = createContext<AppContextType | undefined>(undefined);
+export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 /**
  * Props pour le Provider

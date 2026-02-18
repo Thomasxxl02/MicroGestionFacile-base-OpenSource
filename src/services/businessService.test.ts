@@ -787,6 +787,8 @@ describe('businessService', () => {
         currency: 'EUR',
         language: 'fr',
         siret: '98765432109876',
+        taxType: 'DOMESTIC' as const,
+        paymentTerms: 30,
       };
 
       const xml = generateFacturX_XML(invoice, mockUserProfile, client);

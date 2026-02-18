@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import InvoiceManager from './InvoiceManager';
-import { renderWithRouter, resetTestData } from '../tests/testUtils';
+import { renderWithRouter, resetTestData } from '../tests/testUtils.tsx';
 
 // Mock des dépendances
 vi.mock('../hooks/useData', () => ({

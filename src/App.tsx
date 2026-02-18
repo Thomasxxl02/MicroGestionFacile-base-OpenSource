@@ -1,5 +1,6 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Sidebar from './components/Sidebar';
 import { UserProfile } from './types';
 import { Menu, Loader2 } from 'lucide-react';
@@ -203,6 +204,7 @@ const App: React.FC = () => {
           closeButton
           theme={isDarkMode ? 'dark' : 'light'}
         />
+        <Analytics />
       </div>
     </ErrorBoundary>
   );
