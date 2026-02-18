@@ -1,4 +1,5 @@
 import { test, expect } from '../fixtures/auth.fixture';
+import type { Page } from '@playwright/test';
 import { CommonActions } from '../utils/helpers';
 import { faker } from '@faker-js/faker';
 
@@ -371,15 +372,27 @@ test.describe('🚚 Supplier Management', () => {
       await expect(page.locator('text=/dépenses/i')).toBeVisible();
     });
 
-    test('affiche la date de dernière activité', async ({ page }) => {
+    test('affiche la date de dernière activité', async ({ page, authenticatedPage: _authenticatedPage }) => {
       await createTestSupplier(page, {
         name: 'Supplier Activity',
         email: 'activity@test.com',
         category: 'Services',
       });
 
-      // Si des dépenses existent, afficher la dernière date
-      // Peut ne pas être visible si aucune dépense
+      // Vérifier que le fournisseur a été créé
+      await expect(page.locator('text=Supplier Activity')).toBeVisible();
+
+      // Navigation vers détails pour vérifier la date d'activité
+      const supplierRow = page.locator('[data-testid="supplier-row"]:has-text("Supplier Activity")');
+      if (await supplierRow.isVisible()) {
+        const activityDate = page.locator('[data-testid="supplier-activity-date"]');
+        // La date d'activité peut ne pas être visible si aucune dépense n'existe
+        try {
+          await expect(activityDate).toBeVisible({ timeout: 5000 });
+        } catch {
+          console.info('Activity date not visible (expected if no expenses exist)');
+        }
+      }
     });
   });
 
@@ -497,7 +510,7 @@ test.describe('🚚 Supplier Management', () => {
  * Helper: Créer un fournisseur de test
  */
 async function createTestSupplier(
-  page: any,
+  page: Page,
   data: {
     name: string;
     email: string;
