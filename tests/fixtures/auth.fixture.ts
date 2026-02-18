@@ -58,11 +58,10 @@ export const test = base.extend<AuthFixtures>({
     console.log('[TEST] Waited 10s for React mount + migration + profile load');
 
     //Attendre le dashboard de maan robuste
-    let attempts = 0;
     const maxAttempts = 5;
     let dashboardFound = false;
 
-    while (!dashboardFound && attempts < maxAttempts) {
+    for (let attempts = 0; attempts < maxAttempts && !dashboardFound; attempts++) {
       // Vérifier si dashboard est visible
       dashboardFound = await page.locator('[data-testid="dashboard"]').isVisible({
         timeout: 3000,
@@ -87,8 +86,6 @@ export const test = base.extend<AuthFixtures>({
         // Trop de tentatives de reload
         throw new Error('SetupWizard still visible after retries - profile failed to load');
       }
-
-      attempts++;
     }
 
     if (!dashboardFound) {
