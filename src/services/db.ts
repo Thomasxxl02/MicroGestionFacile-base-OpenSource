@@ -26,7 +26,7 @@ export interface AuditLog {
 
 export interface SecurityKey {
   id: string;
-  keyData: any; // JsonWebKey format
+  keyData: JsonWebKey;
   createdAt: string;
 }
 

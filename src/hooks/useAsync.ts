@@ -8,8 +8,8 @@ interface UseAsyncState<T> {
   error: Error | null;
 }
 
-interface UseAsyncOptions {
-  onSuccess?: (data: any) => void;
+interface UseAsyncOptions<T> {
+  onSuccess?: (data: T) => void;
   onError?: (error: Error) => void;
   showToast?: boolean;
   retryCount?: number;
@@ -20,7 +20,7 @@ interface UseAsyncOptions {
  * Hook pour gérer les opérations asynchrones avec gestion d'erreurs centralisée
  * Inclut retry logic, logging, et feedback utilisateur
  */
-export const useAsync = <T>(options: UseAsyncOptions = {}) => {
+export const useAsync = <T>(options: UseAsyncOptions<T> = {}) => {
   const { onSuccess, onError, showToast = true, retryCount = 0, retryDelay = 1000 } = options;
 
   const [state, setState] = useState<UseAsyncState<T>>({

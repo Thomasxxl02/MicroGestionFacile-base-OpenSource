@@ -100,12 +100,12 @@ export async function initializeApplication(): Promise<void> {
 
   initializationPromise = (async () => {
     try {
-      console.log('[INIT] 🚀 Starting application initialization...');
+      console.info('[INIT] 🚀 Starting application initialization...');
       
       // Étape 1: Effectuer la migration localStorage -> IndexedDB
       // C'est CRITIQUE pour que useUserProfile() trouve le profil
       await migrateFromLocalStorage();
-      console.log('[INIT] ✅ Migration complete');
+      console.info('[INIT] ✅ Migration complete');
 
       // Étape 2: Exposer les services globaux POUR LES TESTS
       // Cela doit être fait avant que React ne se monte
@@ -114,8 +114,8 @@ export async function initializeApplication(): Promise<void> {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).logger = logger;
       
-      console.log('[INIT] ✅ Services exposed to window');
-      console.log('[INIT] ✅ Application ready for React mount');
+      console.info('[INIT] ✅ Services exposed to window');
+      console.info('[INIT] ✅ Application ready for React mount');
 
       isInitialized = true;
     } catch (error) {

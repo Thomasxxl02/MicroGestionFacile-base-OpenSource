@@ -120,11 +120,42 @@ Si vous découvrez une faille de sécurité :
 
 ## 🔄 Mises à Jour de Sécurité
 
-| Date    | Version | Patch            |
-| ------- | ------- | ---------------- |
-| 2026-02 | 0.0.0   | Version initiale |
+| Date    | Version | Patch                                                                                      |
+| ------- | ------- | ------------------------------------------------------------------------------------------ |
+| 2026-02 | 0.0.0   | Version initiale                                                                            |
+| 2026-02 | 0.0.1   | **Corrections qualité et accessibilité**: Variables inutilisées, aria-labels, conditions   |
 
-## 📚 Références
+## 🔧 Corrections Récentes (18 février 2026)
+
+### Améliorations de Qualité du Code
+
+#### 1. **Variables Inutilisées - BACKUP_TEST_SCRIPT.js** ✅
+- **Problème** : Variables `improvedBackupService`, `db`, `logger` déclarées avec portée limitée dans le bloc try
+- **Impact** : CodeQL alerte, code incompréhensible, potentiel bogue de refactorisation
+- **Solution** : Déclaration avec `let` en dehors du bloc try, assignation à l'intérieur
+- **Fichier** : `BACKUP_TEST_SCRIPT.js` (lignes 17-30)
+
+#### 2. **Accessibilité - Bouton sans Label - src/App.tsx** ✅
+- **Problème** : Bouton menu mobile sans texte discernable
+- **Impact** : Non-conformité WCAG, lecteurs d'écran ne peuvent pas identifier le bouton
+- **Solution** : Ajout de `aria-label="Ouvrir le menu"` au bouton
+- **Fichier** : `src/App.tsx` (ligne 167)
+- **Standard** : axe rule `button-name`
+
+#### 3. **Condition Triviale - tests/fixtures/auth.fixture.ts** ✅
+- **Problème** : `.catch(() => false)` crée une ambiguïté pour l'analyseur statique
+- **Impact** : CodeQL ne peut pas tracer le flux de contrôle correctement
+- **Solution** : Remplacement par blocs `try-catch` explicites
+- **Fichier** : `tests/fixtures/auth.fixture.ts` (lignes 64-84)
+
+### Bénéfices
+
+✅ **Qualité du code** : Élimination des smells qui peuvent masquer des bugs  
+✅ **Accessibilité** : Conformité WCAG pour tous les utilisateurs  
+✅ **Maintenabilité** : Code plus explicite et lisible pour les analyseurs et outils  
+✅ **Analyse statique** : Réduction des fausses alertes CodeQL  
+
+
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)
@@ -145,4 +176,4 @@ Avant de déployer en production :
 
 ---
 
-**Dernière mise à jour** : 17 février 2026
+**Dernière mise à jour** : 18 février 2026

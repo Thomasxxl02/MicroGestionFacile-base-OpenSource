@@ -38,7 +38,7 @@ const AISettings: React.FC = () => {
             <h4 className="font-black text-slate-900 mb-2">🔒 Clés API Sécurisées</h4>
             <p className="text-sm text-slate-700 leading-relaxed">
               Les clés API ne sont plus stockées côté client. Elles sont gérées uniquement par le
-              serveur backend via des variables d'environnement sécurisées.
+              serveur backend via des variables d&apos;environnement sécurisées.
             </p>
           </div>
         </div>
@@ -69,7 +69,7 @@ const AISettings: React.FC = () => {
                   <code className="bg-blue-100 px-2 py-1 rounded text-xs font-mono">
                     GEMINI_API_KEY
                   </code>{' '}
-                  en variable d'env
+                  en variable d&apos;env
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -102,7 +102,7 @@ GEMINI_API_KEY=sk-... npm run api`}
             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
               POST /api/ai/chat
             </p>
-            <p className="text-sm text-slate-700">Chat avec l'assistant IA</p>
+            <p className="text-sm text-slate-700">Chat avec l&apos;assistant IA</p>
           </div>
           <div className="bg-white rounded-lg p-4 border border-slate-200">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
@@ -124,7 +124,7 @@ GEMINI_API_KEY=sk-... npm run api`}
               <code className="bg-amber-100 px-2 py-1 rounded text-xs font-mono">
                 GEMINI_API_KEY
               </code>{' '}
-              n'est JAMAIS exposée publiquement. Utilisez un reverse proxy (Nginx, CloudFlare) et
+              n&apos;est JAMAIS exposée publiquement. Utilisez un reverse proxy (Nginx, CloudFlare) et
               HTTPS en production.
             </p>
           </div>
@@ -133,7 +133,7 @@ GEMINI_API_KEY=sk-... npm run api`}
 
       {/* Docs */}
       <div className="text-center">
-        <p className="text-xs text-slate-600 mb-4">Voir le guide complet d'implémentation</p>
+        <p className="text-xs text-slate-600 mb-4">Voir le guide complet d&apos;implémentation</p>
         <a
           href="/docs/ARCHITECTURE.md"
           className="inline-block px-6 py-3 bg-slate-900 text-white rounded-full font-bold text-sm hover:bg-slate-800 transition-colors"

@@ -362,7 +362,7 @@ describe('📋 fecService', () => {
       // Vérifier juste que la fonction peut être appelée
       try {
         await downloadFEC(invoices, mockUserProfile, [mockClient]);
-      } catch (e) {
+      } catch {
         // Attendu car c'est un environnement de test
       }
     });

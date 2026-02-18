@@ -9,7 +9,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import ProductManager from './ProductManager';
+import { useProducts } from '../hooks/useData';
 import { Product } from '../types';
+
+// Mock le hook useData
+vi.mock('../hooks/useData', () => ({
+  useProducts: vi.fn(),
+}));
 
 // Mock des produits de test
 const mockProducts: Product[] = [
@@ -486,7 +492,7 @@ describe('🧪 ProductManager Component', () => {
 
   describe('État vide', () => {
     it('devrait afficher un message quand aucun produit n\'existe', async () => {
-      vi.mocked(require('../hooks/useData').useProducts).mockReturnValue([]);
+      vi.mocked(useProducts).mockReturnValue([]);
 
       render(
         <BrowserRouter>

@@ -11,8 +11,8 @@ export class CustomAssertions {
   static async assertInvoiceAmounts(page: Page, expectedSubtotal: number) {
     // Récupérer les montants du DOM
     const subtotal = await page.locator('[data-testid="invoice-subtotal"]').textContent();
-    const _taxAmount = await page.locator('[data-testid="invoice-tax-amount"]').textContent();
-    const _total = await page.locator('[data-testid="invoice-total"]').textContent();
+    await page.locator('[data-testid="invoice-tax-amount"]').textContent();
+    await page.locator('[data-testid="invoice-total"]').textContent();
 
     // Parser les montants (gérer les formats € et virgules)
     const parseAmount = (text: string | null): number => {

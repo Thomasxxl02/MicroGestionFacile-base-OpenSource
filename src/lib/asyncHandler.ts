@@ -3,7 +3,7 @@
  * Prevents unhandled promise rejections and satisfies TypeScript strict rules
  */
 
-export const asyncHandler = <T extends any[]>(
+export const asyncHandler = <T extends unknown[]>(
   fn: (...args: T) => Promise<void>
 ): ((...args: T) => void) => {
   return (...args: T) => {
@@ -11,7 +11,7 @@ export const asyncHandler = <T extends any[]>(
   };
 };
 
-export const createAsyncHandler = <T extends any[]>(
+export const createAsyncHandler = <T extends unknown[]>(
   fn: (...args: T) => Promise<void>
 ): ((...args: T) => void) => {
   return (...args: T) => {

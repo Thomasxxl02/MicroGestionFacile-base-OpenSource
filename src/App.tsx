@@ -168,6 +168,7 @@ const App: React.FC = () => {
               data-testid="menu-toggle"
               onClick={() => setMobileMenuOpen(true)}
               className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-soft border-2 border-slate-100 text-slate-900 active:scale-90 transition-all"
+              aria-label="Ouvrir le menu"
             >
               <Menu size={24} strokeWidth={3} />
             </button>

@@ -14,7 +14,7 @@ test.describe('🔍 Debug Navigation', () => {
     // Prendre un screenshot
     await page.screenshot({ path: 'test-results/01-initial-load.png', fullPage: true });
     
-    console.log('Page loaded, URL:', page.url());
+    console.info('Page loaded, URL:', page.url());
   });
 
   test('vérifie que le dashboard s\'affiche', async ({ page, authenticatedPage: _authenticatedPage }) => {
@@ -24,13 +24,13 @@ test.describe('🔍 Debug Navigation', () => {
     // Prendre un screenshot
     await page.screenshot({ path: 'test-results/02-after-auth.png', fullPage: true });
     
-    console.log('After auth, URL:', page.url());
+    console.info('After auth, URL:', page.url());
     
     // Vérifier que le dashboard est visible
     const dashboard = page.locator('[data-testid="dashboard"]');
     await expect(dashboard).toBeVisible({ timeout: 10000 });
     
-    console.log('Dashboard found!');
+    console.info('Dashboard found!');
   });
 
   test('vérifie que la sidebar est visible', async ({ page, authenticatedPage: _authenticatedPage }) => {
@@ -40,13 +40,13 @@ test.describe('🔍 Debug Navigation', () => {
     const sidebar = page.locator('[data-testid="sidebar"]');
     const isVisible = await sidebar.isVisible().catch(() => false);
     
-    console.log('Sidebar visible:', isVisible);
+    console.info('Sidebar visible:', isVisible);
     
     if (!isVisible) {
       // Peut-être que c'est mobile et on doit cliquer sur le menu
       const menuToggle = page.locator('[data-testid="menu-toggle"]');
       const menuVisible = await menuToggle.isVisible().catch(() => false);
-      console.log('Menu toggle visible:', menuVisible);
+      console.info('Menu toggle visible:', menuVisible);
       
       if (menuVisible) {
         await menuToggle.click();
@@ -57,7 +57,7 @@ test.describe('🔍 Debug Navigation', () => {
     await page.screenshot({ path: 'test-results/03-sidebar-check.png', fullPage: true });
     
     await expect(sidebar).toBeVisible({ timeout: 10000 });
-    console.log('Sidebar confirmed visible!');
+    console.info('Sidebar confirmed visible!');
   });
 
   test('vérifie que le bouton nav-clients existe', async ({ page, authenticatedPage: _authenticatedPage }) => {
@@ -77,14 +77,14 @@ test.describe('🔍 Debug Navigation', () => {
     const navClients = page.locator('[data-testid="nav-clients"]');
     await expect(navClients).toBeVisible({ timeout: 10000 });
     
-    console.log('Nav clients button found!');
+    console.info('Nav clients button found!');
     await page.screenshot({ path: 'test-results/04-nav-clients.png', fullPage: true });
   });
 
   test('vérifie la navigation vers clients', async ({ page, authenticatedPage: _authenticatedPage }) => {
     await page.waitForLoadState('networkidle');
     
-    console.log('Starting navigation to clients...');
+    console.info('Starting navigation to clients...');
     
     // S'assurer que la sidebar est visible
     const sidebar = page.locator('[data-testid="sidebar"]');
@@ -100,17 +100,17 @@ test.describe('🔍 Debug Navigation', () => {
     const navClients = page.locator('[data-testid="nav-clients"]');
     await navClients.click();
     
-    console.log('Clicked nav-clients, waiting for page...');
+    console.info('Clicked nav-clients, waiting for page...');
     await page.waitForTimeout(1000);
     
-    console.log('Current URL:', page.url());
+    console.info('Current URL:', page.url());
     await page.screenshot({ path: 'test-results/05-clicked-clients.png', fullPage: true });
     
     // Attendre le container clients
     const clientsContainer = page.locator('[data-testid="clients-container"]');
     await expect(clientsContainer).toBeVisible({ timeout: 10000 });
     
-    console.log('Clients container found!');
+    console.info('Clients container found!');
     await page.screenshot({ path: 'test-results/06-clients-loaded.png', fullPage: true });
   });
 });

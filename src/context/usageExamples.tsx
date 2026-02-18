@@ -40,7 +40,7 @@ export function ProtectedComponent() {
   const { isInitialized, initializationError } = useAppContext();
 
   if (initializationError) {
-    return <div>Erreur d'initialisation: {initializationError.message}</div>;
+    return <div>Erreur d&apos;initialisation: {initializationError.message}</div>;
   }
 
   if (!isInitialized) {

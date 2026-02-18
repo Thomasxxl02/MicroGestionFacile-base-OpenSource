@@ -29,8 +29,9 @@ export interface ValidationError {
 /**
  * Convertir les erreurs Zod en format structuré
  */
-function parseZodErrors(zodError: any): ValidationError[] {
-  if (!zodError.errors || !Array.isArray(zodError.errors)) {
+function parseZodErrors(zodError: unknown): ValidationError[] {
+  const err = zodError as Record<string, unknown>;
+  if (!err.errors || !Array.isArray(err.errors)) {
     return [
       {
         field: 'root',
@@ -40,12 +41,15 @@ function parseZodErrors(zodError: any): ValidationError[] {
     ];
   }
 
-  return zodError.errors.map((err: any) => ({
-    field: Array.isArray(err.path) ? err.path.join('.') || 'root' : 'root',
-    message: err.message || String(err),
-    code: err.code || 'VALIDATION_ERROR',
-    value: err,
-  }));
+  return err.errors.map((err: unknown) => {
+    const error = err as Record<string, unknown>;
+    return {
+      field: Array.isArray(error.path) ? (error.path as string[]).join('.') || 'root' : 'root',
+      message: (error.message as string) || String(err),
+      code: (error.code as string) || 'VALIDATION_ERROR',
+      value: err,
+    };
+  });
 }
 
 /**

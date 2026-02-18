@@ -59,7 +59,7 @@ class LoggerService {
     const entry = this.createEntry(LogLevel.DEBUG, message, context);
     this.store(entry);
     if (process.env.NODE_ENV === 'development') {
-      console.debug(`[${entry.timestamp}] ${message}`, context);
+      console.info(`[${entry.timestamp}] ${message}`, context);
     }
   }
 

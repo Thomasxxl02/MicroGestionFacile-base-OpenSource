@@ -12,7 +12,7 @@ interface CacheEntry<T> {
 }
 
 class CacheService {
-  private cache = new Map<string, CacheEntry<any>>();
+  private cache = new Map<string, CacheEntry<unknown>>();
   private debounceTimers = new Map<string, NodeJS.Timeout>();
   private readonly DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
 
@@ -31,7 +31,7 @@ class CacheService {
       const cached = this.cache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < cached.ttl) {
         logger.debug(`Cache hit for ${cacheKey}`);
-        return cached.data;
+        return cached.data as T;
       }
     }
 

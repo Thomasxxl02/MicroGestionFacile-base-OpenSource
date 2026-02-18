@@ -11,7 +11,7 @@ export const useAudit = () => {
       action: AuditAction,
       resourceType: string,
       resourceId?: string,
-      details?: Record<string, any>
+      details?: Record<string, unknown>
     ) => {
       auditService.logAction(action, resourceType, resourceId, details).catch(console.error);
     },

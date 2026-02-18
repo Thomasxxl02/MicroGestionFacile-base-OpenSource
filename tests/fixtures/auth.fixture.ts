@@ -40,13 +40,13 @@ export const test = base.extend<AuthFixtures>({
         isConfigured: true,
       }));
       
-      console.log('[INIT_SCRIPT] Profile stored in localStorage');
+      console.info('[INIT_SCRIPT] Profile stored in localStorage');
     }, configuredProfile);
 
     // NAVIGATION: Charger la page
-    console.log('[TEST] Navigating to / with baseURL http://localhost:3000');
+    console.info('[TEST] Navigating to / with baseURL http://localhost:3000');
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    console.log('[TEST] Page DOM loaded');
+    console.info('[TEST] Page DOM loaded');
     
     // 🔑 CRITICAL WAIT: Donner du temps à React et Dexie pour:
     // 1. React se monter
@@ -55,7 +55,7 @@ export const test = base.extend<AuthFixtures>({
     // 4. Dashboard se rendre
     // Note: Cela prend 8-15 secondes selon la machine
     await page.waitForTimeout(10000);
-    console.log('[TEST] Waited 10s for React mount + migration + profile load');
+    console.info('[TEST] Waited 10s for React mount + migration + profile load');
 
     //Attendre le dashboard de maan robuste
     const maxAttempts = 5;
@@ -63,23 +63,32 @@ export const test = base.extend<AuthFixtures>({
 
     for (let attempts = 0; attempts < maxAttempts && !dashboardFound; attempts++) {
       // Vérifier si dashboard est visible
-      dashboardFound = await page.locator('[data-testid="dashboard"]').isVisible({
-        timeout: 3000,
-      }).catch(() => false);
+      try {
+        dashboardFound = await page.locator('[data-testid="dashboard"]').isVisible({
+          timeout: 3000,
+        });
+      } catch {
+        dashboardFound = false;
+      }
 
       if (dashboardFound) {
-        console.log('[TEST] ✅ Dashboard found and visible on attempt', attempts + 1);
+        console.info('[TEST] ✅ Dashboard found and visible on attempt', attempts + 1);
         break;
       }
 
       // Vérifier si SetupWizard est là (mauvais état)
-      const hasWizard = await page.locator('[data-testid="setup-wizard"]').isVisible({
-        timeout: 1000,
-      }).catch(() => false);
+      let hasWizard = false;
+      try {
+        hasWizard = await page.locator('[data-testid="setup-wizard"]').isVisible({
+          timeout: 1000,
+        });
+      } catch {
+        hasWizard = false;
+      }
 
       if (hasWizard && attempts < 2) {
         // Le profil n'a pas été chargé, reload et retry
-        console.log('[TEST] ⚠️  SetupWizard visible (profile not loaded), reload attempt', attempts + 1);
+        console.info('[TEST] ⚠️  SetupWizard visible (profile not loaded), reload attempt', attempts + 1);
         await page.reload({ waitUntil: 'domcontentloaded' });
         await page.waitForTimeout(2000);
       } else if (hasWizard) {
@@ -100,7 +109,7 @@ export const test = base.extend<AuthFixtures>({
       timeout: 5000,
     });
 
-    console.log('[TEST] ✅ Dashboard is stable and ready');
+    console.info('[TEST] ✅ Dashboard is stable and ready');
 
     await use();
   },
