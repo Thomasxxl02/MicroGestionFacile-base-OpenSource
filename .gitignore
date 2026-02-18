@@ -29,8 +29,16 @@ build/
 
 # Test coverage
 coverage/
+test-results/
 *.lcov
 .nyc_output/
+
+# Test & Development logs
+*.log
+dev-server.log
+test-accounting.log
+test-output.log
+test-results.log
 
 # Editor & IDE
 .vscode/*
@@ -64,3 +72,14 @@ Thumbs.db
 # Development
 *.local
 .pnp.js
+
+# Temporary files & backups
+BACKUP_*.html
+BACKUP_*.js
+*.ps1.bak
+replacements.ps1
+agent ia.json
+agent*.json
+
+# Playwright artifacts
+.playwright-mcp/
