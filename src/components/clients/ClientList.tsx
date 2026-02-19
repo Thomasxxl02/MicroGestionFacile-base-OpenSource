@@ -778,13 +778,17 @@ const ClientList: React.FC<ClientListProps> = ({ clients, invoices }) => {
           </div>
 
           <div className="flex items-center gap-4 bg-card px-8 py-5 rounded-[2rem] shadow-soft border border-border/50">
-            <div className="flex items-center gap-2 text-muted-foreground mr-2">
+            <label
+              htmlFor="sort-select"
+              className="flex items-center gap-2 text-muted-foreground mr-2"
+            >
               <SortAsc size={18} strokeWidth={2.5} />
               <span className="text-[10px] font-black uppercase tracking-[0.2em] hidden lg:inline opacity-60">
                 Trier par
               </span>
-            </div>
+            </label>
             <select
+              id="sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="bg-transparent text-[11px] font-black uppercase tracking-widest text-foreground outline-none cursor-pointer appearance-none"

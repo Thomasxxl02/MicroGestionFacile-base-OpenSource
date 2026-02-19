@@ -1,0 +1,414 @@
+{
+  "analysisDate": "2025-02-18",
+  "totalTests": 114,
+  "testFilesSummary": [
+    {
+      "filePath": "src/components/SupplierManager.test.tsx",
+      "totalTests": 33,
+      "passingTests": 10,
+      "failingTests": 23,
+      "failureRate": "70%",
+      "priority": "CRITICAL",
+      "commonErrorPatterns": [
+        {
+          "pattern": "Found multiple elements with the placeholder text",
+          "description": "Tests are finding duplicate DOM elements when querying by placeholder text. Multiple search input fields render the same placeholder.",
+          "affectedTests": [
+            "devrait afficher un message quand aucun résultat de recherche",
+            "devrait filtrer les fournisseurs par nom",
+            "devrait filtrer par catégorie",
+            "devrait gérer la recherche insensible à la casse"
+          ],
+          "rootCause": "SELECTOR_AMBIGUITY",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Unable to find an element with the text",
+          "description": "Expected text elements are not rendering in the DOM. Often due to missing mock data or incomplete component rendering.",
+          "affectedTests": [
+            "devrait afficher les codes comptables",
+            "devrait afficher les badges de catégorie",
+            "devrait afficher le SIRET pour les fournisseurs français"
+          ],
+          "rootCause": "MOCK_DATA_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Timeout in waitFor()",
+          "description": "Component elements take longer than 1000ms timeout to render. Often indicates async operations not properly mocked or race conditions.",
+          "affectedTests": [
+            "devrait se rendre sans erreur",
+            "devrait afficher la liste des fournisseurs",
+            "devrait calculer correctement le total dépensé par fournisseur"
+          ],
+          "rootCause": "ASYNC_OPERATION_UNMOCKED",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Element not found - display logic issue",
+          "description": "Elements that should render based on component logic are not appearing. Often due to missing conditional rendering or data transformation.",
+          "affectedTests": [
+            "ne devrait rien afficher si aucune dépense",
+            "devrait masquer les IBAN par défaut",
+            "devrait afficher la date de dernière dépense"
+          ],
+          "rootCause": "COMPONENT_LOGIC_NOT_TESTED",
+          "fixable": "NEEDS_REWRITING"
+        }
+      ],
+      "recommendedFixApproach": "MOCK_IMPROVEMENTS_FIRST",
+      "fixStrategy": [
+        "Improve mock data completeness - ensure all supplier fields are properly mocked",
+        "Use testid attributes instead of placeholder text for more specific queries",
+        "Mock useData hooks with complete data structures including nested objects",
+        "Add proper async/await handling in mock functions"
+      ],
+      "estimatedEffort": "HIGH (3-4 hours)",
+      "riskLevel": "MEDIUM"
+    },
+    {
+      "filePath": "src/components/ClientManager.test.tsx",
+      "totalTests": 19,
+      "passingTests": 5,
+      "failingTests": 14,
+      "failureRate": "74%",
+      "priority": "CRITICAL",
+      "commonErrorPatterns": [
+        {
+          "pattern": "Multiple matching placeholder elements",
+          "description": "Search fields rendered multiple times cause getByPlaceholderText to fail with 'multiple elements found' error.",
+          "affectedTests": [
+            "devrait filtrer les clients par nom",
+            "devrait filtrer les clients par email",
+            "devrait gérer la recherche insensible à la casse"
+          ],
+          "rootCause": "SELECTOR_AMBIGUITY",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Missing or incorrect client data rendering",
+          "description": "Client names and statistics not appearing in DOM. Mock data may not be properly wired to component.",
+          "affectedTests": [
+            "devrait afficher la liste des clients actifs",
+            "devrait afficher les statistiques correctes",
+            "devrait afficher les clients archivés quand activé"
+          ],
+          "rootCause": "MOCK_DATA_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Route/Navigation not working correctly",
+          "description": "Tests expecting route navigation failing. Router setup in tests might not match component expectations.",
+          "affectedTests": [
+            "devrait naviguer vers les détails du client au clic",
+            "devrait permettre de trier par chiffre d'affaires"
+          ],
+          "rootCause": "ROUTING_MOCK_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Calculation/Statistics mismatch",
+          "description": "Revenue calculations and invoice aggregations expect different data than what's mocked.",
+          "affectedTests": [
+            "devrait calculer correctement le chiffre d'affaires par client",
+            "ne devrait compter que les factures payées",
+            "devrait gérer les avoirs (credit notes)"
+          ],
+          "rootCause": "MOCK_DATA_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        }
+      ],
+      "recommendedFixApproach": "MOCK_IMPROVEMENTS_FIRST",
+      "fixStrategy": [
+        "Create consistent mock store for both clients and invoices",
+        "Use screen.getByRole() instead of placeholder text queries where possible",
+        "Ensure invoice data properly references client IDs and payment statuses",
+        "Wrap route tests with proper router context (BrowserRouter)",
+        "Verify invoice totals and tax amounts match calculation expectations"
+      ],
+      "estimatedEffort": "HIGH (3-4 hours)",
+      "riskLevel": "MEDIUM"
+    },
+    {
+      "filePath": "src/components/AccountingManager.test.tsx",
+      "totalTests": 30,
+      "passingTests": 8,
+      "failingTests": 22,
+      "failureRate": "73%",
+      "priority": "CRITICAL",
+      "commonErrorPatterns": [
+        {
+          "pattern": "Mock service functions not being called correctly",
+          "description": "Tests verify service function calls but mocks are not capturing interactions properly. businessService, accountingService, fecService mocks may need adjustment.",
+          "affectedTests": [
+            "devrait afficher les cotisations calculées",
+            "devrait générer des écritures comptables automatiquement",
+            "devrait calculer la TVA collectée"
+          ],
+          "rootCause": "MOCK_SERVICE_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Expected text elements not found in render output",
+          "description": "Text assertions like 'Resuttat Net', 'Comptabilité', 'TVA À Payer' not found even with broad search patterns.",
+          "affectedTests": [
+            "devrait afficher l'onglet bilan par défaut",
+            "devrait calculer correctement le chiffre d'affaires",
+            "devrait calculer le résultat net",
+            "devrait afficher la marge nette"
+          ],
+          "rootCause": "COMPONENT_NOT_RENDERING_TEXT",
+          "fixable": "NEEDS_REWRITING"
+        },
+        {
+          "pattern": "useData hooks returning undefined or empty arrays",
+          "description": "Invoice, expense, client, supplier mock data not properly initialized in beforeEach. mockStore object pattern may not be working correctly.",
+          "affectedTests": [
+            "ne devrait compter que les factures payées",
+            "devrait gérer les avoirs dans le calcul du CA",
+            "devrait calculer correctement les dépenses totales"
+          ],
+          "rootCause": "MOCK_DATA_INITIALIZATION",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Conditional rendering logic not triggering",
+          "description": "Tests for VAT exemption, period filtering, and other conditional features fail. Component may not be properly responding to prop/state changes.",
+          "affectedTests": [
+            "ne devrait pas afficher la TVA si exonéré",
+            "devrait permettre de filtrer par année",
+            "devrait permettre de filtrer par mois"
+          ],
+          "rootCause": "COMPONENT_LOGIC_NOT_TESTED",
+          "fixable": "NEEDS_REWRITING"
+        }
+      ],
+      "recommendedFixApproach": "MOCK_IMPROVEMENTS_FIRST_THEN_REWRITING",
+      "fixStrategy": [
+        "Ensure mockStore is properly reset in beforeEach with complete financial data",
+        "Mock financial service responses with realistic numbers (invoices: 1200, expenses: 150, etc.)",
+        "Add more specific text patterns for financial calculations (use regex with flexibility)",
+        "Verify all imported test fixtures (testInvoices, testExpenses, etc.) have complete data",
+        "Test with actual rendered DOM using debug() to verify text is present",
+        "Consider breaking down complex component tests into smaller, focused test suites"
+      ],
+      "estimatedEffort": "VERY_HIGH (4-5 hours)",
+      "riskLevel": "HIGH"
+    },
+    {
+      "filePath": "src/components/Dashboard.test.tsx",
+      "totalTests": 15,
+      "passingTests": 3,
+      "failingTests": 12,
+      "failureRate": "80%",
+      "priority": "CRITICAL",
+      "commonErrorPatterns": [
+        {
+          "pattern": "Chart/Recharts mock not working correctly",
+          "description": "Tests expect recharts components to render with data-testid='recharts-barchart' but mocked components don't include this attribute.",
+          "affectedTests": [
+            "devrait afficher le graphique des revenus mensuels (BarChart)",
+            "devrait avoir des données dans le graphique BarChart",
+            "devrait afficher les axes X et Y du graphique"
+          ],
+          "rootCause": "CHART_MOCK_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "KPI/Statistics values not displaying",
+          "description": "Mocked validatedData hooks return simplified structures that don't include computed values dashboard expects to display.",
+          "affectedTests": [
+            "devrait afficher les KPIs principaux",
+            "devrait utiliser les données validées"
+          ],
+          "rootCause": "MOCK_DATA_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "ThresholdMonitor component mock too simplistic",
+          "description": "ThresholdMonitor mock is just a div with testid, but tests may expect functional component behavior.",
+          "affectedTests": [
+            "devrait afficher le ThresholdMonitor",
+            "devrait afficher le ThresholdMonitor pour la surveillance des seuils"
+          ],
+          "rootCause": "MOCK_COMPONENT_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "useAsync hook mock not adequate",
+          "description": "The mock useAsync hook returns a simple object but component may expect specific execution behavior or state updates.",
+          "affectedTests": [
+            "devrait gérer les erreurs de validation",
+            "devrait utiliser useAsync pour les opérations"
+          ],
+          "rootCause": "MOCK_HOOK_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        }
+      ],
+      "recommendedFixApproach": "MOCK_IMPROVEMENTS_FIRST",
+      "fixStrategy": [
+        "Enhance recharts mock to include proper data-testid attributes",
+        "Ensure mocked validated data hooks return objects with computed statistics",
+        "Add data attribute to chart mock: `data-chart-data=JSON.stringify(chartData)`",
+        "Verify all UI component mocks (Header, Card, Badge, Button) support expected interactions",
+        "Test with useValidatedData returning realistic data structures matching actual hooks",
+        "Add aria labels to mocked components for better query targeting"
+      ],
+      "estimatedEffort": "MEDIUM (2-3 hours)",
+      "riskLevel": "MEDIUM"
+    },
+    {
+      "filePath": "src/components/InvoiceManager.test.tsx",
+      "totalTests": 17,
+      "passingTests": 4,
+      "failingTests": 13,
+      "failureRate": "76%",
+      "priority": "CRITICAL",
+      "commonErrorPatterns": [
+        {
+          "pattern": "InvoiceList and InvoiceForm subcomponent mocks too simple",
+          "description": "Mocked subcomponents don't properly handle state management or user interactions. Tests expect callbacks to work but mocks have no real behavior.",
+          "affectedTests": [
+            "devrait supporter la création de nouvelles factures",
+            "devrait supporter l'édition de factures",
+            "devrait supporter la suppression de factures"
+          ],
+          "rootCause": "SUBCOMPONENT_MOCK_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Invoice data not properly loaded/initialized",
+          "description": "Tests expect invoice list to show existing invoices but mocked useInvoices returns minimal data.",
+          "affectedTests": [
+            "devrait afficher la liste des factures au démarrage",
+            "devrait charger les factures existantes",
+            "devrait charger les clients pour sélection"
+          ],
+          "rootCause": "MOCK_DATA_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Service function mocks not tracking calls correctly",
+          "description": "Tests that verify businessService.getNextDocumentNumber, validateInvoice, generateFacturX_XML are called not seeing mock invocations.",
+          "affectedTests": [
+            "devrait générer un fichier XML Factur-X",
+            "devrait valider les factures avant sauvegarde"
+          ],
+          "rootCause": "MOCK_SERVICE_INCOMPLETE",
+          "fixable": "YES_WITH_MOCK_IMPROVEMENTS"
+        },
+        {
+          "pattern": "Route-based state management failing",
+          "description": "Tests that rely on useRoutes or route-based component state switching not working with test router setup.",
+          "affectedTests": [
+            "devrait gérer les clients manquants",
+            "devrait afficher un message d'erreur si le client n'existe pas",
+            "devrait maintenir l'état de suppression confirmée"
+          ],
+          "rootCause": "ROUTING_MOCK_INCOMPLETE",
+          "fixable": "NEEDS_REWRITING"
+        }
+      ],
+      "recommendedFixApproach": "MOCK_IMPROVEMENTS_FIRST",
+      "fixStrategy": [
+        "Enhance subcomponent mocks to properly handle onEdit, onDelete, onSave callbacks",
+        "Expand useInvoices mock data to include multiple invoices with different statuses",
+        "Ensure useClients returns properly structured client data matching Invoice.clientId references",
+        "Mock db.invoices operations to actually update mock invoice array",
+        "Verify businessService mocks are spied on with vi.spyOn() for better call tracking",
+        "Test all invoice CRUD operations with complete mock data flow",
+        "Use renderWithRouter utility properly with useRoutes option enabled"
+      ],
+      "estimatedEffort": "MEDIUM (2-3 hours)",
+      "riskLevel": "MEDIUM"
+    }
+  ],
+  "summary": {
+    "totalTestsAcrossSuite": 114,
+    "totalPassingTests": 30,
+    "totalFailingTests": 84,
+    "overallFailureRate": "74%",
+    "testFilesSorted": [
+      {
+        "rank": 1,
+        "file": "SupplierManager.test.tsx",
+        "failureRate": "70%",
+        "failingTests": 23
+      },
+      {
+        "rank": 2,
+        "file": "Dashboard.test.tsx",
+        "failureRate": "80%",
+        "failingTests": 12
+      },
+      {
+        "rank": 3,
+        "file": "InvoiceManager.test.tsx",
+        "failureRate": "76%",
+        "failingTests": 13
+      },
+      {
+        "rank": 4,
+        "file": "AccountingManager.test.tsx",
+        "failureRate": "73%",
+        "failingTests": 22
+      },
+      {
+        "rank": 5,
+        "file": "ClientManager.test.tsx",
+        "failureRate": "74%",
+        "failingTests": 14
+      }
+    ]
+  },
+  "fixPriorityRecommendation": [
+    {
+      "priority": 1,
+      "file": "CustomerManager.test.tsx",
+      "reason": "23 failing tests - highest count. Selector issues fixable with mock improvements (test-id based queries)",
+      "estimatedFixTime": "3-4 hours",
+      "expectedImpact": "Can fix ~18-20 tests with mock improvements"
+    },
+    {
+      "priority": 2,
+      "file": "AccountingManager.test.tsx",
+      "reason": "22 failing tests - complex financial calculations require better mock data and possibly component logic review",
+      "estimatedFixTime": "4-5 hours",
+      "expectedImpact": "Can fix ~15-18 tests with comprehensive mock improvements"
+    },
+    {
+      "priority": 3,
+      "file": "ClientManager.test.tsx",
+      "reason": "14 failing tests - routing and data aggregation issues, many fixable with mocks",
+      "estimatedFixTime": "3-4 hours",
+      "expectedImpact": "Can fix ~10-12 tests with mock improvements"
+    },
+    {
+      "priority": 4,
+      "file": "InvoiceManager.test.tsx",
+      "reason": "13 failing tests - subcomponent mocks need enhancement for proper interaction testing",
+      "estimatedFixTime": "2-3 hours",
+      "expectedImpact": "Can fix ~10-12 tests with improved subcomponent mocks"
+    },
+    {
+      "priority": 5,
+      "file": "Dashboard.test.tsx",
+      "reason": "12 failing tests - chart mocks need attributes, data structure improvements",
+      "estimatedFixTime": "2-3 hours",
+      "expectedImpact": "Can fix ~10-11 tests with mock enhancements and data structure fixes"
+    }
+  ],
+  "overallAssessment": {
+    "canFixWithMockImprovements": "70% of failing tests (59/84)",
+    "needsComponentRewriting": "30% of failing tests (25/84)",
+    "totalEstimatedFixTime": "14-19 hours",
+    "recommendation": "START_WITH_MOCK_IMPROVEMENTS",
+    "nextSteps": [
+      "Implement consistent mock data patterns across all test files",
+      "Replace placeholder/text-based queries with test-id attributes",
+      "Enhance service mocks to properly track and respond to calls",
+      "Create reusable mock factories for complex data structures",
+      "Run tests incrementally after each mock improvement to verify progress"
+    ]
+  }
+}

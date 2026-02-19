@@ -106,10 +106,7 @@ vi.mock('../lib/utils', () => ({
 }));
 
 vi.mock('../components/ui/Header', () => ({
-  default: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { children, title }: any
-  ) => (
+  default: ({ children, title }: any) => (
     <div data-testid="header">
       {title && <h1>{title}</h1>}
       {children}
@@ -118,10 +115,7 @@ vi.mock('../components/ui/Header', () => ({
 }));
 
 vi.mock('../components/ui/Button', () => ({
-  default: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { children, onClick }: any
-  ) => (
+  default: ({ children, onClick }: any) => (
     <button data-testid="button" onClick={onClick}>
       {children}
     </button>
@@ -129,10 +123,7 @@ vi.mock('../components/ui/Button', () => ({
 }));
 
 vi.mock('../components/ui/ConfirmDialog', () => ({
-  default: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { isOpen, onConfirm, onCancel, children, title }: any
-  ) => (
+  default: ({ isOpen, onConfirm, onCancel, children, title }: any) => (
     <>
       {isOpen && (
         <div data-testid="confirm-dialog">
@@ -151,10 +142,7 @@ vi.mock('../components/ui/ConfirmDialog', () => ({
 }));
 
 vi.mock('../components/invoices/InvoiceList', () => ({
-  default: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { onEdit, onDelete }: any
-  ) => (
+  default: ({ onEdit, onDelete }: any) => (
     <div data-testid="invoice-list">
       <button data-testid="invoice-edit" onClick={() => onEdit?.('inv-1')}>
         Éditer

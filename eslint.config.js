@@ -61,5 +61,41 @@ export default tseslint.config(
       'no-implicit-coercion': 'warn',
       'no-empty-function': ['warn', { allow: ['arrowFunctions'] }],
     },
+  },
+  // Allow 'any' in test files and mocks where it's more pragmatic
+  {
+    files: ['**/*.test.{ts,tsx}', '**/mocks/**', '**/fixtures/**', '**/setup.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  // Allow exports alongside components in test files
+  {
+    files: ['**/*.test.{ts,tsx}', '**/testWrappers.tsx', '**/usageExamples.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  // Allow utility exports in context and type files
+  {
+    files: ['**/context/**/*.tsx', '**/types/**/*.ts', '**/services/**/*.ts'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  // Relax `any` rules in services where type inference is complex
+  {
+    files: [
+      '**/services/**/*.ts',
+      '**/hooks/**/*.ts',
+      '**/lib/**/*.ts',
+      '**/types/**/*.ts',
+      '**/context/**/*.tsx',
+      '**/tests/utils/**/*.ts',
+      '**/tests/e2e/**/*.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   }
 );

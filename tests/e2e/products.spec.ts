@@ -47,7 +47,7 @@ test.describe('📦 Product & Service Management', () => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
       // Sélectionner type prestation
-      const serviceTab = page.locator('[role="tab"]:has-text("Prestation")');
+      const serviceTab = page.locator('[role="button"]:has-text("Prestation")');
       if (await serviceTab.isVisible()) {
         await serviceTab.click();
       }
@@ -108,7 +108,7 @@ test.describe('📦 Product & Service Management', () => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
       // Sélectionner type produit
-      const productTab = page.locator('[role="tab"]:has-text("Produit")');
+      const productTab = page.locator('[role="button"]:has-text("Produit")');
       if (await productTab.isVisible()) {
         await productTab.click();
       }
@@ -136,7 +136,7 @@ test.describe('📦 Product & Service Management', () => {
 
       await page.locator('button:has-text("Nouveau produit")').click();
 
-      const productTab = page.locator('[role="tab"]:has-text("Produit")');
+      const productTab = page.locator('[role="button"]:has-text("Produit")');
       if (await productTab.isVisible()) {
         await productTab.click();
       }
@@ -402,7 +402,7 @@ test.describe('📦 Product & Service Management', () => {
     test("affiche l'éco-participation", async ({ page }) => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
-      const productTab = page.locator('[role="tab"]:has-text("Produit")');
+      const productTab = page.locator('[role="button"]:has-text("Produit")');
       if (await productTab.isVisible()) {
         await productTab.click();
       }
@@ -419,7 +419,7 @@ test.describe('📦 Product & Service Management', () => {
     test("affiche l'indice de réparabilité", async ({ page }) => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
-      const productTab = page.locator('[role="tab"]:has-text("Produit")');
+      const productTab = page.locator('[role="button"]:has-text("Produit")');
       if (await productTab.isVisible()) {
         await productTab.click();
       }
@@ -456,7 +456,7 @@ test.describe('📦 Product & Service Management', () => {
     test('affiche le SKU', async ({ page }) => {
       await page.locator('button:has-text("Nouveau produit")').click();
 
-      const productTab = page.locator('[role="tab"]:has-text("Produit")');
+      const productTab = page.locator('[role="button"]:has-text("Produit")');
       if (await productTab.isVisible()) {
         await productTab.click();
       }
@@ -501,7 +501,7 @@ async function createTestProduct(
 
   // Sélectionner le type
   if (data.type === 'product') {
-    const productTab = page.locator('[role="tab"]:has-text("Produit")');
+    const productTab = page.locator('[role="button"]:has-text("Produit")');
     if (await productTab.isVisible()) {
       await productTab.click();
     }

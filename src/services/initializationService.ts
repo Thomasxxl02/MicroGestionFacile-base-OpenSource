@@ -106,9 +106,9 @@ export async function initializeApplication(): Promise<void> {
 
       // Étape 2: Exposer les services globaux POUR LES TESTS
       // Cela doit être fait avant que React ne se monte
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       (window as any).db = db;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       (window as any).logger = logger;
 
       console.info('[INIT] ✅ Services exposed to window');

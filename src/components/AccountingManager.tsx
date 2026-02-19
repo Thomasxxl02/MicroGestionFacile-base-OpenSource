@@ -466,6 +466,8 @@ const AccountingManager: React.FC = () => {
                 else if (period === 'year') d.setFullYear(d.getFullYear() - 1);
                 setSelectedDate(d);
               }}
+              aria-label={`Période précédente (${period === 'month' ? 'mois' : period === 'quarter' ? 'trimestre' : 'année'})`}
+              title="Naviguer vers la période précédente"
               className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors"
             >
               <TrendingDown size={16} className="rotate-90" />
@@ -483,6 +485,8 @@ const AccountingManager: React.FC = () => {
                 else if (period === 'year') d.setFullYear(d.getFullYear() + 1);
                 setSelectedDate(d);
               }}
+              aria-label={`Période suivante (${period === 'month' ? 'mois' : period === 'quarter' ? 'trimestre' : 'année'})`}
+              title="Naviguer vers la période suivante"
               className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors"
             >
               <TrendingUp size={16} className="-rotate-90" />
@@ -514,12 +518,17 @@ const AccountingManager: React.FC = () => {
         }
       >
         <div className="mb-8">
+          <label htmlFor="expense-ocr-input" className="sr-only">
+            Télécharger reçu ou facture pour reconnaissance optique
+          </label>
           <input
+            id="expense-ocr-input"
             type="file"
             accept="image/*"
             className="hidden"
             ref={fileInputRef}
             onChange={handleOcr}
+            aria-label="Télécharger reçu ou facture pour reconnaissance optique"
           />
           <button
             onClick={() => fileInputRef.current?.click()}
@@ -553,7 +562,10 @@ const AccountingManager: React.FC = () => {
         <form onSubmit={handleAddExpense} className="space-y-8 py-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <label
+                htmlFor="expense-date"
+                className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+              >
                 Date de l&apos;opération
               </label>
               <div className="relative group">
@@ -561,6 +573,7 @@ const AccountingManager: React.FC = () => {
                   <CalendarIcon size={20} strokeWidth={3} />
                 </div>
                 <input
+                  id="expense-date"
                   type="date"
                   required
                   className="w-full pl-14 p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-slate-900 focus:bg-white outline-none transition-all duration-300 font-black text-slate-900"
@@ -570,10 +583,14 @@ const AccountingManager: React.FC = () => {
               </div>
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <label
+                htmlFor="expense-category"
+                className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+              >
                 Catégorie fiscale
               </label>
               <select
+                id="expense-category"
                 className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-slate-900 focus:bg-white transition-all duration-300 appearance-none cursor-pointer font-black text-slate-900"
                 value={newExpense.category}
                 onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
@@ -591,10 +608,14 @@ const AccountingManager: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+            <label
+              htmlFor="expense-description"
+              className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+            >
               Désignation de la dépense
             </label>
             <input
+              id="expense-description"
               type="text"
               required
               className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-slate-900 focus:bg-white outline-none transition-all duration-300 font-black text-slate-900"
@@ -606,7 +627,10 @@ const AccountingManager: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <label
+                htmlFor="expense-amount"
+                className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+              >
                 Montant TTC
               </label>
               <div className="relative group">
@@ -614,6 +638,7 @@ const AccountingManager: React.FC = () => {
                   <Euro size={20} strokeWidth={3} />
                 </div>
                 <input
+                  id="expense-amount"
                   type="number"
                   step="0.01"
                   required
@@ -626,7 +651,10 @@ const AccountingManager: React.FC = () => {
               </div>
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+              <label
+                htmlFor="expense-vat"
+                className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+              >
                 Dont TVA
               </label>
               <div className="relative group">
@@ -634,6 +662,7 @@ const AccountingManager: React.FC = () => {
                   <Percent size={18} strokeWidth={3} />
                 </div>
                 <input
+                  id="expense-vat"
                   type="number"
                   step="0.01"
                   className="w-full pl-14 p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-indigo-600 focus:bg-white outline-none transition-all duration-300 font-black text-indigo-600"
@@ -647,10 +676,14 @@ const AccountingManager: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
+            <label
+              htmlFor="expense-supplier"
+              className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1"
+            >
               Fournisseur associé
             </label>
             <select
+              id="expense-supplier"
               className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-slate-900 focus:bg-white transition-all duration-300 appearance-none cursor-pointer font-black text-slate-900"
               value={newExpense.supplierId}
               onChange={(e) => setNewExpense({ ...newExpense, supplierId: e.target.value })}

@@ -208,7 +208,7 @@ global.ResizeObserver = class ResizeObserver {
           } as DOMRectReadOnly,
         } as unknown as ResizeObserverEntry,
       ]);
-    } catch (e) {
+    } catch {
       // Ignore errors in callback
     }
   }

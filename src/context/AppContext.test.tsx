@@ -121,7 +121,6 @@ describe('🏗️ AppContext Provider', () => {
 
   describe('useAppContext', () => {
     it('devrait retourner le contexte', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const contextRef = { current: null as any };
 
       function ContextCapture() {
@@ -161,7 +160,6 @@ describe('🏗️ AppContext Provider', () => {
 
   describe('useAppService', () => {
     it('devrait retourner les services spécifiques', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const serviceRef = { current: null as any };
 
       function ServiceConsumer() {
@@ -187,7 +185,6 @@ describe('🏗️ AppContext Provider', () => {
 
   describe('useAppInitialization', () => {
     it("devrait signaler l'état d'initialisation", async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const stateRef = { current: null as any };
 
       function InitComponent() {
@@ -214,7 +211,6 @@ describe('🏗️ AppContext Provider', () => {
 
   describe('Service Injection', () => {
     it('devrait injecter tous les services critiques', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const contextRef = { current: null as any };
 
       function ServiceCheck() {
@@ -242,7 +238,6 @@ describe('🏗️ AppContext Provider', () => {
 
   describe('Nested Providers', () => {
     it('devrait fonctionner avec plusieurs providers imbriqués', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const contextsRef = { current: { ctx1: null as any, ctx2: null as any } };
 
       function Component1() {

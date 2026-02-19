@@ -268,7 +268,10 @@ const ProductManager: React.FC = () => {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6"
         data-testid="product-stats"
       >
-        <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
+        <Card
+          className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500"
+          data-testid="product-stats-total"
+        >
           <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500">
             <LayoutGrid size={24} />
           </div>
@@ -276,11 +279,16 @@ const ProductManager: React.FC = () => {
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
               Total
             </p>
-            <p className="text-3xl font-black text-slate-900">{stats.total}</p>
+            <p className="text-3xl font-black text-slate-900" data-testid="stat-value-total">
+              {stats.total}
+            </p>
           </div>
         </Card>
 
-        <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
+        <Card
+          className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500"
+          data-testid="product-stats-services"
+        >
           <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
             <Briefcase size={24} />
           </div>
@@ -288,11 +296,16 @@ const ProductManager: React.FC = () => {
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
               Prestations
             </p>
-            <p className="text-3xl font-black text-slate-900">{stats.servicesCount}</p>
+            <p className="text-3xl font-black text-slate-900" data-testid="stat-value-services">
+              {stats.servicesCount}
+            </p>
           </div>
         </Card>
 
-        <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
+        <Card
+          className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500"
+          data-testid="product-stats-products"
+        >
           <div className="w-12 h-12 bg-violet-50 rounded-2xl flex items-center justify-center text-violet-500 group-hover:bg-violet-600 group-hover:text-white transition-all duration-500">
             <Package size={24} />
           </div>
@@ -300,11 +313,16 @@ const ProductManager: React.FC = () => {
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
               Marchandises
             </p>
-            <p className="text-3xl font-black text-slate-900">{stats.productsCount}</p>
+            <p className="text-3xl font-black text-slate-900" data-testid="stat-value-products">
+              {stats.productsCount}
+            </p>
           </div>
         </Card>
 
-        <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
+        <Card
+          className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500"
+          data-testid="product-stats-value"
+        >
           <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
             <ArrowUpRight size={24} />
           </div>
@@ -312,13 +330,16 @@ const ProductManager: React.FC = () => {
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
               Valeur Stock
             </p>
-            <p className="text-3xl font-black text-slate-900">
+            <p className="text-3xl font-black text-slate-900" data-testid="stat-value-stock">
               {stats.value.toLocaleString('fr-FR')} €
             </p>
           </div>
         </Card>
 
-        <Card className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500">
+        <Card
+          className="p-8 border-none bg-white shadow-soft rounded-[2.5rem] flex flex-col justify-between group hover:shadow-premium transition-all duration-500"
+          data-testid="product-stats-lowstock"
+        >
           <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:bg-rose-600 group-hover:text-white transition-all duration-500">
             <Tag size={24} />
           </div>
@@ -328,6 +349,7 @@ const ProductManager: React.FC = () => {
             </p>
             <p
               className={`text-3xl font-black ${stats.lowStock > 0 ? 'text-rose-600' : 'text-slate-900'}`}
+              data-testid="stat-value-lowstock"
             >
               {stats.lowStock}
             </p>
@@ -404,6 +426,7 @@ const ProductManager: React.FC = () => {
                   Type
                 </label>
                 <select
+                  aria-label="Type de produit ou service"
                   className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer font-medium"
                   value={formData.type}
                   onChange={(e) => {
@@ -430,6 +453,7 @@ const ProductManager: React.FC = () => {
                   Catégorie Micro
                 </label>
                 <select
+                  aria-label="Catégorie de micro-entreprise pour la fiscalité"
                   className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer font-medium"
                   value={formData.taxCategory}
                   onChange={(e) =>
@@ -446,12 +470,17 @@ const ProductManager: React.FC = () => {
               </div>
 
               <div className="space-y-2 text-blue-600">
-                <label className="text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">
+                <label
+                  htmlFor="product-price"
+                  className="text-xs font-bold text-blue-400 uppercase tracking-widest ml-1"
+                >
                   Prix Unitaire HT (€)
                 </label>
                 <input
+                  id="product-price"
                   type="number"
                   step="0.01"
+                  aria-label="Prix unitaire hors taxes en euros"
                   className="w-full p-4 bg-blue-50/30 border-2 border-blue-100 rounded-2xl focus:border-blue-500 focus:bg-white outline-none transition-all font-black text-slate-900"
                   value={formData.price}
                   onChange={(e) =>
@@ -465,6 +494,7 @@ const ProductManager: React.FC = () => {
                   Taux TVA (%)
                 </label>
                 <select
+                  aria-label="Taux de TVA applicable au produit"
                   className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all appearance-none cursor-pointer font-medium"
                   value={formData.taxRate}
                   onChange={(e) =>
@@ -546,12 +576,17 @@ const ProductManager: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
+                <label
+                  htmlFor="eco-participation"
+                  className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1"
+                >
                   Éco-participation (€ TTC)
                 </label>
                 <input
+                  id="eco-participation"
                   type="number"
                   step="0.01"
+                  aria-label="Éco-participation en euros TTC"
                   className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 focus:bg-white outline-none transition-all text-slate-900 font-medium"
                   value={formData.ecoParticipation}
                   onChange={(e) =>
@@ -561,14 +596,20 @@ const ProductManager: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
+                <label
+                  htmlFor="repairability-index"
+                  className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1"
+                >
                   Indice de réparabilité (/10)
                 </label>
                 <input
+                  id="repairability-index"
                   type="number"
                   step="0.1"
                   min="0"
                   max="10"
+                  aria-label="Indice de réparabilité sur 10"
+                  placeholder="Ex: 8.5"
                   className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 focus:bg-white outline-none transition-all text-slate-900 font-medium"
                   value={formData.repairabilityIndex}
                   onChange={(e) =>
@@ -577,7 +618,6 @@ const ProductManager: React.FC = () => {
                       repairabilityIndex: parseFloat(e.target.value) || undefined,
                     })
                   }
-                  placeholder="Ex: 8.5"
                 />
               </div>
 
@@ -609,11 +649,16 @@ const ProductManager: React.FC = () => {
 
               {formData.type === 'product' && (
                 <div className="md:col-span-2 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 space-y-4">
-                  <label className="text-xs font-bold text-blue-700 uppercase tracking-widest flex items-center gap-2">
+                  <label
+                    htmlFor="product-stock"
+                    className="text-xs font-bold text-blue-700 uppercase tracking-widest flex items-center gap-2"
+                  >
                     <Package size={16} /> Gestion du Stock
                   </label>
                   <input
+                    id="product-stock"
                     type="number"
+                    aria-label="Quantité en stock"
                     className="w-full p-4 bg-white border-2 border-blue-100 rounded-2xl focus:border-blue-500 outline-none transition-all font-black text-blue-900"
                     value={formData.stock || 0}
                     onChange={(e) =>
@@ -872,6 +917,7 @@ const ProductManager: React.FC = () => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="bg-transparent text-sm font-black text-slate-900 outline-none cursor-pointer appearance-none"
+              aria-label="Trier par"
             >
               <option value="name">Alphabétique (A-Z)</option>
               <option value="price">Prix décroissant</option>
@@ -908,6 +954,7 @@ const ProductManager: React.FC = () => {
                       onClick={() => openDetail(p)}
                       className="p-3 bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-white rounded-2xl shadow-sm border border-transparent hover:border-slate-100 transition-all"
                       title="Voir"
+                      aria-label={`Voir détails du produit ${p.name}`}
                     >
                       <Eye size={18} />
                     </button>
@@ -915,6 +962,7 @@ const ProductManager: React.FC = () => {
                       onClick={() => openEdit(p)}
                       className="p-3 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-white rounded-2xl shadow-sm border border-transparent hover:border-slate-100 transition-all"
                       title="Modifier"
+                      aria-label={`Modifier le produit ${p.name}`}
                     >
                       <Edit2 size={18} />
                     </button>
@@ -922,6 +970,7 @@ const ProductManager: React.FC = () => {
                       onClick={(e) => handleDelete(p.id, e)}
                       className="p-3 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-white rounded-2xl shadow-sm border border-transparent hover:border-slate-100 transition-all"
                       title="Supprimer"
+                      aria-label={`Supprimer le produit ${p.name}`}
                     >
                       <Trash2 size={18} />
                     </button>

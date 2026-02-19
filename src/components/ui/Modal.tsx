@@ -69,12 +69,16 @@ const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 40 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            role="dialog"
+            aria-labelledby="modal-title"
             className={`relative w-full ${sizes[size]} bg-card dark:bg-card rounded-4xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[90vh]`}
           >
             {/* Header */}
             <div className="p-8 pb-6 flex justify-between items-start border-b border-border/50">
               <div>
-                <h3 className="text-3xl font-bold text-foreground tracking-tight">{title}</h3>
+                <h3 id="modal-title" className="text-3xl font-bold text-foreground tracking-tight">
+                  {title}
+                </h3>
                 {description && (
                   <p className="text-muted-foreground mt-2 font-medium">{description}</p>
                 )}

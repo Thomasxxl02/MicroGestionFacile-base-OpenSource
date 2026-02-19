@@ -16,6 +16,8 @@ const Header: React.FC<HeaderProps> = ({ title, description, icon: Icon, actions
         {onBack && (
           <button
             onClick={onBack}
+            aria-label="Retour à la page précédente"
+            title="Retour à la page précédente"
             className="group flex items-center justify-center bg-white p-4 rounded-2xl shadow-soft border-2 border-slate-100 text-slate-400 hover:text-slate-900 hover:border-slate-900 transition-all duration-300 active:scale-90 h-16 w-16 shrink-0"
           >
             <svg

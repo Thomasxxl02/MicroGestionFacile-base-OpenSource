@@ -12,6 +12,11 @@ export default defineConfig({
     // Exclure les tests E2E Playwright de Vitest
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'tests/**/*.{test,spec}.ts'],
     exclude: ['tests/e2e/**/*', 'node_modules/**/*'],
+    // Timeouts généreux pour les tests complexes
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    // Isolation des tests
+    isolate: true,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],

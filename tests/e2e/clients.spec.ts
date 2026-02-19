@@ -59,7 +59,7 @@ test.describe('👥 Client Management', () => {
       await page.locator('button:has-text("Nouveau client")').click();
 
       // Sélectionner type entreprise
-      const companyTab = page.locator('[role="tab"]:has-text("Entreprise")');
+      const companyTab = page.locator('[role="button"]:has-text("Entreprise")');
       if (await companyTab.isVisible()) {
         await companyTab.click();
       }
@@ -96,7 +96,7 @@ test.describe('👥 Client Management', () => {
       await page.locator('button:has-text("Nouveau client")').click();
 
       // Sélectionner type particulier
-      const individualTab = page.locator('[role="tab"]:has-text("Particulier")');
+      const individualTab = page.locator('[role="button"]:has-text("Particulier")');
       if (await individualTab.isVisible()) {
         await individualTab.click();
       }

@@ -3,7 +3,6 @@
  * 🧪 Tests du service d'audit (RGPD/Conformité)
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuditAction } from './auditService';
 

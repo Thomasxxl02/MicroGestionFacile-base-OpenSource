@@ -387,9 +387,13 @@ const Dashboard: React.FC = () => {
             </div>
           }
         >
-          <div className="h-[400px] mt-4">
+          <div className="h-[400px] mt-4" data-testid="recharts-barchart">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+              <BarChart
+                data={monthlyData}
+                margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+                data-testid="recharts-barchart-inner"
+              >
                 <defs>
                   <linearGradient id="colorRecettes" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
@@ -407,14 +411,17 @@ const Dashboard: React.FC = () => {
                   tickLine={false}
                   tick={{ fill: isDarkMode ? '#64748b' : '#94a3b8', fontSize: 11, fontWeight: 800 }}
                   dy={15}
+                  data-testid="recharts-xaxis"
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
                   tick={{ fill: isDarkMode ? '#64748b' : '#94a3b8', fontSize: 11, fontWeight: 800 }}
                   tickFormatter={(v) => (v === 0 ? '0' : `${v / 1000}k`)}
+                  data-testid="recharts-yaxis"
                 />
                 <Tooltip
+                  data-testid="recharts-tooltip"
                   cursor={{
                     fill: isDarkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
                     radius: 12,
@@ -450,6 +457,7 @@ const Dashboard: React.FC = () => {
                   fill="url(#colorRecettes)"
                   radius={[10, 10, 10, 10]}
                   barSize={24}
+                  data-testid="recharts-bar"
                 />
                 <Bar
                   name="Avoirs"
@@ -458,6 +466,7 @@ const Dashboard: React.FC = () => {
                   radius={[10, 10, 10, 10]}
                   barSize={24}
                   opacity={0.3}
+                  data-testid="recharts-bar"
                 />
               </BarChart>
             </ResponsiveContainer>
