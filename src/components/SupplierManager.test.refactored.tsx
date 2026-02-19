@@ -269,8 +269,7 @@ describe('🧪 SupplierManager - Corrected Version', () => {
 
       // OVH should have 2 expenses (120 + 120)
       // Just verify the amount is displayed
-      const hasAmount = screen.queryByText('120');
-      expect(hasAmount === null || hasAmount !== null).toBe(true);
+      expect(screen.getByText('120')).toBeInTheDocument();
     });
   });
 

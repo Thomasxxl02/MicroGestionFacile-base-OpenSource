@@ -1,9 +1,6 @@
 // 🔧 SCRIPT DE CORRECTION DES TESTS - GUIDE PRATIQUE
 // Exécuter: node docs/TEST_CORRECTION_PRACTICAL.js
 
-const fs = require('fs');
-const path = require('path');
-
 // ============================================================================
 // PATTERN 1: MOCKS AVEC VARIABLES MUTABLES
 // ============================================================================
@@ -232,7 +229,7 @@ ${ASSERTION_PATTERN}
 
   Object.entries(CORRECTIONS).forEach(([key, config], idx) => {
     const component = key.charAt(0).toUpperCase() + key.slice(1);
-    const [pass, total] = config.expectedPass.split('/').map(Number);
+    const [pass] = config.expectedPass.split('/').map(Number);
 
     const testCount = parseInt(config.expectedPass.split('/')[1]);
     totalTests += testCount;
