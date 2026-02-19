@@ -6,8 +6,43 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import InvoiceManager from './InvoiceManager';
 import { renderWithRouter, resetTestData } from '../tests/testUtils';
+
+// Mock component prop types
+interface ModalProps {
+  children: ReactNode;
+  title: string;
+}
+
+interface ButtonProps {
+  children: ReactNode;
+  onClick: () => void;
+}
+
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  children: ReactNode;
+  title: string;
+}
+
+interface InvoiceListProps {
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+interface InvoiceFormProps {
+  onBack: () => void;
+  onSave: (data: unknown, clientId: string, isSample: boolean) => void;
+}
+
+interface InvoicePreviewProps {
+  invoice: { number?: string } | null | undefined;
+  onBack: () => void;
+}
 
 // Mock des dépendances
 vi.mock('../hooks/useData', () => ({
@@ -106,7 +141,7 @@ vi.mock('../lib/utils', () => ({
 }));
 
 vi.mock('../components/ui/Header', () => ({
-  default: ({ children, title }: any) => (
+  default: ({ children, title }: ModalProps) => (
     <div data-testid="header">
       {title && <h1>{title}</h1>}
       {children}
@@ -115,7 +150,7 @@ vi.mock('../components/ui/Header', () => ({
 }));
 
 vi.mock('../components/ui/Button', () => ({
-  default: ({ children, onClick }: any) => (
+  default: ({ children, onClick }: ButtonProps) => (
     <button data-testid="button" onClick={onClick}>
       {children}
     </button>
@@ -123,7 +158,7 @@ vi.mock('../components/ui/Button', () => ({
 }));
 
 vi.mock('../components/ui/ConfirmDialog', () => ({
-  default: ({ isOpen, onConfirm, onCancel, children, title }: any) => (
+  default: ({ isOpen, onConfirm, onCancel, children, title }: ConfirmDialogProps) => (
     <>
       {isOpen && (
         <div data-testid="confirm-dialog">
@@ -142,7 +177,7 @@ vi.mock('../components/ui/ConfirmDialog', () => ({
 }));
 
 vi.mock('../components/invoices/InvoiceList', () => ({
-  default: ({ onEdit, onDelete }: any) => (
+  default: ({ onEdit, onDelete }: InvoiceListProps) => (
     <div data-testid="invoice-list">
       <button data-testid="invoice-edit" onClick={() => onEdit?.('inv-1')}>
         Éditer
@@ -155,7 +190,7 @@ vi.mock('../components/invoices/InvoiceList', () => ({
 }));
 
 vi.mock('../components/invoices/InvoiceForm', () => ({
-  default: ({ onBack, onSave }: any) => (
+  default: ({ onBack, onSave }: InvoiceFormProps) => (
     <div data-testid="invoice-form">
       <button
         data-testid="form-submit"
@@ -171,7 +206,7 @@ vi.mock('../components/invoices/InvoiceForm', () => ({
 }));
 
 vi.mock('../components/invoices/InvoicePreviewDocument', () => ({
-  default: ({ invoice, onBack }: any) => (
+  default: ({ invoice, onBack }: InvoicePreviewProps) => (
     <div data-testid="invoice-preview">
       <p>{invoice?.number}</p>
       <button data-testid="preview-back" onClick={onBack}>

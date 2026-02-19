@@ -1,54 +1,18 @@
 /**
- * AppContext - Contexte Global d'Application
+ * AppContext - Provider et Hooks
  *
- * Centralise l'injection des services critiques:
- * - Logger
- * - Encryption
- * - Audit
- * - Business Logic
- * - Validation
- * - Caching
- *
- * Avantages:
- * - Pas de prop drilling
- * - Dépendances clairement typées
- * - Facile à tester (injection de mocks)
- * - Lifecycle contrôlé
+ * Ce fichier contient le composant AppProvider et les hooks pour accéder au contexte
+ * Les types et la création du contexte sont définis dans AppContextTypes.ts
  */
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { useContext } from 'react';
+import { AppContext, AppContextType, AppProviderProps } from './AppContextTypes';
 import { logger } from '../services/loggerService';
 import { encryptionService } from '../services/encryptionService';
 import { keyManagementService } from '../services/keyManagementService';
 
-/**
- * Type d'interface pour tous les services injectés
- */
-export interface AppContextType {
-  // Logging & Debugging
-  logger: typeof logger;
-
-  // Sécurité & Chiffrement
-  encryption: typeof encryptionService;
-  keyManagement: typeof keyManagementService;
-
-  // Métadonnées du service
-  isInitialized: boolean;
-  initializationError?: Error;
-}
-
-/**
- * Le contexte lui-même
- */
-export const AppContext = createContext<AppContextType | undefined>(undefined);
-
-/**
- * Props pour le Provider
- */
-interface AppProviderProps {
-  children: ReactNode;
-  userPassphrase?: string; // Pour initialiser l'encryption
-}
+// Ré-exporter les types et contexte pour compatibilité
+export { AppContext, type AppContextType, type AppProviderProps } from './AppContextTypes';
 
 /**
  * AppProvider - Initialise et fournit tous les services

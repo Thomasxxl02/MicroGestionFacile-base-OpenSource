@@ -12,8 +12,14 @@ vi.mock('../../types', () => ({
   UserProfileSchema: { parse: vi.fn((v) => v) },
 }));
 
+// Props type for MockSetupWizard
+interface SetupWizardProps {
+  onComplete: (data: unknown) => void;
+  initialData?: unknown;
+}
+
 // Créer un widget simple pour les tests sans les dépendances complexes
-const MockSetupWizard = ({ onComplete, initialData }: any) => (
+const MockSetupWizard = ({ onComplete, initialData }: SetupWizardProps) => (
   <div data-testid="setup-wizard">
     <h1>Bienvenue</h1>
     <button onClick={() => onComplete(initialData)}>Continuer</button>

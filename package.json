@@ -12,7 +12,7 @@
     "build:analyze": "tsc && vite build --analyze",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 500 --cache",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix --cache",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
