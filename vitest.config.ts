@@ -7,6 +7,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+      },
+    },
     setupFiles: ['./src/tests/setup.ts'],
     bail: 0,
     // Exclure les tests E2E Playwright de Vitest
@@ -17,6 +22,13 @@ export default defineConfig({
     hookTimeout: 10000,
     // Isolation des tests
     isolate: true,
+    // Pool configuration pour gérer les modules ESM/CommonJS
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: true,
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
