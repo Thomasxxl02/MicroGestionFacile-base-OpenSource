@@ -134,7 +134,7 @@ class EncryptionService {
       const plaintext = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv } as AesGcmParams,
         tableKey,
-        ciphertext
+        ciphertext as BufferSource
       );
 
       // Parser les données

@@ -66,7 +66,8 @@ export default defineConfig(({ mode }) => {
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: false,
+          // 🔒 Supprimer tous les console.* en production pour éviter les fuites d'informations métier.
+          drop_console: mode !== 'development',
           drop_debugger: true,
         },
       },

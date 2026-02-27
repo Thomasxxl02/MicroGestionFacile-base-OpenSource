@@ -113,7 +113,7 @@ export const generatePDF = async (elementId: string, filename: string, facturX_X
     }
 
     // Download the final hybrid PDF
-    const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
+    const blob = new Blob([finalPdfBytes as BlobPart], { type: 'application/pdf' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${filename}.pdf`;

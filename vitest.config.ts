@@ -24,6 +24,7 @@ export default defineConfig({
     isolate: true,
     // Pool configuration pour gérer les modules ESM/CommonJS
     pool: 'threads',
+    // @ts-ignore - poolOptions est supporté mais TypeScript ne le reconnaît pas
     poolOptions: {
       threads: {
         singleThread: true,

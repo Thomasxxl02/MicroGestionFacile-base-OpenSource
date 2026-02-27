@@ -47,9 +47,18 @@ const App: React.FC = () => {
       // Initialize logging service
       logger.debug('Application initialization started', { version: '0.0.0' });
 
-      // Initialize encryption service with SIRET as seed (unique identifier)
+      // Initialize encryption service with a persistent random seed stocké localement.
+      // ⚠️ Ne jamais utiliser une donnée publique (SIRET) comme passphrase de chiffrement.
       try {
-        await encryptionService.initialize(userProfile.siret || 'default-seed');
+        const SEED_STORAGE_KEY = 'mgf_enc_seed_v1';
+        let encSeed = localStorage.getItem(SEED_STORAGE_KEY);
+        if (!encSeed) {
+          // Premier lancement : génération d'un seed aléatoire, unique par installation
+          encSeed = crypto.randomUUID();
+          localStorage.setItem(SEED_STORAGE_KEY, encSeed);
+          logger.info('Encryption seed generated (first launch)');
+        }
+        await encryptionService.initialize(encSeed);
         const encryptionOk = await encryptionService.test();
         if (encryptionOk) {
           logger.info('Encryption service initialized successfully');
@@ -97,19 +106,22 @@ const App: React.FC = () => {
       backupService.initialize();
       logger.info('Backup service initialized');
 
-      // EXPOSE SERVICES TO WINDOW FOR TESTING
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).db = db;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).logger = logger;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).encryptionService = encryptionService;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).backupService = backupService;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).improvedBackupService = improvedBackupService;
-      // eslint-disable-next-line no-console
-      console.log('%c✅ Services available globally for tests', 'color: green; font-weight: bold;');
+      // 🔒 EXPOSE SERVICES TO WINDOW FOR TESTING — DEV ONLY
+      // En production, ces assignations sont éliminées par le tree-shaking (import.meta.env.DEV = false).
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).db = db;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).logger = logger;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).encryptionService = encryptionService;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).backupService = backupService;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).improvedBackupService = improvedBackupService;
+        // eslint-disable-next-line no-console
+        console.log('%c✅ Services available globally for tests', 'color: green; font-weight: bold;');
+      }
     };
     void initialize();
   }, [userProfile.siret]);
