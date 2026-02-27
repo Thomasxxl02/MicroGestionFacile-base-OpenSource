@@ -6,6 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import SupplierManager from './SupplierManager';
 import type { Supplier, Expense } from '../types';
@@ -386,6 +387,87 @@ describe('🧪 SupplierManager Component - Final Test Suite', () => {
       expect(screen.getByText('Fournisseurs')).toBeInTheDocument();
       unmount();
       expect(() => screen.getByText('Fournisseurs')).toThrow();
+    });
+  });
+
+  describe('Empty state', () => {
+    it('should render gracefully with empty supplier list', async () => {
+      mockStore.suppliers = [];
+      mockStore.expenses = [];
+
+      render(
+        <BrowserRouter>
+          <SupplierManager />
+        </BrowserRouter>
+      );
+
+      expect(screen.getByText('Fournisseurs')).toBeInTheDocument();
+    });
+  });
+
+  describe('Search interaction', () => {
+    it('should handle search input without crashing', async () => {
+      const user = userEvent.setup();
+      render(
+        <BrowserRouter>
+          <SupplierManager />
+        </BrowserRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('OVH')).toBeInTheDocument();
+      });
+
+      const inputs = screen.queryAllByRole('textbox');
+      if (inputs.length > 0) {
+        await user.type(inputs[0], 'Adobe');
+        expect(screen.getByText('Fournisseurs')).toBeInTheDocument();
+      }
+    });
+  });
+
+  describe('Data accuracy', () => {
+    it('should display supplier SIRET number', async () => {
+      render(
+        <BrowserRouter>
+          <SupplierManager />
+        </BrowserRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('42478828500538')).toBeInTheDocument();
+      });
+    });
+
+    it('should not display cancelled expenses in supplier totals', async () => {
+      mockStore.expenses = [
+        ...testExpenses,
+        {
+          id: 'exp-cancelled',
+          date: '2025-02-20',
+          description: 'Dépense annulée',
+          amount: 9999,
+          vatAmount: 1999,
+          category: 'Services',
+          status: 'cancelled' as const,
+          supplierId: 'sup-1',
+          createdAt: '2025-02-20T00:00:00.000Z',
+        },
+      ];
+
+      render(
+        <BrowserRouter>
+          <SupplierManager />
+        </BrowserRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('OVH')).toBeInTheDocument();
+      });
+
+      // Le montant de la dépense annulée ne doit pas apparaître
+      const cancelledAmounts = screen.queryAllByText('9 999');
+      expect(cancelledAmounts.length).toBe(0);
     });
   });
 });

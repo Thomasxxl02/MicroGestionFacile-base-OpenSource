@@ -20,7 +20,12 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       VitePWA({
-        registerType: 'autoUpdate',
+        registerType: 'prompt', // Contrôle manuel des mises à jour via hook usePWAUpdate
+        workbox: {
+          skipWaiting: true, // SW se termine immédiatement quand demandé
+          clientsClaim: true, // Reprendre les clients immédiatement
+          cleanupOutdatedCaches: true,
+        },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'favicon.svg'],
         manifest: {
           name: 'Micro Gestion Facile',
@@ -76,13 +81,12 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             'vendor-react': ['react', 'react-dom', 'react-router-dom'],
             'vendor-state': ['zustand'],
-            'vendor-ui': ['framer-motion', 'lucide-react', 'sonner', 'styled-components'],
+            'vendor-ui': ['framer-motion', 'lucide-react', 'sonner'],
             'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
             'vendor-pdf': ['jspdf', 'html2canvas'],
             'vendor-pdflib': ['pdf-lib'],
             'vendor-charts': ['recharts'],
             'vendor-db': ['dexie', 'dexie-react-hooks', 'decimal.js'],
-            'vendor-ai': ['@google/genai'],
           },
           assetFileNames: (assetInfo) => {
             if (!assetInfo.name) return `assets/[name]-[hash][extname]`;

@@ -8,9 +8,9 @@ import { Menu, Loader2 } from 'lucide-react';
 import { db } from './services/db';
 import { Toaster } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import { backupService } from './services/backupService';
 import { useUIStore } from './store';
 import { useUserProfile } from './hooks/useData';
+import { usePWAUpdate } from './hooks/usePWAUpdate';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { logger } from './services/loggerService';
 import { encryptionService } from './services/encryptionService';
@@ -37,6 +37,9 @@ const LoadingFallback = () => (
 );
 
 const App: React.FC = () => {
+  // Activer les notifications de mise à jour PWA
+  usePWAUpdate();
+
   const location = useLocation();
   const { setMobileMenuOpen, isDarkMode } = useUIStore();
   const { profile: userProfile, isLoading: isProfileLoading } = useUserProfile();
@@ -102,11 +105,7 @@ const App: React.FC = () => {
         logger.info('Migration from localStorage to IndexedDB complete');
       }
 
-      // Initialize automatic backup service
-      backupService.initialize();
-      logger.info('Backup service initialized');
-
-      // 🔒 EXPOSE SERVICES TO WINDOW FOR TESTING — DEV ONLY
+      logger.info('Migration from localStorage to IndexedDB complete');
       // En production, ces assignations sont éliminées par le tree-shaking (import.meta.env.DEV = false).
       if (import.meta.env.DEV) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,11 +115,12 @@ const App: React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).encryptionService = encryptionService;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).backupService = backupService;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).improvedBackupService = improvedBackupService;
         // eslint-disable-next-line no-console
-        console.log('%c✅ Services available globally for tests', 'color: green; font-weight: bold;');
+        console.log(
+          '%c✅ Services available globally for tests',
+          'color: green; font-weight: bold;'
+        );
       }
     };
     void initialize();

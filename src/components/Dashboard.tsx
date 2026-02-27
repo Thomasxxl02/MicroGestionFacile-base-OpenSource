@@ -1,7 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InvoiceStatus } from '../types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import DashboardVatAlert from './dashboard/DashboardVatAlert';
+import MonthlyChart from './dashboard/MonthlyChart';
+import UrssafDeadlineCard from './dashboard/UrssafDeadlineCard';
 import {
   Euro,
   TrendingUp,
@@ -15,7 +17,6 @@ import {
   Users,
   FilePlus,
   Zap,
-  BrainCircuit,
   Sparkles,
 } from 'lucide-react';
 import { Decimal } from 'decimal.js';
@@ -251,40 +252,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Alerte Prédictive TVA */}
-      {vatPrediction?.isLikelyToExceed && (vatPrediction.monthsBeforeExceeding || 99) <= 3 && (
-        <div className="relative group overflow-hidden bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 rounded-4xl p-8 flex items-start gap-6 shadow-premium transition-all hover:shadow-2xl">
-          <div className="bg-amber-500 p-4 rounded-3xl shadow-lg shadow-amber-500/30 text-white animate-pulse">
-            <BrainCircuit className="w-8 h-8" />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-xl font-bold text-amber-900 dark:text-amber-100 uppercase tracking-tight">
-                Analyse Prédictive : TVA
-              </h3>
-              <Badge variant="warning" dot>
-                IA Gemini
-              </Badge>
-            </div>
-            <p className="text-amber-800/80 dark:text-amber-200/80 text-sm mb-4 leading-relaxed max-w-3xl">
-              Votre croissance actuelle indique un passage probable au régime de TVA dans environ{' '}
-              <span className="font-black text-amber-600 dark:text-amber-400">
-                {vatPrediction.monthsBeforeExceeding} mois
-              </span>
-              . Projection de fin d&apos;année :{' '}
-              <span className="font-black">
-                {vatPrediction.projectedCA.toLocaleString('fr-FR')} €
-              </span>
-              .
-            </p>
-            <div className="bg-white/40 dark:bg-amber-900/20 border border-amber-500/10 p-4 rounded-2xl text-xs font-medium text-amber-800 dark:text-amber-200">
-              <span className="font-black uppercase tracking-widest mr-2 opacity-60">
-                Conseil :
-              </span>
-              {vatPrediction.recommendation}
-            </div>
-          </div>
-        </div>
-      )}
+      <DashboardVatAlert vatPrediction={vatPrediction} />
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         <div className="xl:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -327,24 +295,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Fiscal Deadline Widget */}
-        <Card className="flex flex-col items-center text-center p-10 bg-primary border-none text-white relative overflow-hidden shadow-2xl shadow-primary/20 group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-white/20 transition-all duration-700" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full -ml-16 -mb-16 blur-2xl group-hover:bg-black/20 transition-all duration-700" />
-
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-3xl border border-white/20 flex items-center justify-center text-white mb-6 animate-pulse relative z-10">
-            <Zap size={32} fill="white" className="drop-shadow-lg" />
-          </div>
-          <p className="text-[10px] font-black text-white/60 uppercase tracking-[0.25em] mb-2 relative z-10">
-            Prochain défi
-          </p>
-          <h4 className="text-2xl font-black mb-3 leading-tight relative z-10">{deadline.label}</h4>
-          <div className="bg-white text-primary px-6 py-2 rounded-2xl text-sm font-black mb-6 shadow-2xl relative z-10 group-hover:scale-105 transition-transform">
-            {deadline.date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-          </div>
-          <p className="text-[10px] text-white/50 font-black uppercase tracking-widest relative z-10">
-            Période de {deadline.period}
-          </p>
-        </Card>
+        <UrssafDeadlineCard deadline={deadline} />
       </div>
 
       {vatStatus.shouldPayVat && (
@@ -372,106 +323,7 @@ const Dashboard: React.FC = () => {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <Card
-          title="Recettes"
-          subtitle="Analyse de l'historique annuel"
-          className="lg:col-span-2 border-none shadow-premium"
-          headerActions={
-            <div className="flex bg-muted/50 p-1.5 rounded-xl border border-border/50">
-              <button className="px-4 py-1.5 bg-white dark:bg-slate-800 rounded-lg text-[10px] font-black tracking-widest uppercase shadow-premium text-primary">
-                Mensuel
-              </button>
-              <button className="px-4 py-1.5 text-muted-foreground/60 rounded-lg text-[10px] font-black tracking-widest uppercase hover:text-foreground transition-colors">
-                Trimestriel
-              </button>
-            </div>
-          }
-        >
-          <div className="h-[400px] mt-4" data-testid="recharts-barchart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={monthlyData}
-                margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
-                data-testid="recharts-barchart-inner"
-              >
-                <defs>
-                  <linearGradient id="colorRecettes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="8 8"
-                  vertical={false}
-                  stroke={isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)'}
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: isDarkMode ? '#64748b' : '#94a3b8', fontSize: 11, fontWeight: 800 }}
-                  dy={15}
-                  data-testid="recharts-xaxis"
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: isDarkMode ? '#64748b' : '#94a3b8', fontSize: 11, fontWeight: 800 }}
-                  tickFormatter={(v) => (v === 0 ? '0' : `${v / 1000}k`)}
-                  data-testid="recharts-yaxis"
-                />
-                <Tooltip
-                  data-testid="recharts-tooltip"
-                  cursor={{
-                    fill: isDarkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-                    radius: 12,
-                  }}
-                  content={({ active, payload, label }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="bg-card/95 backdrop-blur-xl border border-border p-5 rounded-3xl shadow-2xl">
-                          <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-3 border-b border-border/50 pb-2">
-                            {label}
-                          </p>
-                          <div className="space-y-2">
-                            {payload.map((item, i) => (
-                              <div key={i} className="flex justify-between items-center gap-8">
-                                <span className="text-xs font-bold text-muted-foreground capitalize">
-                                  {item.name}
-                                </span>
-                                <span className="text-sm font-black text-foreground">
-                                  {item.value?.toLocaleString('fr-FR')} €
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Bar
-                  name="Recettes"
-                  dataKey="Recettes"
-                  fill="url(#colorRecettes)"
-                  radius={[10, 10, 10, 10]}
-                  barSize={24}
-                  data-testid="recharts-bar"
-                />
-                <Bar
-                  name="Avoirs"
-                  dataKey="Avoirs"
-                  fill="#f43f5e"
-                  radius={[10, 10, 10, 10]}
-                  barSize={24}
-                  opacity={0.3}
-                  data-testid="recharts-bar"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
+        <MonthlyChart monthlyData={monthlyData} isDarkMode={isDarkMode} />
 
         <Card
           title="Recents"
