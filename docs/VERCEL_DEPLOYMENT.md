@@ -178,3 +178,17 @@ Après le déploiement sur Vercel, les tests :
 - ♿ Accessibility audit results
 - ⚡ Performance metrics
 - 🚀 Deployment summary
+
+## 🆘 Troubleshooting
+
+Pour les erreurs courantes lors du déploiement sur Vercel, consultez le [**Guide de Dépannage Vercel**](VERCEL_TROUBLESHOOTING.md).
+
+Les problèmes couverts incluent :
+
+- ❌ Unmatched function pattern
+- ❌ Unable to load project settings
+- ❌ Project name validation errors
+- ❌ Domain verification issues
+- ❌ Build timeout et autres
+
+[Accédez au guide complet →](VERCEL_TROUBLESHOOTING.md)

@@ -5,7 +5,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ClientManager from './ClientManager';
@@ -257,7 +258,9 @@ describe('🧪 ClientManager Component', () => {
       );
 
       await waitFor(() => {
-        const clientNames = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
+        const clientNames = screen
+          .getAllByRole('heading', { level: 4 })
+          .map((h: HTMLElement) => h.textContent);
         expect(clientNames[0]).toBe('Acme Corp');
       });
     });

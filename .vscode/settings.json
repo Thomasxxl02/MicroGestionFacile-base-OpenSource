@@ -1,0 +1,30 @@
+{
+  // ============================================
+  // Configuration SQL + langage
+  // ============================================
+
+  // Associer les fichiers .sql du répertoire database/ à PostgreSQL
+  "[sql]": {
+    "editor.defaultFormatter": "ms-mssql.mssql",
+    "editor.formatOnSave": false
+  },
+
+  // Désactiver MSSQL pour les fichiers database/
+  "sql.linter.excludeSchemas": [],
+
+  // Forcer le dialecte pour les fichiers database/*.sql
+  "files.associations": {
+    "database/**/*.sql": "postgresql"
+  },
+
+  // Extensions recommandées
+  "extensions.recommendations": [],
+
+  // Ignorer les avertissements MSSQL dans database/
+  "[postgresql]": {
+    "editor.formatOnSave": false
+  },
+
+  // Debug
+  "debug.sqlLanguageMode": "postgresql"
+}

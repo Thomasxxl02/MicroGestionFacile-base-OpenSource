@@ -1,0 +1,89 @@
+# ============================================
+# DOCKER COMPOSE - PostgreSQL + pgAdmin
+# ============================================
+# Pour développement local
+# Usage: docker-compose up -d
+
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: micro-gestion-postgres
+    environment:
+      POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-micro_gestion_facile}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: '-E UTF8 -l fr_FR.UTF-8'
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      # Persister les données
+      - postgres_data:/var/lib/postgresql/data
+      # Charger les migrations au démarrage
+      - ./database/migrations:/docker-entrypoint-initdb.d
+      - ./database/seeds:/docker-entrypoint-initdb.d/seeds
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # pgAdmin - Interface Web pour PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: micro-gestion-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - '5050:80'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  app-network:
+    driver: bridge
+
+# ============================================
+# USAGE
+# ============================================
+#
+# Démarrer:
+#   docker-compose up -d
+#
+# Accéder à pgAdmin:
+#   http://localhost:5050
+#   Email: admin@example.com
+#   Password: admin
+#
+# Connecter à PostgreSQL dans pgAdmin:
+#   Hostname: postgres
+#   Port: 5432
+#   Username: postgres
+#   Password: postgres
+#
+# Arrêter:
+#   docker-compose down
+#
+# Supprimer les données (reset):
+#   docker-compose down -v
+#
+# Logs:
+#   docker-compose logs -f postgres
+#   docker-compose logs -f pgadmin

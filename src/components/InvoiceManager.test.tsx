@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/dom';
 import { ReactNode } from 'react';
 import InvoiceManager from './InvoiceManager';
 import { renderWithRouter, resetTestData } from '../tests/testUtils';

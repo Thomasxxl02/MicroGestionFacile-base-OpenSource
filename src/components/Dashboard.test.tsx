@@ -5,7 +5,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, waitFor, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/dom';
+import { act } from '@testing-library/react';
 import Dashboard from './Dashboard';
 import { renderWithRouter, resetTestData } from '../tests/testUtils';
 
@@ -299,7 +300,7 @@ describe('📊 Dashboard Component', () => {
         renderWithRouter(<Dashboard />, { useRoutes: true, withCharts: true });
       });
       const buttons = screen.queryAllByTestId('button');
-      buttons.forEach((btn) => {
+      buttons.forEach((btn: HTMLElement) => {
         expect(btn).toBeInTheDocument();
       });
     });

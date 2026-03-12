@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-vscode.powershell",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "biomejs.biome",
+    "GitHub.copilot",
+    "ms-playwright.playwright",
+    "cweijan.vscode-postgresql-client"
+  ],
+  "unwantedRecommendations": ["ms-mssql.mssql"]
+}
